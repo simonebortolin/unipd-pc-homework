@@ -1,0 +1,24 @@
+\section{Introduction}\label{introduction}
+
+\begin{algorithm}
+    \For{\(i \in [1,n]\)}{
+        \For{\(j \in [1,n]\)}{
+            initialize \( d [ i , j ] \leftarrow c [ i , j ] \) and pred \( [ i , j ]  \leftarrow i \)
+        }
+    }
+    \For{\(h\in [1,n]\)} {
+        \For{\(i \in [1,n]\)} {
+            \For{\(j \in [1,n]\)}{
+                \If{\( d [ i , h ] + d [ h , j ] < d [ i , j ] \)} {
+                    \( d [ i , j ] \leftarrow d [ i , h ] + d [ h , j ] \)
+                    \( pred [ i , j ] \leftarrow pred [ h , j ] \)
+                }
+            }
+        }
+        \For{\(i \in [1,n]\)} {
+            \If{\(d[i,i]< 0\)} {
+                STOP  "negative cycles"
+            }
+        }
+    }
+\end{algorithm}

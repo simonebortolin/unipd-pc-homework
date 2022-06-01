@@ -1,13 +1,13 @@
 #include <iostream>
 #include "matrix.h"
 
-pc::matrix floydWarhsallSeq(pc::matrix &dist);
+pc::matrix<int> floydWarhsallSeq(pc::matrix<double> &dist);
 
 int main() {
-    pc::matrix c = pc::matrix(0);
+    pc::matrix<double> c = pc::matrix<double>(0);
     std::cin >> c;
 
-    pc::matrix out = floydWarhsallSeq(c);
+    pc::matrix<int> out = floydWarhsallSeq(c);
     std::cout << c << std::endl;
     std::cout << out << std::endl;
 
@@ -24,11 +24,12 @@ int main() {
  * 5;0,2,3,4,0;3,1,3,1,0;3,2,2,1,0;3,2,3,3,0;3,2,3,4,4;
  */
 
-pc::matrix floydWarhsallSeq(pc::matrix &dist){
+pc::matrix<int> floydWarhsallSeq(pc::matrix<double> &dist){
 
-    double tr, pr;
+    double tr;
+    int pr;
     int d = dist.getSize();
-    pc::matrix pred = pc::matrix(d);
+    pc::matrix<int> pred = pc::matrix<int>(d);
 
     for(int i=0; i<d;i++){
         for(int j=0; j<d;j++){
@@ -47,6 +48,7 @@ pc::matrix floydWarhsallSeq(pc::matrix &dist){
                 }
             }
         }
+
         for(int i=0;i<d;i++ ){
             if(dist.get(i,i) < 0) {
                 std:: cout<< "error";
@@ -56,3 +58,4 @@ pc::matrix floydWarhsallSeq(pc::matrix &dist){
     }
     return pred;
 }
+
