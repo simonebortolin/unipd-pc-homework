@@ -1,6 +1,26 @@
 \section{Introduction}\label{introduction}
 
 % introduzione generica all'algoritmo e cosa fa
+Given a complete directed  graph, Floyd-Warshall's algorithm \textsuperscript{\ref{alg:sequential}} can be used to compute the shortest paths from all vertices to all vertices.
+When applying the sequential version of the algorithm, the solution is reached with a complexity of $O(n\textsuperscript{3})$, with n as number of vertices.
+Unlike Dijkstra's algorithm for the shortest path problem, Floyd-Warshall's algorithm can also be used in case of negative costs and can identify the presence of negative cycles 
+(even thought the correctness of the algorithm is not guaranteed in such cases).
+
+\cite{fischetti}
+The algorithm takes in input an adjacency matrix of $n \times n$  distances $d[i,j]$ with $i,j \in V$ and $n$ number of vertices representing an oriented graph, and as output it returns two matrices:
+\begin{itemize}
+    \item a distance cost matrix where $d[i,j]$ is the cost of the shortest path from \textit{i} to \textit{j}
+    \item a predecessor matrix where $pred[i,j]$ is the predecessor of j in the shortest path from \textit{i} to \textit{j}
+  \end{itemize}
+
+The overall algorithm works by testing every intermediate vertex h to find the shortest path from a vertex \textit{i} to a vertex \textit{j},
+comparing the new path cost with the current one (best so far).
+
+\begin{equation}
+    d[i,j] = min\left\{ d[i,j], d[i,h]+d[h,j] \right\}
+\end{equation}
+
+
 
 \begin{algorithm}
     \For{\(i \in [1,n]\)}{
@@ -23,7 +43,10 @@
             }
         }
     }
+\caption{Floyd-Warshall's sequential algorithm}
+\label{alg:sequential}
 \end{algorithm}
+
 
 % 2 esempi banali
 
