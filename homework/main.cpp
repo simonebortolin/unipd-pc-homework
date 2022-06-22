@@ -8,8 +8,8 @@ int main() {
     std::cin >> c;
 
     pc::matrix<int> out = floydWarhsallSeq(c);
-    std::cout << c << std::endl;
-    std::cout << out << std::endl;
+    std::cout << c << std::endl; //distances matrix: min costs
+    std::cout << out << std::endl; //predecessors matrix: min path
 
     return 0;
 
@@ -31,24 +31,33 @@ pc::matrix<int> floydWarhsallSeq(pc::matrix<double> &dist){
     int d = dist.getSize();
     pc::matrix<int> pred = pc::matrix<int>(d);
 
+    // initialised predecessors
     for(int i=0; i<d;i++){
         for(int j=0; j<d;j++){
             pred.set(i,j,i);
         }
     }
 
+    //computation of min path costs
     for(int h=0; h<d;h++){
         for(int i=0; i<d;i++){
             for(int j=0; j<d;j++){
+
+                //path comparison between current i->j and i->h->j
                 tr = dist.get(i,h) + dist.get(h,j);
+
                 if(  tr < dist.get(i,j) ){
+
+                    //update of min path distance and predecessors
                     dist.set(i,j,tr);
                     pr = pred.get(h,j);
                     pred.set(i,j,pr);
+
                 }
             }
         }
 
+        //possible negative cycle
         for(int i=0;i<d;i++ ){
             if(dist.get(i,i) < 0) {
                 std:: cout<< "error";
