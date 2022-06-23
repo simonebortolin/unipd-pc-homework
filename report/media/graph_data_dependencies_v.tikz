@@ -1,0 +1,36 @@
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw,inner sep=4pt}]
+        \foreach  \x in {0,...,5}
+            \foreach  \y in {0,...,5}
+                \node (I-\x-\y) at (\x,-\y) {};
+    \end{scope}
+    \begin{scope}
+        \foreach  \y in {0,...,5}
+            \node[anchor=east, inner sep = 8pt] at (I-0-\y) {\(\y\)};
+    \end{scope}
+    \begin{scope}
+        \foreach  \x in {0,...,5}
+            \node[anchor=south, inner sep = 8pt] at (I-\x-0) {\(\x\)};
+    \end{scope}
+    \begin{scope}[>={Stealth[white]},
+        every node/.style={fill=white,circle,inner sep=0pt},
+        every edge/.style={draw=white,very thick}]
+        \foreach  \y in {0,...,5}
+            \foreach \x in {0,2}
+                \path [->] (I-1-\y) edge (I-\x-\y);
+        \foreach  \y in {0,...,5}
+            \foreach \x in {3,4,5}
+                \path [->] (I-1-\y) edge [bend right=30] (I-\x-\y);
+    \end{scope}
+    \begin{scope}[>={Stealth[black]},
+        every node/.style={fill=white,circle,inner sep=0pt},
+        every edge/.style={draw=black,very thick}]
+        \foreach  \x in {0,...,5}
+            \foreach \y in {0,2}
+                \path [->] (I-\x-1) edge (I-\x-\y);
+        \foreach  \x in {0,...,5}
+            \foreach \y in {3,4,5}
+                \path [->] (I-\x-1) edge [bend left=20] (I-\x-\y);
+    \end{scope}
+    
+\end{tikzpicture}
