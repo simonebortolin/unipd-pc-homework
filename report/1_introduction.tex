@@ -19,7 +19,10 @@ comparing the new path cost with the current one (best so far) as described by \
     d[i,j] = \min\left\{ d[i,j], d[i,h]+d[h,j] \right\}
 \end{equation}
 
-\begin{algorithm}
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{.5\textwidth}
+        \begin{algorithm}[H]
     \For{\(i \in [1,n]\)}{
         \For{\(j \in [1,n]\)}{
             \( d [ i , j ] \leftarrow c [ i , j ] \)
@@ -27,9 +30,9 @@ comparing the new path cost with the current one (best so far) as described by \
             \( pred [ i , j ]  \leftarrow i \)
         }
     }
-    \For{\(h\in [1,n]\)} {
-        \For{\(i \in [1,n]\)} {
-            \For{\(j \in [1,n]\)}{
+    \For{\(h\in [1,n]\)} { \label{alg:for-h}
+        \For{\(i \in [1,n]\)} { \label{alg:for-i}
+            \For{\(j \in [1,n]\)}{ \label{alg:for-j}
                 \If{\( d [ i , h ] + d [ h , j ] < d [ i , j ] \)} {
                     \( d [ i , j ] \leftarrow d [ i , h ] + d [ h , j ] \)
 
@@ -46,8 +49,10 @@ comparing the new path cost with the current one (best so far) as described by \
 \caption{Floyd-Warshall's sequential algorithm}
 \label{alg:sequential}
 \end{algorithm}
+    \end{minipage}
+\end{figure}
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \begin{subfigure}[b]{0.19\textwidth}
         \centering
@@ -94,6 +99,11 @@ comparing the new path cost with the current one (best so far) as described by \
 
 
 
+
 % 2 esempi banali
 
 % performance dell'algoritmo
+
+
+
+\FloatBarrier

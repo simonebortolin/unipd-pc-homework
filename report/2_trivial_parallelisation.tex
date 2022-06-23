@@ -1,10 +1,10 @@
 \section{Trivial parallelization}\label{trivial_parallelization}
 
-Knowing that in general, synchronisation times after parallel execution of a given cycle can be very, very noticeable, which is why it is good to start parallelising from the most external cycle «for \(h\)».
+Knowing that in general, synchronisation times after parallel execution of a given cycle can be very, very noticeable, which is why it is good to start parallelising from the most external cycle «for \(h\)» (\cref{alg:for-h} of \cref{alg:sequential}).
 
-Analysing the dependencies of the most external loop «for \(h\)», as shown in \cref{fig:data-dependency-external-loop}, we note that parallelling this loop in a simple manner is impossible.
+Analysing the dependencies of the most external loop «for \(h\)», as shown in \cref{fig:data-dependency-external-loop}, we note that parallelling this loop in a simple manner is impossible, whereas the execution of loops i and j can be done in any order~\cite{rucci}.
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \begin{subfigure}[t]{0.3\textwidth}
         \centering
@@ -30,15 +30,11 @@ Analysing the dependencies of the most external loop «for \(h\)», as shown in 
     \label{fig:data-dependency-external-loop}
 \end{figure}
 
-Parallelization of the intermediate cycle «for \(i\)» on the other hand seems possible, as there are no dependencies with respect to other previous or subsequent cycles.
-This parallelization, however, exploits the maximum \(i\) thread.
+As mentioned by~\cite{rucci}, and easily demonstrated, it is possible to parallelize internal cycles without any problems, let's start with the parallelization of  the intermediate cycle «for \(i\)» (\cref{alg:for-i} of \cref{alg:sequential}) on the other hand seems possible, as there are no dependencies with respect to other previous or subsequent cycles.
+This parallelization, however, exploits the maximum \(i\) thread, is not a problem if \(i \geq p\), it becomes a problem if \(p \gg i\).
 Which in the case of machines with numerous threads \(p \gg n\) could be a waste, then \(p\) the number of threads the performance is \(\displaystyle O\left(\frac{n^3}{p}\right)\) plus synchronisation times, which are \(n\times n\).
 The main problem with this implementation is the synchronisation times, which are too high.
 
+In a similar way can also be paralysed «for \(j\)» (\cref{alg:for-j} of \cref{alg:sequential}) again, the problem is mainly synchronisation time after parallelisation, which becomes \(n^3\).
 
-
-
-% parallelizzazione "stupida" quindi parallelizzanzo uno alla volta i 3 cicli e di quanto è inefficenze questa cosa per via di tempi si syncr tra i vari thread
-
-%
-
+\FloatBarrier

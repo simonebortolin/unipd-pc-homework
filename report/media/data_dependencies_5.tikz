@@ -6,7 +6,7 @@
 %Shape: Rectangle [id:dp16271817762553908]
     \draw  [fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1 ] (10,90) -- (50,90) -- (50,130) -- (10,130) -- cycle ;
 %Shape: Rectangle [id:dp9925798269702357]
-    \draw  [fill={rgb, 255:red, 184; green, 233; blue, 134 }  ,fill opacity=1 ] (10,150) -- (50,150) -- (50,190) -- (10,190) -- cycle ;
+    \draw  [fill={rgb, 255:red, 184; green, 233; blue, 134 }  ,fill opacity=0 ] (10,150) -- (50,150) -- (50,190) -- (10,190) -- cycle ;
 
 % Text Node
     \draw (71,42) node [anchor=north west][inner sep=0.75pt]   [align=left] {Phase 1: self-dependent cell $\displaystyle ( h,h)$};
