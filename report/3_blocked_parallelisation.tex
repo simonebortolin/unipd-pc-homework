@@ -1,7 +1,7 @@
 \section{Blocked parallelization}\label{blocked_parallelization}
 
 Although, the parallelization of the «for \(i\)» loop is simple and improves times, there remains the problem of synchronisation times being too high, remembering that a parallel algorithm does not start with the sequential algorithm.
-We can think of a divide-and-conquer strategy: from the figure \cref{fig:data-dependencies-3} we can see that the same image applies whether the cell size is \(1 \times 1,  2 \times 2,  4 \times 4, \dots\) and that we can then divide the matrix into blocks and execute the sequential algorithm in parallel on sub-matrices.
+We can think of a divide-and-conquer strategy: from the figure \cref{fig:data-dependencies-3} we can see that the same image applies whether the cell size is \(1 \times 1,  2 \times 2,  4 \times 4, \dots\) and that we can then divide the matrix into blocks and execute the sequential algorithm in parallel on sub-matrices, as shown in \cref{fig:data-dependency-external-loop-parallel}.
 In particular, the order of execution is as follows:
 \begin{enumerate}
     \item diagonal cell \((h,h)\) since they are self-dependent (\cref{alg:block-diagonal} of \cref{alg:fw-blocked}).
@@ -10,10 +10,18 @@ In particular, the order of execution is as follows:
     \item The rest of the matrix blocks as each of them depends on the \(h\)-th block of its row and the \(h\)-th block of its column (\cref{alg:block-other}  of \cref{alg:fw-blocked}).
 \end{enumerate}
 
-Performing the calculations in this order satisfies all the dependencies seen in \cref{fig:data-dependencies-3}, and one can start from this list to realise the parallel algorithm. \cref{fig:data-dependency-external-loop-parallel} shows the above steps.
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[t]{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{media/data_dependencies_block_1}
+    \end{subfigure}
 
-Also in this case the outer loop cannot be paralleled but must always be executed sequentially.
-Despite this, the matrix strategy makes it possible to reduce synchronisation times from \(n\times n\) to \(n/b + n/b + n/b \times n/b \approx n/b \times n/b\) so as \(b\) changes, the time required for synchronize after parallel execution changes.
+    \caption{Graphical representation of the dependencies of the algorithm to calculate the cell values for each \(h\)}
+    \label{fig:data-dependency-external-loop-parallel}
+\end{figure}
+
+Performing the calculations in this order satisfies all the dependencies seen in \cref{fig:data-dependencies-3}, and one can start from this list to realise the parallel algorithm \cite{rucci}.
 
 \begin{figure}[htbp]
     \centering
@@ -65,17 +73,26 @@ Despite this, the matrix strategy makes it possible to reduce synchronisation ti
 
 \begin{figure}[htbp]
     \centering
-    \begin{subfigure}[t]{0.33\textwidth}
+    \begin{subfigure}[t]{0.4\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{media/data_dependencies_4}
+        \includegraphics[width=\textwidth]{media/graph_data_dependencies_v}
+        \caption{Each task in row \(h\) broadcast to tasks in same column}
+        \label{fig:data-dependencies-v}
     \end{subfigure}
-    \begin{subfigure}[t]{0.45\textwidth}
+    \begin{subfigure}[t]{0.4\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{media/data_dependencies_5}
-
+        \includegraphics[width=\textwidth]{media/graph_data_dependencies_o}
+        \caption{Each task in column \(h\) broadcast to tasks in same row}
+        \label{fig:data-dependencies-o}
     \end{subfigure}
-    \caption{Graphical representation of the dependencies of the algorithm to calculate the cell values for each \(h\)}
-    \label{fig:data-dependency-external-loop-parallel}
+    \caption{Communication during the parallel task.}
+    \label{fig:communication-during-parallel-task}
 \end{figure}
+
+\cref{fig:communication-during-parallel-task}  describes communications in an implementation where each individual block is parallelised and started together, suspended until it receives data and executed.
+
+As we can see from \cref{alg:fw-blocked}, the code works sequentially with \(O(n/b \cdot n/b \cdot n/b \cdot b^3) =O(n^3) \).
+In a parallel manner we have instead \(O(n \cdot (1+n/p+n/p+ n^2/p)) = O(n^3/p)\).
+Despite this, the matrix strategy makes it possible to reduce synchronisation times from \(n\times n\) to \(n/b + n/b + n/b \times n/b \approx n/b \times n/b\) so as \(b\) changes, the time required for synchronize after parallel execution changes \cite{rucci}.
 
 \FloatBarrier

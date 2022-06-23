@@ -1,19 +1,25 @@
 \begin{tikzpicture}[yscale=-1,xscale=1]
-%uncomment if require: \path (0,186); %set diagram left start at 0, and has height of 186
+    \draw (0,0) rectangle (5,5);
+    \draw[fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1] (1,2) rectangle (2,5);
+    \draw[fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1] (1,0) rectangle (2,2);
+    \draw[fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1] (2,1) rectangle (5,2);
+    \draw[fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1] (0,1) rectangle (2,2);
+    \draw[fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1 ] (1,1) rectangle (2,2);
 
-%Shape: Path Data [id:dp9852843888613778]
-    \draw  [fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1 ] (140,20) -- (140,60) -- (100,60) -- (100,20) -- (140,20) -- cycle (140,180) -- (100,180) -- (100,100) -- (140,100) -- (140,180) -- cycle (60,60) -- (60,100) -- (100,100) -- (100,60) -- (60,60) -- cycle (220,100) -- (220,60) -- (140,60) -- (140,100) -- (220,100) -- cycle ;
-%Shape: Rectangle [id:dp15326804212025373]
-    \draw  [fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1 ] (100,60) -- (140,60) -- (140,100) -- (100,100) -- cycle ;
-%Shape: Grid [id:dp4771848475496565]
-    \draw  [draw opacity=0] (60,20) -- (220,20) -- (220,180) -- (60,180) -- cycle ; \draw   (60,20) -- (60,180)(100,20) -- (100,180)(140,20) -- (140,180)(180,20) -- (180,180) ; \draw   (60,20) -- (220,20)(60,60) -- (220,60)(60,100) -- (220,100)(60,140) -- (220,140) ; \draw    ;
-%Shape: Rectangle [id:dp22051672889162477]
-    \draw   (60,20) -- (220,20) -- (220,180) -- (60,180) -- cycle ;
-
-% Text Node
-    \draw (104,2) node [anchor=north west][inner sep=0.75pt]   [align=left] {\(2\)-nd column};
-% Text Node
-    \draw (3,70) node [anchor=north west][inner sep=0.75pt]   [align=left] {\(2\)-nd row};
-
-
+    \begin{scope}[every path/.style={very thin}]
+        \foreach \i in {1,...,4} {
+            \draw   (\i,0) -- (\i,5);
+        }
+        \foreach \i in {1,...,4} {
+            \draw   (0,\i) -- (5,\i);
+        }
+        \foreach \i in {0,...,4} {
+            \node [ anchor=south] at ($(\i,0)+(0.5,0)$) {\(\i\)};
+        }
+        \foreach \i in {0,...,4} {
+            \node [anchor=east] at ($(0,\i)+(0,0.5)$) {\(\i\)};
+        }
+        
+        \node [ anchor=center] at (1.5,1.5) {\((1,1)\)};
+    \end{scope}
 \end{tikzpicture}
