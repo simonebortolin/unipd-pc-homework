@@ -1,7 +1,7 @@
 \section{Introduction}\label{introduction}
 
 % introduzione generica all'algoritmo e cosa fa
-Given a complete directed  graph, Floyd-Warshall's algorithm, described in \textsuperscript{\ref{alg:sequential}}, can be used to compute the shortest paths from all vertices to all vertices.
+Given a complete directed  graph, Floyd-Warshall's algorithm, described in \cref{alg:sequential}, can be used to compute the shortest paths from all vertices to all vertices.
 When applying the sequential version of the algorithm, the solution is reached with a complexity of \(O(n^3)\), with \(n\) as number of vertices.
 Unlike Dijkstra's algorithm for the shortest path problem, Floyd-Warshall's algorithm can also be used in case of negative costs and can identify the presence of negative cycles 
 (even thought the correctness of the algorithm is not guaranteed in such cases)~\cite{fischetti}.
@@ -22,7 +22,9 @@ comparing the new path cost with the current one (best so far) as described by \
 \begin{algorithm}
     \For{\(i \in [1,n]\)}{
         \For{\(j \in [1,n]\)}{
-            initialize \( d [ i , j ] \leftarrow c [ i , j ] \) and pred \( [ i , j ]  \leftarrow i \)
+            \( d [ i , j ] \leftarrow c [ i , j ] \)
+
+            \( pred [ i , j ]  \leftarrow i \)
         }
     }
     \For{\(h\in [1,n]\)} {
@@ -30,6 +32,7 @@ comparing the new path cost with the current one (best so far) as described by \
             \For{\(j \in [1,n]\)}{
                 \If{\( d [ i , h ] + d [ h , j ] < d [ i , j ] \)} {
                     \( d [ i , j ] \leftarrow d [ i , h ] + d [ h , j ] \)
+
                     \( pred [ i , j ] \leftarrow pred [ h , j ] \)
                 }
             }

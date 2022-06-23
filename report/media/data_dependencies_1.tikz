@@ -1,0 +1,19 @@
+\begin{tikzpicture}[yscale=-1,xscale=1]
+%uncomment if require: \path (0,186); %set diagram left start at 0, and has height of 186
+
+%Shape: Rectangle [id:dp05303881871206384] 
+    \draw  [fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1 ] (60,62) -- (100,62) -- (100,182) -- (60,182) -- cycle ;
+%Shape: Rectangle [id:dp23542101841681018] 
+    \draw  [fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1 ] (100,22) -- (220,22) -- (220,62) -- (100,62) -- cycle ;
+%Shape: Rectangle [id:dp257993036816877] 
+    \draw  [fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1 ] (60,22) -- (100,22) -- (100,62) -- (60,62) -- cycle ;
+%Shape: Grid [id:dp41601706520213155] 
+    \draw  [draw opacity=0] (60,22) -- (220,22) -- (220,182) -- (60,182) -- cycle ; \draw   (60,22) -- (60,182)(100,22) -- (100,182)(140,22) -- (140,182)(180,22) -- (180,182) ; \draw   (60,22) -- (220,22)(60,62) -- (220,62)(60,102) -- (220,102)(60,142) -- (220,142) ; \draw    ;
+%Shape: Rectangle [id:dp911120624144893] 
+    \draw   (60,22) -- (220,22) -- (220,182) -- (60,182) -- cycle ;
+
+% Text Node
+    \draw (71,2) node [anchor=north west][inner sep=0.75pt]   [align=left] {first column};
+% Text Node
+    \draw (3,32) node [anchor=north west][inner sep=0.75pt]   [align=left] {first row};
+\end{tikzpicture}

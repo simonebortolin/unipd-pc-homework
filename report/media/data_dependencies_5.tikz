@@ -1,0 +1,19 @@
+\begin{tikzpicture}[yscale=-1,xscale=1]
+%uncomment if require: \path (0,226); %set diagram left start at 0, and has height of 226
+
+%Shape: Rectangle [id:dp767562137981743]
+    \draw  [fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1 ] (10,30) -- (50,30) -- (50,70) -- (10,70) -- cycle ;
+%Shape: Rectangle [id:dp16271817762553908]
+    \draw  [fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1 ] (10,90) -- (50,90) -- (50,130) -- (10,130) -- cycle ;
+%Shape: Rectangle [id:dp9925798269702357]
+    \draw  [fill={rgb, 255:red, 184; green, 233; blue, 134 }  ,fill opacity=1 ] (10,150) -- (50,150) -- (50,190) -- (10,190) -- cycle ;
+
+% Text Node
+    \draw (71,42) node [anchor=north west][inner sep=0.75pt]   [align=left] {Phase 1: self-dependent cell $\displaystyle ( h,h)$};
+% Text Node
+    \draw (71,102) node [anchor=north west][inner sep=0.75pt]   [align=left] {Phase 2 and 3: cells dependent on $\displaystyle ( h,h)$ \ $ $};
+% Text Node
+    \draw (72,162) node [anchor=north west][inner sep=0.75pt]   [align=left] {Phase 4: cells dependent on row $\displaystyle h$ and column $\displaystyle h$};
+
+
+\end{tikzpicture}
