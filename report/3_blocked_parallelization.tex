@@ -78,17 +78,17 @@ Performing the calculations in this order satisfies all the dependencies seen in
                 let \(b\) number of partition
 
                 \For{\(h \in [1,n,b]\)}{
-                    \FFloyd(\(d[k:k+b,k:k+b],d[k:k+b,k:k+b],d[k:k+b,k:k+b],pred[k:k+b,k:k+b]\)) \label{alg:block-diagonal}
+                    \FFloyd(\(d[h:h+b,h:h+b],d[h:h+b,h:h+b],d[h:h+b,h:h+b],pred[h:h+b,h:h+b]\)) \label{alg:block-diagonal}
 
                     \For{\(j  \in [1,n,b] \setminus h\)} {
-                        \FFloyd(\(d[k:k+b,j:j+b],d[k:k+b,k:k+b],d[k:k+b,j:j+b],pred[k:k+b,k:k+b]\)) \label{alg:block-row}
+                        \FFloyd(\(d[h:h+b,j:j+b],d[h:h+b,h:h+b],d[h:h+b,j:j+b],pred[h:h+b,h:h+b]\)) \label{alg:block-row}
                     }
 
                     \For{\(i  \in [1,n,b]  \setminus h\)} {
-                        \FFloyd(\(d[i:i+b,k:k+b],d[i:i+b,k:k+b],d[k:k+b,k:k+b],pred[k:k+b,k:k+b]\)) \label{alg:block-column}
+                        \FFloyd(\(d[i:i+b,h:h+b],d[i:i+b,h:h+b],d[h:h+b,h:h+b],pred[h:h+b,h:h+b]\)) \label{alg:block-column}
 
                         \For{\(j  \in [1,n,b] \setminus h\)} {
-                            \FFloyd(\(d[i:i+b,j:j+b],d[i:i+b,k:k+b],d[k:k+b,j:j+b],pred[k:k+b,k:k+b]\)) \label{alg:block-other}
+                            \FFloyd(\(d[i:i+b,j:j+b],d[i:i+b,h:h+b],d[h:h+b,j:j+b],pred[h:h+b,h:h+b]\)) \label{alg:block-other}
                         }
                     }
                 }
