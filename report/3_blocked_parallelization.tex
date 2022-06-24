@@ -2,10 +2,10 @@
 
 Although, the parallelization of the «for \(i\)» loop is simple and improves times, there remains the problem of join times being too high, remembering that a parallel algorithm does not start with the sequential algorithm.
 
-We can think of a divide-and-conquer strategy: starting from a block division, as depicted in \cref{fig:submatrix}, we can analyse the dependencies, the dependencies are similar to those analysed in \cref{fig:data-dependency-external-loop}, only this time the value of the matrix \(d[h:h+b,h:h+b]\) must also be calculated.
+We can think of a divide-and-conquer strategy: starting from a block division, as depicted in \cref{fig:submatrix}, we can analyse the dependencies, the dependencies are similar to those analysed in \cref{fig:data-dependency-external-loop}, only this time the value of the matrix \(d[h{\twodots}h{+}b,h{\twodots}h{+}b]\) must also be calculated.
 
 Starting from the previous dependency analysis (\cref{fig:data-dependencies-3}), Starting from the previous dependency analysis, we note that if the cell size is greater than one, such as  \(  2 \times 2,  4 \times 4, \dots\) dependency do not change.
-\Cref{fig:data-dependencies-block-1} and \ref{fig:data-dependencies-block-2} show the dependencies for \(h \in [1:4]\) and \(h \in [5:8]\).
+\Cref{fig:data-dependencies-block-1} and \ref{fig:data-dependencies-block-2} show the dependencies for \(h \in [1{\twodots}4]\) and \(h \in [5{\twodots}8]\).
 
 \begin{figure}[htbp]
     \centering
@@ -17,13 +17,13 @@ Starting from the previous dependency analysis (\cref{fig:data-dependencies-3}),
     \hfill
     \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics[width=\textwidth]{media/data_dependencies_block_1}
-        \caption{Graphical representation of dependencies in the case of block subdivision of the matrix: for \(h \in [1:4]\) we must first calculate the matrix highlighted in dark green \(d[1:4,1:4]\), then those in light green and finally those in white.}
+        \caption{Graphical representation of dependencies in the case of block subdivision of the matrix: for \(h \in [1{\twodots}4]\) we must first calculate the matrix highlighted in dark green \(d[1{\twodots}4,1{\twodots}4]\), then those in light green and finally those in white}
         \label{fig:data-dependencies-block-1}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics[width=\textwidth]{media/data_dependencies_block_2}
-        \caption{Graphical representation of dependencies in the case of block subdivision of the matrix: for \(h \in [5:8]\) we must first calculate the matrix highlighted in dark green \(d[5:8,5:8]\), then those in light green and finally those in white.}
+        \caption{Graphical representation of dependencies in the case of block subdivision of the matrix: for \(h \in [5{\twodots}8]\) we must first calculate the matrix highlighted in dark green \(d[5{\twodots}8,5{\twodots}8]\), then those in light green and finally those in white.}
         \label{fig:data-dependencies-block-2}
     \end{subfigure}
     \caption{Graphical representation of the block division and constraints.}
@@ -60,9 +60,9 @@ Performing the calculations in this order satisfies all the dependencies seen in
             \Pn{\FFloyd{\(d,a,b,pred\)}}{
                 let \(b\) size of the matrix \(d,a,b, pred\)
 
-                \For{\(h \in [1:b]\)}{
-                    \For{\(i \in [1:b]\)}{
-                        \For{\(j \in [1:b]\)}{
+                \For{\(h \in [1{\twodots}b]\)}{
+                    \For{\(i \in [1{\twodots}b]\)}{
+                        \For{\(j \in [1{\twodots}b]\)}{
                             \If{\( a [ i , h ] + b [ h , j ] < d [ i , j ] \)} {
                                 \( d [ i , j ] \leftarrow a [ i , h ] + b [ h , j ] \)
 
@@ -77,18 +77,18 @@ Performing the calculations in this order satisfies all the dependencies seen in
             \Pn{\FFloydBlocked{\(W\)}}{
                 let \(b\) number of partition
 
-                \For{\(h \in [1:n \operatorname{with} \operatorname{step} b]\)}{
-                    \FFloyd(\(d[h:h+b,h:h+b],d[h:h+b,h:h+b],d[h:h+b,h:h+b],pred[h:h+b,h:h+b]\)) \label{alg:block-diagonal}
+                \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} b]\)}{
+                    \FFloyd(\(d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)) \label{alg:block-diagonal}
 
-                    \For{\(j  \in [1:n \operatorname{with} \operatorname{step} b] \setminus h\)} {
-                        \FFloyd(\(d[h:h+b,j:j+b],d[h:h+b,h:h+b],d[h:h+b,j:j+b],pred[h:h+b,h:h+b]\)) \label{alg:block-row}
+                    \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} b] \setminus h\)} {
+                        \FFloyd(\(d[h{\twodots}h{+}b,j{\twodots}j{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)) \label{alg:block-row}
                     }
 
-                    \For{\(i  \in [1:n \operatorname{with} \operatorname{step} b]  \setminus h\)} {
-                        \FFloyd(\(d[i:i+b,h:h+b],d[i:i+b,h:h+b],d[h:h+b,h:h+b],pred[h:h+b,h:h+b]\)) \label{alg:block-column}
+                    \For{\(i  \in [1{\twodots}n \operatorname{with} \operatorname{step} b]  \setminus h\)} {
+                        \FFloyd(\(d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)) \label{alg:block-column}
 
-                        \For{\(j  \in [1:n \operatorname{with} \operatorname{step} b] \setminus h\)} {
-                            \FFloyd(\(d[i:i+b,j:j+b],d[i:i+b,h:h+b],d[h:h+b,j:j+b],pred[h:h+b,h:h+b]\)) \label{alg:block-other}
+                        \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} b] \setminus h\)} {
+                            \FFloyd(\(d[i{\twodots}i{+}b,j{\twodots}j{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)) \label{alg:block-other}
                         }
                     }
                 }

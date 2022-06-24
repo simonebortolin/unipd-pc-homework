@@ -35,6 +35,6 @@
         \node [anchor=east] at ($(0,\i)-(0,0.125)$) {\(\j\)};
     }
     
-    %\node [anchor=center,fill={rgb, 255:red, 65; green, 117; blue, 5 },inner sep=0pt] at (0.5,0.5) {\(\scriptscriptstyle d[1:4,1:4]\)};
+    %\node [anchor=center,fill={rgb, 255:red, 65; green, 117; blue, 5 },inner sep=0pt] at (0.5,0.5) {\(\scriptstyle d[1{:}4,1{:}4]\)};
     
 \end{tikzpicture}
