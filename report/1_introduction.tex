@@ -25,16 +25,16 @@ Once the algorithm has been run, we can use \(pred\) to navigate from one node t
     \centering
     \begin{minipage}{.5\textwidth}
         \begin{algorithm}[H]
-    \For{\(i \in [1,n]\)}{
-        \For{\(j \in [1,n]\)}{
+    \For{\(i \in [1:n]\)}{
+        \For{\(j \in [1:n]\)}{
             \( d [ i , j ] \leftarrow c [ i , j ] \)
 
             \( pred [ i , j ]  \leftarrow i \)
         }
     }
-    \For{\(h\in [1,n]\)} { \label{alg:for-h}
-        \For{\(i \in [1,n]\)} { \label{alg:for-i}
-            \For{\(j \in [1,n]\)}{ \label{alg:for-j}
+    \For{\(h\in [1:n]\)} { \label{alg:for-h}
+        \For{\(i \in [1:n]\)} { \label{alg:for-i}
+            \For{\(j \in [1:n]\)}{ \label{alg:for-j}
                 \If{\( d [ i , h ] + d [ h , j ] < d [ i , j ] \)} {
                     \( d [ i , j ] \leftarrow d [ i , h ] + d [ h , j ] \)
 
@@ -42,7 +42,7 @@ Once the algorithm has been run, we can use \(pred\) to navigate from one node t
                 }
             }
         }
-        \For{\(i \in [1,n]\)} {
+        \For{\(i \in [1:n]\)} {
             \If{\(d[i,i]< 0\)} {
                 STOP  "negative cycles"
             }
