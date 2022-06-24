@@ -9,7 +9,7 @@
 
     \begin{scope}[>={Stealth[black]},
     every node/.style={fill=white,circle,inner sep=0pt},
-    every edge/.style={draw=black,very thick}]
+    every edge/.style={draw=black,thick}]
     \path [->] (0) edge node {\(3\)} (1);
     \path [->] (0) edge node {\(-4\)} (4);
     \path [->] (4) edge node {\(6\)} (3);

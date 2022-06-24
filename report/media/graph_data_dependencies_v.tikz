@@ -14,7 +14,7 @@
     \end{scope}
     \begin{scope}[>={Stealth[white]},
         every node/.style={fill=white,circle,inner sep=0pt},
-        every edge/.style={draw=white,very thick}]
+        every edge/.style={draw=white,thick}]
         \foreach  \y in {0,...,5}
             \foreach \x in {0,2}
                 \path [->] (I-1-\y) edge (I-\x-\y);
@@ -24,7 +24,7 @@
     \end{scope}
     \begin{scope}[>={Stealth[black]},
         every node/.style={fill=white,circle,inner sep=0pt},
-        every edge/.style={draw=black,very thick}]
+        every edge/.style={draw=black,thick}]
         \foreach  \x in {0,...,5}
             \foreach \y in {0,2}
                 \path [->] (I-\x-1) edge (I-\x-\y);

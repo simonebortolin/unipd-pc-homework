@@ -11,12 +11,12 @@
         \foreach \i in {1,...,4} {
             \draw   (0,\i) -- (5,\i);
         }
-        \foreach \i in {0,...,4} {
-            \node [ anchor=south] at ($(\i,0)+(0.5,0)$) {\(\i\)};
+        \foreach \i in {1,...,5} {
+            \node [ anchor=south] at ($(\i,0)-(0.5,0)$) {\(\i\)};
         }
-        \foreach \i in {0,...,4} {
-            \node [anchor=east] at ($(0,\i)+(0,0.5)$) {\(\i\)};
+        \foreach \i in {1,...,5} {
+            \node [anchor=east] at ($(0,\i)-(0,0.5)$) {\(\i\)};
         }
-        \node [ anchor=center] at (0.5,0.5) {\((0,0)\)};
+        \node [ anchor=center] at (0.5,0.5) {\((1,1)\)};
     \end{scope}
 \end{tikzpicture}

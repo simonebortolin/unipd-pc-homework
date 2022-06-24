@@ -1,0 +1,43 @@
+\section{Trivial parallelization}\label{trivial_parallelization}
+
+Knowing that in general, join times after parallel execution of a given cycle can be very, very noticeable, which is why it is good to start parallelizing from the most external cycle «for \(h\)» (\cref{alg:for-h} of \cref{alg:sequential}).
+
+Dependency analysis shows us that to execute the «for \(h\)»  in parallel, there are some dependencies. For the execution of the round \(h=2\) we need to know of the round \(h=1\) the row \(1\) and the column \(1\). Continuing the dependencies' analysis, we note that cell \((1,1)\) needs to be accessed for the execution of rows \(1\) and column \(1\), but this value is always \(0\) in the matrix \(d\) and is not updated, however this value is updated in the matrix \(pred\), as shown in the \cref{fig:data-dependencies-1}.
+For the execution of the round \(h=3\) we need to know of the round \(h=2\) the cell \((2,2)\) row \(2\) and the column \(2\), as shown in the \cref{fig:data-dependencies-2}.
+
+Analysing the dependencies of the most external loop «for \(h\)», as shown in \cref{fig:data-dependency-external-loop}, we note that parallelling this loop in a simple manner is impossible, whereas the execution of loops \(i\) and \(j\) can be done in any order~\cite{rucci}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{media/data_dependencies_1}
+        \caption{Data dependencies in Floyd algorithm when \(h=2\): we need to know the output of the execution of the round \(h=1\) of row \(1\) and column \(1\) for row and column execution, it is necessary to know the self-dependent cell \((1,1)\), but the is always \(0\) for \(d\) and \(1\) for \(pred\).}
+        \label{fig:data-dependencies-1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{media/data_dependencies_2}
+        \caption{Data dependencies in Floyd algorithm when \(h=3\): we need to know the output of the execution of the round \(h=2\) of row \(2\) and column \(2\) for row and column execution, it is necessary to know the self-dependent cell \((2,2)\), but the is always \(0\) for \(d\) and \(2\) for \(pred\).}
+        \label{fig:data-dependencies-2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{media/data_dependencies_3}
+        \caption{Data dependencies in Floyd algorithm: For each \(h+1\) we need to know the output of the execution of the round \(h\) of row \(h\) and column \(h\). For row and column execution, it is necessary to know the self-dependent cell \((h,h)\), but the is always \(0\) for \(d\) and \(h\) for \(pred\).}
+        \label{fig:data-dependencies-3}
+    \end{subfigure}
+    \caption{Data dependency in Floyd algorithm for the execution of each instance of the external for loop. In dark green the self-dependent cell \((h,h)\) which have no data requirements and should be executed before the light green cells of the row \(h\) and column \(h\), but the is always \(0\) for \(d\) and \(h\) for \(pred\) and therefore only the light-green dependency exists.}
+    \label{fig:data-dependency-external-loop}
+\end{figure}
+
+As mentioned by~\cite{rucci}, and easily demonstrated, it is possible to parallelize internal cycles without any problems, let's start with the parallelization of  the intermediate cycle «for \(i\)» (\cref{alg:for-i} of \cref{alg:sequential}) on the other hand seems possible, as there are no dependencies with respect to other previous or subsequent cycles.
+This parallelization, however, exploits the maximum \(p\) thread, is not a problem if \(n \geq p\), it becomes a problem if \(p \gg n\).
+The performance is \(\displaystyle O\left(\frac{n^3}{p}\right)\) plus join times, which are valued \(n\times n\).
+The main problem with this implementation is the join times, which are too high.
+
+In a similar way can also be paralysed «for \(j\)» (\cref{alg:for-j} of \cref{alg:sequential}) again, the problem is mainly join time after parallelization, which becomes \(n^3\).
+
+\FloatBarrier
