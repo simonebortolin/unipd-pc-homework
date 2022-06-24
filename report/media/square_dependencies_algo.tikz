@@ -1,46 +1,47 @@
 \begin{tikzpicture}[yscale=-1,xscale=1]
-    \draw (0,0) rectangle (5,5);
-    \draw[fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1] (2,3) rectangle (3,5);
-    \draw[fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1] (2,0) rectangle (3,3);
-    \draw[fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1] (3,2) rectangle (5,3);
-    \draw[fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1] (0,2) rectangle (3,3);
-    \draw[fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1 ] (2,2) rectangle (3,3);
+    \draw (0,0) rectangle (11,11);
 
-    \begin{scope}[every path/.style={very thin}]
-        \foreach \i in {2,3} {
-            \draw   (\i,0) -- (\i,5);
-        }
-        \foreach \i in {0,2,3,5} {
-            \draw   (0,\i) -- (5,\i);
-        }
-        \node [ anchor=south] at (2,0) {\(h\)};
 
-        \node [ anchor=south] at (3,0) {\(h{+}b\)};
+    \draw[fill={rgb, 255:red, 155; green, 255; blue, 41 }  ,fill opacity=1 ] (0,0) rectangle (11,11);
+    \draw[fill={rgb, 255:red, 140; green, 232; blue, 35 }  ,fill opacity=1 ] (10,5) rectangle (11,6);
+    \draw[fill={rgb, 255:red, 140; green, 232; blue, 35 }  ,fill opacity=1 ] (5,10) rectangle (6,11);
+    \draw[fill={rgb, 255:red, 140; green, 232; blue, 35 }  ,fill opacity=1 ] (0,5) rectangle (1,6);
+    \draw[fill={rgb, 255:red, 140; green, 232; blue, 35 }  ,fill opacity=1 ] (5,0) rectangle (6,1);
+
+    \draw[fill={rgb, 255:red, 140; green, 232; blue, 35 }  ,fill opacity=1 ] (1,1) rectangle (10,10);
+    \draw[fill={rgb, 255:red, 125; green, 209; blue, 29 }  ,fill opacity=1 ] (9,5) rectangle (10,6);
+    \draw[fill={rgb, 255:red, 125; green, 209; blue, 29 }  ,fill opacity=1 ] (5,9) rectangle (6,10);
+    \draw[fill={rgb, 255:red, 125; green, 209; blue, 29 }  ,fill opacity=1 ] (1,5) rectangle (2,6);
+    \draw[fill={rgb, 255:red, 125; green, 209; blue, 29 }  ,fill opacity=1 ] (5,1) rectangle (6,2);
+
+    \draw[fill={rgb, 255:red, 125; green, 209; blue, 29 }  ,fill opacity=1 ] (2,2) rectangle (9,9);
+    \draw[fill={rgb, 255:red, 110; green, 186; blue, 23 }   ,fill opacity=1 ] (8,5) rectangle (9,6);
+    \draw[fill={rgb, 255:red, 110; green, 186; blue, 23 }   ,fill opacity=1 ] (5,8) rectangle (6,9);
+    \draw[fill={rgb, 255:red, 110; green, 186; blue, 23 }   ,fill opacity=1 ] (2,5) rectangle (3,6);
+    \draw[fill={rgb, 255:red, 110; green, 186; blue, 23 }   ,fill opacity=1 ] (5,2) rectangle (6,3);
+
+    \draw[fill={rgb, 255:red, 110; green, 186; blue, 23 }   ,fill opacity=1 ] (3,3) rectangle (8,8);
+    \draw[fill={rgb, 255:red, 95; green, 163; blue, 17 }  ,fill opacity=1 ] (7,5) rectangle (8,6);
+    \draw[fill={rgb, 255:red, 95; green, 163; blue, 17 }  ,fill opacity=1 ] (5,7) rectangle (6,8);
+    \draw[fill={rgb, 255:red, 95; green, 163; blue, 17 }  ,fill opacity=1 ] (3,5) rectangle (4,6);
+    \draw[fill={rgb, 255:red, 95; green, 163; blue, 17 }  ,fill opacity=1 ] (5,3) rectangle (6,4);
+
+    \draw[fill={rgb, 255:red, 95; green, 163; blue, 17 }  ,fill opacity=1 ] (4,4) rectangle (7,7);
+    \draw[fill={rgb, 255:red, 80; green, 140; blue, 11 }  ,fill opacity=1 ] (6,5) rectangle (7,6);
+    \draw[fill={rgb, 255:red, 80; green, 140; blue, 11 }  ,fill opacity=1 ] (5,6) rectangle (6,7);
+    \draw[fill={rgb, 255:red, 80; green, 140; blue, 11 }  ,fill opacity=1 ] (4,5) rectangle (5,6);
+    \draw[fill={rgb, 255:red, 80; green, 140; blue, 11 }  ,fill opacity=1 ] (5,4) rectangle (6,5);
+
+    \draw[fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1 ] (5,5) rectangle (6,6);
+
+
+    \begin{scope}[every path/.style={very thin, dashed}]
+        \foreach \i in {0,...,11} {
+            \draw   (\i,0) -- (\i,11);
+        }
+        \foreach \i in {0,...,11} {
+            \draw   (0,\i) -- (11,\i);
+        }
+    \end{scope}
     
-        \node [anchor=east] at (0,2) {\(h\)};
-            
-        \node [anchor=east] at (0,3) {\(h{+}b\)};
-
-        \node [ anchor=south east] at (2,2) {\((h,h)\)};
-
-    \end{scope}
-    \begin{scope}[every path/.style={very thin}]
-        \foreach \i in {2.25,2.5,2.75} {
-            \draw   (\i,0) -- (\i,5);
-        }
-        \foreach \i in {2.25,2.5,2.75} {
-            \draw   (0,\i) -- (5,\i);
-        }
-        \foreach \i in {0.25,0.5,1.5,1.75,3.25,3.5,4.5,4.75} {
-            \draw   (\i,2) -- (\i,3);
-        }
-        \foreach \i in {0.25,0.5,1.5,1.75,3.25,3.5,4.5,4.75} {
-            \draw   (2,\i) -- (3,\i);
-        }
-    \end{scope}
-    \begin{scope}
-        \draw  [fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1 ] (6,0) rectangle (7,1) node [anchor=west] at (7.5,0.5) {Phase 1: self-dependent block $\displaystyle ( h,h)$};
-        \draw  [fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1 ] (6,2) rectangle (7,3) node [anchor=west] at (7.5,2.5) {Phase 2 and 3: block dependent on $\displaystyle ( h,h)$};
-        \draw  [fill=white  ,fill opacity=1 ] (6,4) rectangle (7,5) node [anchor=west] at (7.5,4.5) {Phase 4: block dependent on row $\displaystyle h$ and column $\displaystyle h$};
-    \end{scope}
 \end{tikzpicture}
