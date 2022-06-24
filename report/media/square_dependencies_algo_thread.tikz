@@ -1,0 +1,26 @@
+\begin{tikzpicture}[yscale=-1,xscale=1]
+    \draw (0,0) rectangle (11,11);
+    \draw (1,1) rectangle (10,10);
+    \draw (2,2) rectangle (9,9);
+    \draw (3,3) rectangle (8,8);
+    \draw (4,4) rectangle (7,7);
+
+    \draw[fill={rgb, 255:red, 155; green, 252; blue, 42 }  ,fill opacity=1 ] (6,5) rectangle (11,6);
+
+    \draw[fill={rgb, 255:red, 155; green, 252; blue, 42 }  ,fill opacity=1 ] (5,6) rectangle (6,11);
+    \draw[fill={rgb, 255:red, 155; green, 252; blue, 42 }  ,fill opacity=1 ] (5,5) rectangle (0,6);
+    \draw[fill={rgb, 255:red, 155; green, 252; blue, 42 }  ,fill opacity=1 ] (5,5) rectangle (6,0);
+
+    \draw[fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1 ] (5,5) rectangle (6,6);
+
+
+    \begin{scope}[every path/.style={very thin, dashed}]
+        \foreach \i in {0,...,11} {
+            \draw   (\i,0) -- (\i,11);
+        }
+        \foreach \i in {0,...,11} {
+            \draw   (0,\i) -- (11,\i);
+        }
+    \end{scope}
+    
+\end{tikzpicture}
