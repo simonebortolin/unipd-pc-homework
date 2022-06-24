@@ -19,6 +19,8 @@ comparing the new path cost with the current one (best so far) as described by \
     d[i,j] = \min\left\{ d[i,j], d[i,h]+d[h,j] \right\}
 \end{equation}
 
+Once the algorithm has been run, we can use \(pred\) to navigate from one node to another via the best route.
+
 \begin{figure}[htbp]
     \centering
     \begin{minipage}{.5\textwidth}
@@ -46,71 +48,65 @@ comparing the new path cost with the current one (best so far) as described by \
             }
         }
     }
-\caption{Floyd-Warshall's sequential algorithm}
+\caption{Floyd-Warshall's sequential algorithm.}
 \label{alg:sequential}
 \end{algorithm}
     \end{minipage}
 \end{figure}
 
 \begin{figure}[htbp]
-    \centering
     \begin{subfigure}[b]{0.19\textwidth}
         \centering
         \includegraphics[width=\textwidth]{media/example_floyd_warshall}
         \caption{Input graph}
         \label{fig:example-floyd-warshall-input-graph}
     \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.28\textwidth}
         \centering
-        \begin{tabular} { l | l | l | l | l | l | }
-            \mc{} & \mc{\(0\)} & \mc{\(1\)} & \mc{\(2\)} & \mc{\(3\)} & \mc{\(4\)} \\ \cline{2-6}
-        \(0\) & \(0\) & \(3\) & 8 & \( \infty \) & \( - 4 \) \\  \cline{2-6}
-        \(1\) & \( \infty \) & \(0\) & \( \infty \) & \(1\) & \(7\)   \\ \cline{2-6}
-        \(2\) & \( \infty \) & \(4\) & \(0\) & \( \infty \) & \( \infty \) \\ \cline{2-6}
-        \(3\) & \(2\) & \( \infty \) & \( - 5 \) & \(0\) & \( \infty \) \\ \cline{2-6}
-        \(4\) & \( \infty \) & \( \infty \) & \( \infty \) & \(6\) & \(0\) \\ \cline{2-6}
-        \end{tabular}
+        {\renewcommand{\arraystretch}{1.25}%
+        \setlength{\tabcolsep}{0.5em} % for the horizontal padding
+        \begin{tabular} { c | c | c | c | c | c | }
+            \mc{} & \mc{\(1\)} & \mc{\(2\)} & \mc{\(3\)} & \mc{\(4\)} & \mc{\(5\)} \\ \cline{2-6}
+        \(1\) & \(0\) & \(3\) & 8 & \( \infty \) & \( - 4 \) \\  \cline{2-6}
+        \(2\) & \( \infty \) & \(0\) & \( \infty \) & \(1\) & \(7\)   \\ \cline{2-6}
+        \(3\) & \( \infty \) & \(4\) & \(0\) & \( \infty \) & \( \infty \) \\ \cline{2-6}
+        \(4\) & \(2\) & \( \infty \) & \( - 5 \) & \(0\) & \( \infty \) \\ \cline{2-6}
+        \(5\) & \( \infty \) & \( \infty \) & \( \infty \) & \(6\) & \(0\) \\ \cline{2-6}
+        \end{tabular}}
         \caption{Input matrix}
         \label{fig:example-floyd-warshall-input-matrix}
     \end{subfigure}
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.26\textwidth}
         \centering
-        \begin{tabular}{ l | l | l | l | l | l | }
-            \mc{} & \mc{\(0\)} & \mc{\(1\)} & \mc{\(2\)} & \mc{\(3\)} & \mc{\(4\)} \\ \cline{2-6}
-            \(0\)& \(0\) &\(1\) &\(-3\) &\(2\) &\(-5\)\\  \cline{2-6} 
-            \(1\)&\(3\) &\(0\) & \(-4\)&\(1\) &\(-1\)\\  \cline{2-6} 
-            \(2\)&\(7\) &\(5\) &\(0\) &\(5\) &\(3\)\\  \cline{2-6} 
-            \(3\)&\(2\) &\(-1\) &\(-5\) &\(0\) &\(-2\)\\  \cline{2-6} 
-            \(4\)&\(8\) &\(5\) &\(1\) &\(6\) &\(0\) \\ \cline{2-6}
-            \end{tabular}
+        {\renewcommand{\arraystretch}{1.25}%
+        \setlength{\tabcolsep}{0.5em} % for the horizontal padding
+        \begin{tabular} { c | c | c | c | c | c | }
+            \mc{} & \mc{\(1\)} & \mc{\(2\)} & \mc{\(3\)} & \mc{\(4\)} & \mc{\(5\)} \\ \cline{2-6}
+            \(1\)& \(0\) &\(1\) &\(-3\) &\(2\) &\(-5\)\\  \cline{2-6} \(2\)&\(3\) &\(0\) & \(-4\)&\(1\) &\(-1\)\\  \cline{2-6} \(3\)&\(7\) &\(5\) &\(0\) &\(5\) &\(3\)\\  \cline{2-6} \(5\)&\(2\) &\(-1\) &\(-5\) &\(0\) &\(-2\)\\  \cline{2-6} \(5\)&\(8\) &\(5\) &\(1\) &\(6\) &\(0\) \\ \cline{2-6}
+            \end{tabular}}
         \caption{Output: distance matrix}
         \label{fig:xample-floyd-warshall-output-matrix-d}
     \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.19\textwidth}
+    \begin{subfigure}[b]{0.25\textwidth}
         \centering
-        \begin{tabular}{ l | l | l | l | l | l | }
-            \mc{} & \mc{\(0\)} & \mc{\(1\)} & \mc{\(2\)} & \mc{\(3\)} & \mc{\(4\)} \\ \cline{2-6}
-            \(0\)&\(0\) &\(2\) &\(3\) &\(4\) &\(0\)\\  \cline{2-6}
-            \(1\)&\(3\) &\(1\) &\(3\) &\(1\) &\(0\)\\  \cline{2-6} 
-            \(2\)&\(3\) &\(2\) &\(2\) &\(1\) &\(0\)\\  \cline{2-6} 
-            \(3\)&\(3\) &\(2\) &\(3\) &\(3\) &\(0\)\\  \cline{2-6} 
-            \(4\)&\(3\) &\(2\) &\(3\) &\(4\) &\(4\) \\ \cline{2-6}
-        \end{tabular}
-        \caption{Output: pred. matrix}
+        {\renewcommand{\arraystretch}{1.25}%
+        \setlength{\tabcolsep}{0.5em} % for the horizontal padding
+        \begin{tabular} { c | c | c | c | c | c | }
+            \mc{} & \mc{\(1\)} & \mc{\(2\)} & \mc{\(3\)} & \mc{\(4\)} & \mc{\(5\)} \\ \cline{2-6}
+            \(1\)&\(0\) &\(2\) &\(3\) &\(4\) &\(0\)\\  \cline{2-6} \(2\)&\(3\) &\(1\) &\(3\) &\(1\) &\(0\)\\  \cline{2-6} \(3\)&\(3\) &\(2\) &\(2\) &\(1\) &\(0\)\\  \cline{2-6} \(4\)&\(3\) &\(2\) &\(3\) &\(3\) &\(0\)\\  \cline{2-6} \(5\)&\(3\) &\(2\) &\(3\) &\(4\) &\(4\) \\ \cline{2-6}
+        \end{tabular}}
+        \caption{Output: \(pred\) matrix}
         \label{fig:xample-floyd-warshall-output-matrix-pred}
     \end{subfigure}
-    \caption{Example of the input and the output for the execution of the Floyd-Warshall algorithm}
+    \caption{Example of the input and the output for the execution of the Floyd-Warshall algorithm.}
     \label{fig:example-floyd-warshall}
 \end{figure}
 
+%esempio?
 
+% altro esempio?
 
-
-% 2 esempi banali
-
-% performance dell'algoritmo
+% performance dell'algoritmo?
 
 
 
