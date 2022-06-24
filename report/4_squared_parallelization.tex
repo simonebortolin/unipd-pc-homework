@@ -1,5 +1,74 @@
 \section{Squared Parallelization}\label{squared-parallelization}
 
-Our idea is to reduce synchronisation times between threads as much as possible and to always use a divide-and-conquer algorithm. Is based on parallelising through inscribed squares in squares: for each block of \([h:h+b]\) I first execute 
+Our idea is to reduce synchronisation times between threads as much as possible and to always use a divide-and-conquer algorithm. Is based on parallelising through inscribed squares in squares.
+For each block of \(h\)'s run \texttt{Floyd} simplified on: the block \(d[h{\twodots}h{+}b,h{\twodots}h{+}b]\), after this let \(k=1\):
+\begin{enumerate}
+    \item Run the \texttt{Floyd} simplified on at in the central blocks of the 4 sides of the square of dimension \(k\).
+    \item Run on other thread \texttt{Floyd} simplified in the remaining blocks of the square of dimension \(k\).
+    \item Increase \(k\) by one and return to step 1 until \(\lfloor n/2 \rfloor\) is reached.
+\end{enumerate}
+The algorithm is specifically illustrated in \cref{alg:fw-squared} and \cref{fig:square-algo}.
+It is evident that this algorithm requires a very specific partition, i.e. it must generate an odd number of rows and columns. Despite this, this can be remedied with fictitious data, for example, points disconnected from all others and.
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{\textwidth}
+        \begin{algorithm}[H]
+            \SetKwFunction{FFloyd}{Floyd}
+          
+            \SetKwFunction{FThread}{Thread}
+
+            \SetKwFunction{FAdd}{Add}
+            
+            \SetKwFunction{FJoin}{Join}
+
+            \SetKwFunction{FSquaredBlocked}{Squared Floyd Warshall}
+            \SetKwProg{Pn}{Function}{:}{\KwRet}
+            \Pn{\FSquaredBlocked{\(d\)}}{
+                let \(b\) number of partition
+
+
+                \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} b]\)}{
+                    \FFloyd(\(d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)) \label{alg:inner-square}
+
+                    
+                    let \(t\) an empty thread list
+
+                    \For{\(k \in [1{\twodots}\lfloor h/2 \rfloor]\)}{
+
+                        \For{\(j \in [(k{\pm}1+n) \bmod n]\)}{ \label{alg:line-new-thread}
+                            \FFloyd{\(d[k{\twodots}k{+}b,j{\twodots}j{+}b],d[h{\twodots}h{+}b,k{\twodots}k{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:square-row-first}
+                        }
+                        \For{\(i \in [(k{\pm}1+n) \bmod n]\)}{
+                            \FFloyd{\(d[i{\twodots}i{+}b,k{\twodots}k{+}b],d[i{\twodots}i{+}b,k{\twodots}k{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:square-column-first}
+                        }
+                        
+                        \(t\).\FAdd{\FThread{ 
+                            \For{\(j,i \in [(k{\pm}1+n) \bmod n] \times [((-k{\twodots}k)+n) \bmod n] \setminus 0\)}{
+                                \FFloyd{\(d[i{\twodots}i{+}b,j{\twodots}j{+}b],d[i{\twodots}i{+}b,k{\twodots}k{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:square-row}
+                            }
+                            \For{\(i,j \in [(k{\pm}1+n) \bmod n] \times [((-k{+}1{\twodots}k{-}1)+n) \bmod n] \setminus 0\)}{
+                                \FFloyd{\(d[i{\twodots}i{+}b,j{\twodots}j{+}b],d[i{\twodots}i{+}b,k{\twodots}k{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:square-column}
+                            }
+                        }}
+                    }
+                    \FJoin{\(t\)}
+                }
+            }
+            \caption{Floyd-Warshall's squared parallel algorithm.}
+            \label{alg:fw-squared}
+        \end{algorithm}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{media/square_dependencies_algo.tikz}
+        
+    \end{subfigure}
+    \caption{Graphical representation of the squared Floyd Warshall algorithm.}
+        \label{fig:square-algo}
+\end{figure}
 
 \FloatBarrier

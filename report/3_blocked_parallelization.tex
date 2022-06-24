@@ -74,21 +74,21 @@ Performing the calculations in this order satisfies all the dependencies seen in
             }
             \SetKwFunction{FFloydBlocked}{Blocked Floyd Warshall}
             \SetKwProg{Pn}{Function}{:}{\KwRet}
-            \Pn{\FFloydBlocked{\(W\)}}{
+            \Pn{\FFloydBlocked{\(d\)}}{
                 let \(b\) number of partition
 
                 \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} b]\)}{
-                    \FFloyd(\(d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)) \label{alg:block-diagonal}
+                    \FFloyd{\(d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:block-diagonal}
 
                     \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} b] \setminus h\)} {
-                        \FFloyd(\(d[h{\twodots}h{+}b,j{\twodots}j{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)) \label{alg:block-row}
+                        \FFloyd{\(d[h{\twodots}h{+}b,j{\twodots}j{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:block-row}
                     }
 
                     \For{\(i  \in [1{\twodots}n \operatorname{with} \operatorname{step} b]  \setminus h\)} {
-                        \FFloyd(\(d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)) \label{alg:block-column}
+                        \FFloyd{\(d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:block-column}
 
                         \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} b] \setminus h\)} {
-                            \FFloyd(\(d[i{\twodots}i{+}b,j{\twodots}j{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)) \label{alg:block-other}
+                            \FFloyd{\(d[i{\twodots}i{+}b,j{\twodots}j{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:block-other}
                         }
                     }
                 }
