@@ -101,14 +101,17 @@ namespace pc {
 
     template <class T>
     T matrix<T>::get(int i, int j) const {
-        if(i < _size && j < _size)
+        if(i < _size && j < _size && i >= 0 && j >= 0)
             return _matrix[i][j];
+        throw std::invalid_argument( "invalid i or j" );
     }
 
     template <typename T>
     void matrix<T>::set(int i, int j, T w){
-        if(i < _size && j < _size)
+
+        if(i < _size && j < _size && i >= 0 && j >= 0)
             _matrix[i][j] = w;
+        else throw std::invalid_argument( "invalid i or j" );
     }
 
     template <class T>
@@ -121,7 +124,7 @@ namespace pc {
 
     template <class T>
     T *matrix<T>::get(int i) {
-        if(i<_size)
+        if(i<_size && i >= 0)
             return _matrix[i];
         return nullptr;
     }
