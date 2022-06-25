@@ -16,6 +16,7 @@ namespace pc {
     private:
         T ** _matrix;
         int _size;
+<<<<<<< HEAD
         void create(int);
         void destroy();
     public:
@@ -30,6 +31,17 @@ namespace pc {
         bool operator==(matrix<T> &);
         bool operator!=(matrix<T> &);
         matrix<T>& operator=(matrix&&);
+=======
+        void create(int size);
+        void destroy();
+    public:
+        explicit matrix(int size);
+        int getSize() const;
+        T get(int i, int j) const;
+        T* get(int i);
+        void set(int i, int j, T w);
+        void changeSize(int newSize);
+>>>>>>> 0d280cf (revert)
 
         ~matrix();
 

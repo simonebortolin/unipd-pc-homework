@@ -31,6 +31,26 @@ int main() {
 
 }
 
+<<<<<<< HEAD
+=======
+
+/*
+ * Input
+ * 5;0,3,8,i,-4;i,0,i,1,7;i,4,0,i,i;2,i,-5,0,i;i,i,i,6,0;
+ * Output
+ * 5;0,1,-3,2,-4;3,0,-4,1,-1;7,4,0,5,3;2,-1,-5,0,-2;8,5,1,6,0;
+ * 5;0,2,3,4,0;3,1,3,1,0;3,2,2,1,0;3,2,3,3,0;3,2,3,4,4;
+ */
+
+/*
+ * Input
+ * 6;0,3,8,i,-4,i;i,0,i,1,7,i;i,4,0,i,i,2;2,i,-5,0,i,i;i,i,i,6,0,i;i,4,i,i,i,0;
+ * Output
+ * 6;0,1,-3,2,-4,-1;3,0,-4,1,-1,-2;7,4,0,5,3,2;2,-1,-5,0,-2,-3;8,5,1,6,0,3;7,4,0,5,3,0; <---
+ * 6;0,2,3,4,0,2;3,1,3,1,0,2;3,2,2,1,0,2;3,2,3,3,0,2;3,2,3,4,4,2;3,5,3,1,0,5;
+ */
+
+>>>>>>> 0d280cf (revert)
 pc::matrix<int> floydWarhsallSeq(pc::matrix<double> &dist){
 
     double tr;
@@ -140,19 +160,24 @@ pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
         floyd(dist, pred, h,h,h,h,h,h,s); // first
 
 
+<<<<<<< HEAD
         for(int k=1; k<=(n/s)/2;k++){ // second - ....
+=======
+        for(int k=0; k<(n/s)/2;k++){ // second - ....
+            std:: cout << "h: " << h <<  " k: " << k << std::endl;
+>>>>>>> 0d280cf (revert)
             //verde chiaro - riga h
-            int j = (h-k*s+n) % n;
+            int j = (h-s+n) % n;
             floyd(dist,pred,h,j,h,h,h,j,s);
 
-            j = (h+k*s+n) % n;
+            j = (h+s+n) % n;
             floyd(dist,pred,h,j,h,h,h,j,s);
 
             // verde chiaro - colonna h
-            int i = (h-k*s+n) % n;
+            int i = (h-s+n) % n;
             floyd(dist, pred, i, h, i, h, h, h,s);
 
-            i = (h+k*s+n) % n;
+            i = (h+s+n) % n;
             floyd(dist, pred, i, h, i, h, h, h,s);
 
             // bianco - resto
@@ -161,18 +186,18 @@ pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
                 int m = (l+k)*s;
                 i = (m+n) % n;
                 if(i == h) continue;
-                j = (h-k*s+n) % n;
+                j = (h-s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
-                j = (h+k*s+n) % n;
+                j = (h+s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
             }
             for(int l = k-(n/s)/2+s; l<=(n/s)/2+k-s; l++) {
                 int m = (l+k)*s;
                 i = (m+n) % n;
                 if(i == h) continue;
-                j = (h-k*s+n) % n;
+                j = (h-s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
-                j = (h+k*s+n) % n;
+                j = (h+s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
             }
         }
