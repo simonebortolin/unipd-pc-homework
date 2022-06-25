@@ -8,24 +8,19 @@ int main() {
     int s;
     std::cin >> s;
 
-    pc::matrix<double> c = pc::matrix<double>(0);
-    std::cin >> c;
-    pc::matrix<double> cc = c;
+    pc::matrix<double> cseq = pc::matrix<double>(0);
+    std::cin >> cseq;
+    pc::matrix<double> csq = cseq;
 
-    pc::matrix<int> out = floydWarhsallSeq(c);
-    pc::matrix<int> outc = floydWarhsallSquared(cc,s);
+    pc::matrix<int> out = floydWarhsallSeq(cseq);
+    pc::matrix<int> outc = floydWarhsallSquared(csq,s);
 
-    if(c != cc) {
+    if(cseq != csq) {
         std::cout << "not ok dist" << std::endl;
-    }
-    else if(out != outc)  {
-        std::cout << "not ok pred" << std::endl;
     } else {
-
-        std::cout << c << std::endl; //distances matrix: min costs
-        std::cout << out << std::endl; //predecessors matrix: min path
+        std::cout << csq << std::endl; //distances matrix: min costs
+        std::cout << outc << std::endl; //predecessors matrix: min path
     }
-
 
     return 0;
 
@@ -67,12 +62,9 @@ pc::matrix<int> floydWarhsallSeq(pc::matrix<double> &dist){
         //possible negative cycle
         for(int i=0;i<d;i++ ){
             if(dist.get(i,i) < 0) {
-                std:: cout<< "error";
-                return pred ; // TODO
+                throw std::invalid_argument( "negative cycle" );
             }
         }
-
-        //std::cout << dist << std::endl;
     }
     return pred;
 }
@@ -132,30 +124,28 @@ pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
         }
     }
 
-    //std::cout << dist << std::endl;
-
     //computation of min path costs
     for(int h=0; h<n;h+=s){
-        //verde scuro self dependent
+        // dark green self dependent
         floyd(dist, pred, h,h,h,h,h,h,s); // first
 
 
         for(int k=1; k<=(n/s)/2;k++){ // second - ....
-            //verde chiaro - riga h
+            // light green - row h
             int j = (h-k*s+n) % n;
             floyd(dist,pred,h,j,h,h,h,j,s);
 
             j = (h+k*s+n) % n;
             floyd(dist,pred,h,j,h,h,h,j,s);
 
-            // verde chiaro - colonna h
+            // light green - row h
             int i = (h-k*s+n) % n;
             floyd(dist, pred, i, h, i, h, h, h,s);
 
             i = (h+k*s+n) % n;
             floyd(dist, pred, i, h, i, h, h, h,s);
 
-            // bianco - resto
+            // white - rest of cells
 
             for(int l = k-(n/s)/2; l<=(n/s)/2+k; l++) {
                 int m = (l+k)*s;

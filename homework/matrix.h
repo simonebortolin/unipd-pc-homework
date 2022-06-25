@@ -47,8 +47,7 @@ namespace pc {
         for(int i =0; i<_size; i++) {
             for(int j =0; j<_size; j++) {
                 if(b.get(i,j) != get(i,j)) {
-                    std::cout << i << " " << j << std::endl;
-                    //return false;
+                    return false;
                 }
             }
         }
