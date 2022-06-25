@@ -10,11 +10,21 @@ int main() {
 
     pc::matrix<double> c = pc::matrix<double>(0);
     std::cin >> c;
+    pc::matrix<double> cc = c;
 
-    pc::matrix<int> out = floydWarhsallSquared(c,s);
-    std::cout << c << std::endl; //distances matrix: min costs
-    std::cout << out << std::endl; //predecessors matrix: min path
+    pc::matrix<int> out = floydWarhsallSeq(c);
+    pc::matrix<int> outc = floydWarhsallSquared(cc,s);
 
+    if(c != cc) {
+        std::cout << "not ok dist" << std::endl;
+    }
+    else if(out != outc)  {
+        std::cout << "not ok pred" << std::endl;
+    } else {
+
+        std::cout << c << std::endl; //distances matrix: min costs
+        std::cout << out << std::endl; //predecessors matrix: min path
+    }
 
 
     return 0;
@@ -87,7 +97,7 @@ pc::matrix<int> floydWarhsallSeq(pc::matrix<double> &dist){
             }
         }
 
-        std::cout << dist << std::endl;
+        //std::cout << dist << std::endl;
     }
     return pred;
 }
@@ -156,7 +166,7 @@ pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
 
 
         for(int k=1; k<=(n/s)/2;k++){ // second - ....
-            std:: cout << "h: " << h <<  " k: " << k << std::endl;
+            //std:: cout << "h: " << h <<  " k: " << k << std::endl;
             //verde chiaro - riga h
             int j = (h-k*s+n) % n;
             floyd(dist,pred,h,j,h,h,h,j,s);
@@ -191,7 +201,7 @@ pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
                 j = (h+k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
             }
-            std::cout << dist << std::endl;
+            //std::cout << dist << std::endl;
 
 
         }
@@ -200,12 +210,9 @@ pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
         //possible negative cycle
         for(int i=0;i<n;i++ ){
             if(dist.get(i,i) < 0) {
-                std:: cout<< "error";
-                return pred ; // TODO
+                throw std::invalid_argument( "negative cycle" );
             }
         }
     }
     return pred;
 }
-
-
