@@ -25,9 +25,30 @@ namespace pc {
             T* get(int i);
             void set(int i, int j, T w);
             void changeSize(int newSize);
+            bool operator==(matrix<T> &);
+            bool operator!=(matrix<T> &);
 
         ~matrix();
     };
+
+    template <class T>
+    bool matrix<T>::operator==(matrix<T> &b) {
+        if(b._size != _size) return false;
+        for(int i =0; i<_size; i++) {
+            for(int j =0; j<_size; j++) {
+                if(b.get(i,j) != get(i,j)) {
+                    std::cout << i << " " << j << std::endl;
+                    //return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    template <class T>
+    bool matrix<T>::operator!=(matrix<T> &b) {
+        return !((*this) == b);
+    }
 
     template <class T>
     std::ostream& operator<<(std::ostream& os, const matrix<T>& mt);
