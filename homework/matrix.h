@@ -13,23 +13,33 @@
 namespace pc {
     template <class T>
     class matrix {
-        private:
-            T ** _matrix;
-            int _size;
-            void create(int size);
-            void destroy();
-        public:
-            explicit matrix(int size);
-            int getSize() const;
-            T get(int i, int j) const;
-            T* get(int i);
-            void set(int i, int j, T w);
-            void changeSize(int newSize);
-            bool operator==(matrix<T> &);
-            bool operator!=(matrix<T> &);
+    private:
+        T ** _matrix;
+        int _size;
+        void create(int);
+        void destroy();
+    public:
+        matrix(const matrix&);
+        matrix(matrix&&);
+        explicit matrix(int);
+        int getSize() const;
+        T get(int, int ) const;
+        T* get(int);
+        void set(int, int, T );
+        void changeSize(int);
+        bool operator==(matrix<T> &);
+        bool operator!=(matrix<T> &);
+        matrix<T>& operator=(matrix&&);
 
         ~matrix();
+
     };
+
+    template <class T>
+    std::ostream& operator<<(std::ostream& os, const matrix<T>& mt);
+
+    template <class T>
+    std::istream &operator>>(std::istream &is, matrix<T>& mt);
 
     template <class T>
     bool matrix<T>::operator==(matrix<T> &b) {
@@ -49,12 +59,6 @@ namespace pc {
     bool matrix<T>::operator!=(matrix<T> &b) {
         return !((*this) == b);
     }
-
-    template <class T>
-    std::ostream& operator<<(std::ostream& os, const matrix<T>& mt);
-
-    template <class T>
-    std::istream &operator>>(std::istream &is, matrix<T>& mt);
 
     std::vector<std::string> split(const std::string& s, const std::string& delimiter);
 
@@ -122,6 +126,26 @@ namespace pc {
         return nullptr;
     }
 
+    template<class T>
+    matrix<T>::matrix(const matrix &m) {
+        _size =m._size;
+        _matrix = new T*[_size];
+        for(int i =0; i<m._size; i++) {
+            _matrix[i] = new T[_size];
+            for(int j =0; j<m._size; j++) {
+                set(i,j,m._matrix[i][j]);
+            }
+        }
+    }
+
+    template<class T>
+    matrix<T>::matrix(matrix &&m) {
+        _size = m._size;
+        _matrix = m._matrix;
+        m._size = 0;
+        m._matrix = nullptr;
+    }
+
     template <class T>
     std::ostream& operator<<(std::ostream& os, const matrix<T>& mt) {
         os << mt.getSize() << ";";
@@ -156,6 +180,17 @@ namespace pc {
 
 
         return is;
+    }
+
+    template<class T>
+    matrix<T> &matrix<T>::operator=(matrix &&m) {
+        if(&m != this) {
+            delete[] _matrix;
+            _matrix = m._matrix;
+            _size = m._size;
+            m._matrix = nullptr;
+            m._size = 0;
+        }
     }
 
 
