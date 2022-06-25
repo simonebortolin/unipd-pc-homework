@@ -3,11 +3,14 @@
 Our idea is to reduce synchronisation times between threads as much as possible and to always use a divide-and-conquer algorithm. 
 It is based on the parallelization through inscribed squares in squares.
 
-The main principle is that for each block of \(h\), a simplified \texttt{Floyd} is run on the block \(d[h{\twodots}h{+}b,h{\twodots}h{+}b]\) (\cref{alg:inner-square} of \cref{alg:fw-squared}) and after this let \(k=1\):
+
 \begin{enumerate}
-    \item Run the \texttt{Floyd} simplified on the central blocks of the 4 sides of the square of dimension \(k\) (\cref{alg:square-row-first} and \ref{alg:square-column-first} of \cref{alg:fw-squared}).
-    \item Run on other thread \texttt{Floyd} simplified in the remaining blocks of the square of dimension \(k\) (\cref{alg:square-row} and \ref{alg:square-column} of \cref{alg:fw-squared}).
-    \item Increase \(k\) by one and return to step 1 until \(\lfloor n/b/2 \rfloor\) is reached.
+    \item First the input matrix is divided into \(h\) blocks of size \(s\).
+    \item For each block a simplified version of Floyd-Warshall, i.e. \texttt{Floyd} from \cref{alg:Floyd} of \cref{alg:fw-blocked}, is run on each self-dependent cell in \(d[h{\twodots}h{+}b,h{\twodots}h{+}b]\) (\cref{alg:inner-square} of \cref{alg:fw-squared}) 
+    \item Run the simplified \texttt{Floyd} on the row and column of the current block of dimension \(k\) as in \cref{fig:square-dependecies-thread} (\cref{alg:square-row-first} and \ref{alg:square-column-first} of \cref{alg:fw-squared}). (Optionally these steps can also be run in parallel)
+    \item The remaining blocks are computed in parallel on other threads (\cref{alg:square-row} and \ref{alg:square-column} of \cref{alg:fw-squared}).
+    \item Increase \(k\) by one and return to step 3 until \(\lfloor n/b/2 \rfloor\) is reached.
+    \item Await until all threads have finished their execution to increment \(h\) and start again the computation of a new block.
 \end{enumerate}
 The algorithm is specifically illustrated in \cref{alg:fw-squared} and \cref{fig:square-algo}.
 It is evident that this algorithm requires a very specific partition, i.e. it must generate an odd number of rows and columns. 
