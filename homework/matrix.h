@@ -9,6 +9,7 @@
 #include <vector>
 #include <limits>
 #include <algorithm>
+#include <functional>
 
 namespace pc {
     template <class T>
@@ -20,13 +21,16 @@ namespace pc {
             void destroy();
         public:
             explicit matrix(int size);
+            matrix();
             int getSize() const;
             T get(int i, int j) const;
             T* get(int i);
             void set(int i, int j, T w);
-            void changeSize(int newSize);
+            void changeSize(int size);
 
         ~matrix();
+
+        void resize(int size, std::function<T(int, int)> fill);
     };
 
     template <class T>
@@ -87,10 +91,10 @@ namespace pc {
     }
 
     template <class T>
-    void matrix<T>::changeSize(int newSize) {
-        if(newSize != _size) {
+    void matrix<T>::changeSize(int size) {
+        if(size != _size) {
             destroy();
-            create(newSize);
+            create(size);
         }
     }
 
@@ -99,6 +103,30 @@ namespace pc {
         if(i<_size)
             return _matrix[i];
         return nullptr;
+    }
+
+    template <class T>
+    void matrix<T>::resize(int size, std::function<T(int, int)> fill) {
+        if(size != _size) {
+            T** matrix = new T *[size];
+            for(int i =0 ; i < size; i++) {
+                matrix[i] = new T[size];
+                for(int j = 0; j < size; j++) {
+                    if(j< _size && i < _size)
+                        matrix[i][j] = _matrix[i][j];
+                    else
+                        matrix[i][j] = fill(i,j);
+                }
+            }
+            destroy();
+            _matrix = matrix;
+            _size = size;
+        }
+    }
+
+    template<class T>
+    matrix<T>::matrix() {
+        matrix(0);
     }
 
     template <class T>

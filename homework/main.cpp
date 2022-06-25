@@ -4,14 +4,34 @@
 pc::matrix<int> floydWarhsallSeq(pc::matrix<double> &dist);
 pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s);
 
-int main() {
-    int s;
-    std::cin >> s;
-
+int main(int argc, char *argv[]) {
     pc::matrix<double> c = pc::matrix<double>(0);
     std::cin >> c;
 
-    pc::matrix<int> out = floydWarhsallSquared(c,s);
+    if(argc == 0) {
+        std::cout<< "ERROR! please specify ad algorithm";
+    }
+
+    std::string str = std::string(argv[1]);
+    pc::matrix<int> out;
+    if(str == "sq") {
+        if(argc == 1) {
+            std::cout<< "ERROR! please specify the partition";
+        }
+        int s;
+        s = atoi(argv[2]);
+        out = floydWarhsallSquared(c,s);
+    } else if(str == "sqp") {
+        if(argc == 1) {
+            std::cout<< "ERROR! please specify the partition";
+        }
+        int s;
+        s = atoi(argv[2]);
+        out = floydWarhsallSquared(c,s);
+    } else{
+        out = floydWarhsallSeq(c);
+    }
+
     std::cout << c << std::endl; //distances matrix: min costs
     std::cout << out << std::endl; //predecessors matrix: min path
 
@@ -24,7 +44,7 @@ int main() {
 
 /*
  * Input
- * 5;0,3,8,i,-4;i,0,i,1,7;i,4,0,i,i;2,i,-5,0,i;i,i,i,6,0;
+ * 5;0,3,8,inf,-4;inf,0,inf,1,7;inf,4,0,inf,inf;2,inf,-5,0,inf;inf,inf,inf,6,0;
  * Output
  * 5;0,1,-3,2,-4;3,0,-4,1,-1;7,4,0,5,3;2,-1,-5,0,-2;8,5,1,6,0;
  * 5;0,2,3,4,0;3,1,3,1,0;3,2,2,1,0;3,2,3,3,0;3,2,3,4,4;
@@ -32,7 +52,7 @@ int main() {
 
 /*
  * Input
- * 6;0,3,8,i,-4,i;i,0,i,1,7,i;i,4,0,i,i,2;2,i,-5,0,i,i;i,i,i,6,0,i;i,4,i,i,i,0;
+ * 6;0,3,8,inf,-4,inf;inf,0,inf,1,7,inf;inf,4,0,inf,inf,2;2,inf,-5,0,inf,inf;inf,inf,inf,6,0,inf;inf,4,inf,inf,inf,0;
  * Output
  * 6;0,1,-3,2,-4,-1;3,0,-4,1,-1,-2;7,4,0,5,3,2;2,-1,-5,0,-2,-3;8,5,1,6,0,3;7,4,0,5,3,0; <---
  * 6;0,2,3,4,0,2;3,1,3,1,0,2;3,2,2,1,0,2;3,2,3,3,0,2;3,2,3,4,4,2;3,5,3,1,0,5;
@@ -40,7 +60,7 @@ int main() {
 
 /*
  * Input
- * 10;0,3,4,i,i,i,i,i,i,i;i,0,2,i,7,i,i,i,i,i;i,i,0,3,i,i,i,i,i,i;i,i,i,0,i,i,i,i,5,i;i,i,i,2,0,5,i,i,i,i;i,i,i,i,i,0,1,i,i,4;i,i,i,i,i,i,0,2,i,i;i,i,i,i,i,i,i,0,i,8;i,i,i,i,i,i,2,i,0,i;2,i,i,i,i,i,i,i,i,0;
+ * 10;0,3,4,inf,inf,inf,inf,inf,inf,inf;inf,0,2,inf,7,inf,inf,inf,inf,inf;inf,inf,0,3,inf,inf,inf,inf,inf,inf;inf,inf,inf,0,inf,inf,inf,inf,5,inf;inf,inf,inf,2,0,5,inf,inf,inf,inf;inf,inf,inf,inf,inf,0,1,inf,inf,4;inf,inf,inf,inf,inf,inf,0,2,inf,inf;inf,inf,inf,inf,inf,inf,inf,0,inf,8;inf,inf,inf,inf,inf,inf,2,inf,0,inf;2,inf,inf,inf,inf,inf,inf,inf,inf,0;
  * Output
  * 10;0,3,4,7,10,15,14,16,12,19;18,0,2,5,7,12,12,14,10,16;22,25,0,3,32,37,10,12,8,20;19,22,23,0,29,34,7,9,5,17;11,14,15,2,0,5,6,8,7,9;6,9,10,13,16,0,1,3,18,4;12,15,16,19,22,27,0,2,24,10;10,13,14,17,20,25,24,0,22,8;14,17,18,21,24,29,2,4,0,12;2,5,6,9,12,17,16,18,14,0;
  * 10;0,0,0,2,1,4,8,6,3,5;9,1,1,2,1,4,8,6,3,5;9,0,2,2,1,4,8,6,3,7;9,0,0,3,1,4,8,6,3,7;9,0,0,4,4,4,5,6,3,5;9,0,0,2,1,5,5,6,3,5;9,0,0,2,1,4,6,6,3,7;9,0,0,2,1,4,8,7,3,7;9,0,0,2,1,4,8,6,8,7;9,0,0,2,1,4,8,6,3,9;
@@ -83,11 +103,11 @@ pc::matrix<int> floydWarhsallSeq(pc::matrix<double> &dist){
         for(int i=0;i<d;i++ ){
             if(dist.get(i,i) < 0) {
                 std:: cout<< "error";
-                return pred ; // TODO
+                return {};
             }
         }
 
-        std::cout << dist << std::endl;
+        //std::cout << dist << std::endl;
     }
     return pred;
 }
@@ -128,13 +148,20 @@ pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
 
 
     double tr;
-    int pr;
-    int n = dist.getSize();
+    int pr, n;
+    int on = n = dist.getSize();
 
-    if(((int)((double)n/(double)s))%2 == 0) {
-        std:: cout<< n/s;
-        std:: cout<< "work only with a odd division of matrix";
-        return pc::matrix<int>(0);
+    int rns = n%s;
+
+    if(rns != 0) {
+        return {};
+        dist.resize(dist.getSize() + s-rns, [](int i, int j) { return std::numeric_limits<double>::infinity();});
+        n = dist.getSize();
+    }
+    if((n/s)%2 == 0) {
+        return {};
+        dist.resize(dist.getSize() + s, [](int i, int j) { return std::numeric_limits<double>::infinity();});
+        n = dist.getSize();
     }
 
     pc::matrix<int> pred = pc::matrix<int>(n);
@@ -201,11 +228,16 @@ pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
         for(int i=0;i<n;i++ ){
             if(dist.get(i,i) < 0) {
                 std:: cout<< "error";
-                return pred ; // TODO
+                return {};
             }
         }
     }
+
+    //dist.resize(on, nullptr);
+    //pred.resize(on, nullptr);
+
     return pred;
 }
+
 
 

@@ -1,2 +1,1 @@
-2
-10;0,3,4,i,i,i,i,i,i,i;i,0,2,i,7,i,i,i,i,i;i,i,0,3,i,i,i,i,i,i;i,i,i,0,i,i,i,i,5,i;i,i,i,2,0,5,i,i,i,i;i,i,i,i,i,0,1,i,i,4;i,i,i,i,i,i,0,2,i,i;i,i,i,i,i,i,i,0,i,8;i,i,i,i,i,i,2,i,0,i;2,i,i,i,i,i,i,i,i,0
+10;0,3,4,inf,inf,inf,inf,inf,inf,inf;inf,0,2,inf,7,inf,inf,inf,inf,inf;inf,inf,0,3,inf,inf,inf,inf,inf,inf;inf,inf,inf,0,inf,inf,inf,inf,5,inf;inf,inf,inf,2,0,5,inf,inf,inf,inf;inf,inf,inf,inf,inf,0,1,inf,inf,4;inf,inf,inf,inf,inf,inf,0,2,inf,inf;inf,inf,inf,inf,inf,inf,inf,0,inf,8;inf,inf,inf,inf,inf,inf,2,inf,0,inf;2,inf,inf,inf,inf,inf,inf,inf,inf,0
