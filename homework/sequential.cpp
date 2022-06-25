@@ -76,19 +76,15 @@ void floyd(pc::matrix<double> &dist, pc::matrix<int> &pred, int dx, int dy, int 
 }
 
 pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
-
-
-    double tr;
-    int pr;
     int n = dist.getSize();
 
+    pc::matrix<int> pred = pc::matrix<int>(n);
+
+
     if(((int)((double)n/(double)s))%2 == 0) {
-        std:: cout<< n/s;
-        std:: cout<< "work only with a odd division of matrix";
+        std::cout << "ERROR! work only with a odd division of matrix";
         return pc::matrix<int>(0);
     }
-
-    pc::matrix<int> pred = pc::matrix<int>(n);
 
 
     // initialised predecessors
