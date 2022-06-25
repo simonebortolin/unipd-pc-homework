@@ -33,27 +33,27 @@ Despite this fictitious problem, it can be simply solved by adding fictitious da
 
 
                 \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} b]\)}{
-                    \FFloyd(\(d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)) \label{alg:inner-square}
+                    \FFloyd{\(d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:inner-square}
 
                     
                     let \(t\) an empty thread list
 
                     \For{\(k \in [1{\twodots}\lfloor n/b/2 \rfloor]\)}{
 
-                        \For{\(j \in [(k{\pm}1+n) \bmod n]\)}{ \label{alg:square-row-first}
-                            \FFloyd{\(d[k{\twodots}k{+}b,j{\twodots}j{+}b],d[h{\twodots}h{+}b,k{\twodots}k{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} 
+                        \For{\(j \in [(h{\pm}s+n) \bmod n]\)}{ \label{alg:square-row-first}
+                            \FFloyd{\(d[h{\twodots}h{+}b,j{\twodots}j{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} 
                         }
-                        \For{\(i \in [(k{\pm}1+n) \bmod n]\)}{ \label{alg:square-column-first}
-                            \FFloyd{\(d[i{\twodots}i{+}b,k{\twodots}k{+}b],d[i{\twodots}i{+}b,k{\twodots}k{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} 
+                        \For{\(i \in [(h{\pm}s+n) \bmod n]\)}{ \label{alg:square-column-first}
+                            \FFloyd{\(d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} 
                         }
                         
                         \(t\).\FAdd{\FThread{ 
                             \FDo{
                                 \For{\(j,i \in [(k{\pm}1+n) \bmod n] \times [((-k{\twodots}k)+n) \bmod n] \setminus 0\)}{ \label{alg:square-row}
-                                    \FFloyd{\(d[i{\twodots}i{+}b,j{\twodots}j{+}b],d[i{\twodots}i{+}b,k{\twodots}k{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} 
+                                    \FFloyd{\(d[i{\twodots}i{+}b,j{\twodots}j{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} 
                                 }
                                 \For{\(i,j \in [(k{\pm}1+n) \bmod n] \times [((-k{+}1{\twodots}k{-}1)+n) \bmod n] \setminus 0\)}{ \label{alg:square-column}
-                                    \FFloyd{\(d[i{\twodots}i{+}b,j{\twodots}j{+}b],d[i{\twodots}i{+}b,k{\twodots}k{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} 
+                                    \FFloyd{\(d[i{\twodots}i{+}b,j{\twodots}j{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} 
                                 }
                             }
                         }}
