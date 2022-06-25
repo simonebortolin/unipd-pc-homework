@@ -7,10 +7,10 @@
     \draw[fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1 ] (1,1) rectangle (2,2);
 
     \begin{scope}[every path/.style={very thin}]
-        \foreach \i in {1,...,4} {
+        \foreach \i in {1,...,5} {
             \draw   (\i,0) -- (\i,5);
         }
-        \foreach \i in {1,...,4} {
+        \foreach \i in {1,...,5} {
             \draw   (0,\i) -- (5,\i);
         }
         \foreach \i in {1,...,4} {
