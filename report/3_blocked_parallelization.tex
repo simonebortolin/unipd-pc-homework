@@ -127,6 +127,6 @@ It is then possible to implement a block division algorithm of the matrix and th
 
 As we can see from \cref{alg:fw-blocked}, the code works sequentially with \(O(n/b \cdot n/b \cdot n/b \cdot b^3) =O(n^3) \).
 In a parallel manner we have instead \(O(n \cdot (1+n/p+n/p+ n^2/p)) = O(n^3/p)\).
-Despite this, the matrix strategy makes it possible to reduce the join times starting from \(n\times n\) to \(n/b + n/b + n/b \times n/b \approx n/b \times n/b\) so that ss \(b\) changes, the time required for the join after parallel execution changes \cite{rucci}.
+Despite this, the matrix strategy makes it possible to reduce the join times starting from \(n\times n\) to \(n/b + n/b + n/b \times n/b \approx n/b \times n/b\) so that if \(b\) changes, the time required for the join after parallel execution changes \cite{rucci}.
 
 \FloatBarrier
