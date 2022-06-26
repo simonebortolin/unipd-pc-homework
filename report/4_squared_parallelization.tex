@@ -9,7 +9,7 @@ It is based on the parallelization through inscribed squares in squares.
     \item For each block a simplified version of Floyd-Warshall, i.e. \texttt{Floyd} from \cref{alg:Floyd} of \cref{alg:fw-blocked}, is run on each self-dependent cell in \(d[h{\twodots}h{+}b,h{\twodots}h{+}b]\) (\cref{alg:inner-square} of \cref{alg:fw-squared}) 
     \item Run the simplified \texttt{Floyd} on the row and column of the current block of dimension \(k\) as in \cref{fig:square-dependecies-thread} (\cref{alg:square-row-first} and \ref{alg:square-column-first} of \cref{alg:fw-squared}). (Optionally these steps can also be run in parallel)
     \item The remaining blocks are computed in parallel on other threads (\cref{alg:square-row} and \ref{alg:square-column} of \cref{alg:fw-squared}).
-    \item Increase \(k\) by one and return to step 3 until \(\lfloor n/b/2 \rfloor\) is reached.
+    \item Increase \(k\) by one and return to step 3 until \(\lfloor n/2b \rfloor\) is reached.
     \item Await until all threads have finished their execution to increment \(h\) and start again the computation of a new block.
 \end{enumerate}
 The algorithm is specifically illustrated in \cref{alg:fw-squared} and \cref{fig:square-algo}.
