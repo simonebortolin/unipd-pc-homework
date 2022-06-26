@@ -12,7 +12,7 @@ The total analysis of the dependencies of the most external loop «for \(h\)», 
     \begin{subfigure}[t]{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{media/data_dependencies_1}
-        \caption{Data dependencies in Floyd algorithm when \(h=2\): the output of the execution of the round \(h=1\), of row \(1\) and column \(1\), is needed. For row and column executiont it's necessary to know the self-dependent cell \((1,1)\), that is always \(0\) in \(d\) and initialized as \(1\) in \(pred\).}
+        \caption{Data dependencies in Floyd algorithm when \(h=2\): the output of the execution of the round \(h=1\), of row \(1\) and column \(1\), is needed. For row and column execution, it's necessary to know the self-dependent cell \((1,1)\), that is always \(0\) in \(d\) and initialized as \(1\) in \(pred\).}
         \label{fig:data-dependencies-1}
     \end{subfigure}
     \hfill
@@ -33,7 +33,7 @@ The total analysis of the dependencies of the most external loop «for \(h\)», 
     \label{fig:data-dependency-external-loop}
 \end{figure}
 
-As mentioned by~\cite{rucci}, and easily demonstrated, it is possible to parallelize internal cycles without any problems. 
+As mentioned and proved by~\cite{rucci}, it is possible to parallelize internal cycles without any problems. 
 Let's start with the parallelization of  the intermediate cycle «for \(i\)» (\cref{alg:for-i} of \cref{alg:sequential}) that on the other hand seems quite possible, as there are no dependencies with respect to other previous or subsequent cycles.
 This parallelization, however, exploits the maximum \(p\) thread, and it is not a problem if \(n \geq p\), but it becomes a problem if \(p \gg n\).
 
