@@ -14,7 +14,7 @@ namespace pc {
     template <class T>
     class matrix {
     private:
-        T ** _matrix;
+        T * _matrix;
         int _size;
         void create(int);
         void destroy();
@@ -37,7 +37,7 @@ namespace pc {
     };
 
     template <class T>
-    std::ostream& operator<<(std::ostream& os, const matrix<T>& mt);
+    std::ostream &operator<<(std::ostream &os, const matrix<T>& mt);
 
     template <class T>
     std::istream &operator>>(std::istream &is, matrix<T>& mt);
@@ -78,9 +78,6 @@ namespace pc {
 
     template <class T>
     void matrix<T>::destroy() {
-        for(int i =0 ; i < _size; i++) {
-            delete[] _matrix[i];
-        }
         delete[] _matrix;
         _matrix = nullptr;
     }
@@ -88,10 +85,7 @@ namespace pc {
     template <class T>
     void matrix<T>::create(int size) {
         _size = size;
-        _matrix = new T*[size];
-        for(int i =0 ; i< size; i++) {
-            _matrix[i] = new T[size];
-        }
+        _matrix = new T[size*size];
     }
 
     template <class T>
@@ -102,7 +96,7 @@ namespace pc {
     template <class T>
     T matrix<T>::get(int i, int j) const {
         if(i < _size && j < _size && i >= 0 && j >= 0)
-            return _matrix[i][j];
+            return _matrix[i*_size + j];
 
         throw std::invalid_argument( "invalid i or j" );
     }
@@ -110,7 +104,7 @@ namespace pc {
     template <typename T>
     void matrix<T>::set(int i, int j, T w){
         if(i < _size && j < _size && i >= 0 && j >= 0)
-            _matrix[i][j] = w;
+            _matrix[i*_size + j] = w;
         else throw std::invalid_argument( "invalid i or j" );
     }
 
@@ -123,20 +117,20 @@ namespace pc {
     }
 
     template <class T>
-    T *matrix<T>::get(int i) {
-        if(i<_size && i >= 0)
-            return _matrix[i];
+    T* matrix<T>::get(int i) {
+        if(i<_size && i >= 0) {
+            return &_matrix[i*_size];
+        }
         return nullptr;
     }
 
     template<class T>
     matrix<T>::matrix(const matrix &m) {
         _size =m._size;
-        _matrix = new T*[_size];
+        _matrix = new T[_size];
         for(int i =0; i<m._size; i++) {
-            _matrix[i] = new T[_size];
             for(int j =0; j<m._size; j++) {
-                set(i,j,m._matrix[i][j]);
+                set(i,j,m._matrix[i*_size + j]);
             }
         }
     }
@@ -166,6 +160,7 @@ namespace pc {
 
     template <class T>
     std::istream &operator>>(std::istream &is, matrix<T>& mt) {
+
         std::string line;
         std::getline(is, line, ';');
         int size = std::stoi(line);
