@@ -73,6 +73,12 @@ Despite this fictitious problem, it can be simply solved by adding fictitious da
 \begin{figure}[htbp]
     \centering
     \begin{subfigure}[t]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{media/square_dependencies_algo_mod}
+        
+        \caption{Graphical representation of the circular array operation of our algorithm to optimise the execution of the algorithm even when our self-dependent block is not central: a mod is executed within the circular matrix to avoid wasting parallel executions.}
+        \label{fig:square-dependecies-circular}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics[width=\textwidth]{media/square_dependencies_algo}
         
         \caption{Graphical representation of the order of execution of the squared algorithm to respect dependencies. In dark green are the blocks to be executed before the lighter ones.}
@@ -83,12 +89,6 @@ Despite this fictitious problem, it can be simply solved by adding fictitious da
         
         \caption{Graphical representation of the subdivision of the functional execution: in dark green the only element that cannot be executed in parallel, in light green the elements that can be executed in parallel but in this algorithm are not by algorithm design, in white the blocks executed in parallel.}
         \label{fig:square-dependecies-thread}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{media/square_dependencies_algo_mod}
-        
-        \caption{Graphical representation of the circular array operation of our algorithm to optimise the execution of the algorithm even when our self-dependent block is not central: a mod is executed within the circular matrix to avoid wasting parallel executions.}
-        \label{fig:square-dependecies-circular}
     \end{subfigure}
     \caption{Graphical representation of the squared Floyd Warshall algorithm: in the first illustration, sequential and parallel executions are described, in the second the subdivision over several threads and in the third the circular matrix solution.}
         \label{fig:square-algo}

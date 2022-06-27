@@ -13,10 +13,10 @@
         \foreach \i in {1,...,5} {
             \draw   (0,\i) -- (5,\i);
         }
-        \foreach \i in {1,...,4} {
+        \foreach \i in {1,...,5} {
             \node [ anchor=south] at ($(\i,0)-(0.5,0)$) {\(\i\)};
         }
-        \foreach \i in {1,...,4} {
+        \foreach \i in {1,...,5} {
             \node [anchor=east] at ($(0,\i)-(0,0.5)$) {\(\i\)};
         }
         

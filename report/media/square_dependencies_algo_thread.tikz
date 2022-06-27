@@ -5,13 +5,13 @@
     \draw (3,3) rectangle (8,8);
     \draw (4,4) rectangle (7,7);
 
-    \draw[fill={rgb, 255:red, 155; green, 252; blue, 42 }  ,fill opacity=1 ] (6,5) rectangle (11,6);
+    \draw[fill={rgb, 255:red, 155; green, 252; blue, 42 }  ,fill opacity=1, very thick  ] (6,5) rectangle (11,6);
 
-    \draw[fill={rgb, 255:red, 155; green, 252; blue, 42 }  ,fill opacity=1 ] (5,6) rectangle (6,11);
-    \draw[fill={rgb, 255:red, 155; green, 252; blue, 42 }  ,fill opacity=1 ] (5,5) rectangle (0,6);
-    \draw[fill={rgb, 255:red, 155; green, 252; blue, 42 }  ,fill opacity=1 ] (5,5) rectangle (6,0);
+    \draw[fill={rgb, 255:red, 155; green, 252; blue, 42 }  ,fill opacity=1, very thick  ] (5,6) rectangle (6,11);
+    \draw[fill={rgb, 255:red, 155; green, 252; blue, 42 }  ,fill opacity=1, very thick  ] (5,5) rectangle (0,6);
+    \draw[fill={rgb, 255:red, 155; green, 252; blue, 42 }  ,fill opacity=1, very thick  ] (5,5) rectangle (6,0);
 
-    \draw[fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1 ] (5,5) rectangle (6,6);
+    \draw[fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1, very thick  ] (5,5) rectangle (6,6);
 
 
     \begin{scope}[every path/.style={very thin, dashed}]

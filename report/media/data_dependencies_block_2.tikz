@@ -1,21 +1,21 @@
 \begin{tikzpicture}[yscale=-1,xscale=1]
-    \draw[fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1] (0,1) rectangle (1,5);
-    \draw[fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1] (1,0) rectangle (5,1);
-    \draw[fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1 ] (0,0) rectangle (1,1);
+    \draw[fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1] (1,0) rectangle (2,5);
+    \draw[fill={rgb, 255:red, 126; green, 211; blue, 33 }  ,fill opacity=1] (0,1) rectangle (5,2);
+    \draw[fill={rgb, 255:red, 65; green, 117; blue, 5 }  ,fill opacity=1 ] (1,1) rectangle (2,2);
     \begin{scope}[every path/.style={very thin}]
-        \foreach \i in {0.25,0.5,0.75} {
+        \foreach \i in {1.25,1.5,1.75} {
             \draw   (\i,0) -- (\i,5);
         }
-        \foreach \i in {0.25,0.5,0.75} {
+        \foreach \i in {1.25,1.5,1.75} {
             \draw   (0,\i) -- (5,\i);
         }
     \end{scope}
     \begin{scope}[every path/.style={very thin}]
-        \foreach \i in {1.25,1.5,...,4.75} {
-            \draw   (\i,0) -- (\i,1);
+        \foreach \i in {0.25,0.5,...,4.75} {
+            \draw   (\i,1) -- (\i,2);
         }
-        \foreach \i in {1.25,1.5,...,4.75} {
-            \draw   (0,\i) -- (1,\i);
+        \foreach \i in {0.25,0.5,...,4.75} {
+            \draw   (1,\i) -- (2,\i);
         }
     \end{scope}
     \begin{scope}[every path/.style={thick}]
