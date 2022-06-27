@@ -37,6 +37,7 @@ namespace pc {
 
         ~matrix();
 
+        void fill(T t);
     };
 
     template <class T>
@@ -89,7 +90,12 @@ namespace pc {
     void matrix<T>::create(int size) {
         _size = size;
         _matrix = new T[size*size];
-        memset (_matrix, T(), sizeof (T) * size*size);
+    }
+
+    template <class T>
+    void matrix<T>::fill(T t) {
+
+        std::fill (_matrix, _matrix + _size*_size, t);
     }
 
     template <class T>

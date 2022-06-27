@@ -52,6 +52,7 @@ int main(int argc , char ** argv) {
     if(thread_rank != 0) {
         dist = pc::matrix<double>(n);
         pred = pc::matrix<int>(n);
+        dist.fill(std::numeric_limits<double>::infinity());
     }
 
     floydWarhsallSquaredParallel(dist, pred, n, s,  thread_size, thread_rank);
