@@ -1,5 +1,6 @@
 #include <iostream>
 #include <mpi.h>
+#include <sstream>
 #include "matrix.h"
 #include "sequential.h"
 
@@ -7,7 +8,7 @@
 
 void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pred, int n, int s, int thread_size, int thread_rank);
 
-void whiteFor(int [], pc::matrix<double> &dist, pc::matrix<int> &pred);
+void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<int> &pred);
 
 template <class T>
 void plusOfSquareToLinear(pc::matrix<T> &matrix, T* dest,  int s, int n, int h, int k);
@@ -47,6 +48,11 @@ int main(int argc , char ** argv) {
     MPI_Barrier( MPI_COMM_WORLD );
     MPI_Bcast( &n, 1, MPI_INT, 0, MPI_COMM_WORLD );
     MPI_Bcast( &s, 1, MPI_INT, 0, MPI_COMM_WORLD );
+
+    if(thread_rank != 0) {
+        dist = pc::matrix<double>(n);
+        pred = pc::matrix<int>(n);
+    }
 
     floydWarhsallSquaredParallel(dist, pred, n, s,  thread_size, thread_rank);
 
@@ -109,9 +115,8 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
 
                 // white - rest of cells
 
-                int data[] = {s, n, h, k};
                 if (thread_size == 1) {
-                    whiteFor(data, dist, pred);
+                    whiteFor(s, n, h, k, dist, pred);
                 } else {
                     printf("cpu %d is start to initialised to send data at cpu %d \n", thread_rank, k % (thread_size -1) +1);
 
@@ -120,7 +125,7 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
                     int * linearSquarePred = new int[size];
                     plusOfSquareToLinear<double>(dist, linearSquareDist, s, n, h, k);
                     plusOfSquareToLinear<int>(pred, linearSquarePred, s, n, h, k);
-                    MPI_Send(data, 4, MPI_INT, k % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
+                    MPI_Send(&k, 1, MPI_INT, k % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
                     MPI_Send(linearSquareDist, size, MPI_DOUBLE, k % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
                     MPI_Send(linearSquarePred, size, MPI_INT, k % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
                     delete[] linearSquareDist;
@@ -130,6 +135,11 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
 
             if (thread_size != 1) {
                 MPI_Barrier(MPI_COMM_WORLD);
+                pc::matrix<double> merge = pc::matrix<double>(n);
+
+                MPI_Reduce(dist[0], merge[0], n*n, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+
+                dist = merge;
             }
             //possible negative cycle
             for (int i = 0; i < n; i++) {
@@ -149,18 +159,24 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
             for (int i = 0; i < kk / (thread_size -1); i++) {
                 printf("cpu %d is ready to recive packet %d of %d \n", thread_rank, i,  kk / (thread_size -1));
 
-                int data[4];
                 MPI_Status status;
-                MPI_Recv(data, 4, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
-                int k = data[3];
+                int k = 0;
+                MPI_Recv(&k, 1, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
                 int size = 12*(k+1)*s*s;
-                double * linearSquareDist = new double[size];
+                auto * linearSquareDist = new double[size];
                 int * linearSquarePred = new int[size];
                 MPI_Recv(linearSquareDist, size, MPI_DOUBLE, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
                 MPI_Recv(linearSquarePred, size, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
-                printf("cpu %d recive packet with data s: %d n: %d h: %d k: %d \n", thread_rank, data[0], data[1], data[2], data[3]);
+                printf("cpu %d recive packet with data s: %d n: %d h: %d k: %d \n", thread_rank, s, n, h, k);
 
-                //whiteFor(data, dist, pred);
+                std::cout << dist << std::endl;
+
+                plusOfSquareFromLinear(dist, linearSquareDist, s, n, h, k);
+                plusOfSquareFromLinear(pred, linearSquarePred, s, n, h, k);
+
+                whiteFor(s, n, h, k, dist, pred);
+
+                std::cout << dist << std::endl;
 
                 printf("cpu %d end of calc \n", thread_rank);
 
@@ -170,35 +186,37 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
             if(thread_rank + 1 < kk % (thread_size -1)) {
                 printf("cpu %d is ready to recive last packet \n", thread_rank);
 
-                int data[4];
                 MPI_Status status;
-                MPI_Recv(data, 4, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
-                int k = data[3];
+                int k = 0;
+                MPI_Recv(&k, 1, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
                 int size = 12*(k+1)*s*s;
-                double * linearSquareDist = new double[size];
+                auto * linearSquareDist = new double[size];
                 int * linearSquarePred = new int[size];
                 MPI_Recv(linearSquareDist, size, MPI_DOUBLE, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
                 MPI_Recv(linearSquarePred, size, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
-                printf("cpu %d recive packet with data s: %d n: %d h: %d k: %d \n", thread_rank, data[0], data[1], data[2], data[3]);
+                printf("cpu %d recive packet with data s: %d n: %d h: %d k: %d \n", thread_rank, s, n, h, k);
+
+                plusOfSquareFromLinear(dist, linearSquareDist, s, n, h, k);
 
 
-                //whiteFor(data, dist, pred);
+
+                whiteFor(s, n, h, k, dist, pred);
 
                 printf("cpu %d end of calc \n", thread_rank);
 
                 delete[] linearSquareDist;
                 delete[] linearSquarePred;
             }
+
             MPI_Barrier ( MPI_COMM_WORLD );
+            pc::matrix<double> merge = pc::matrix<double>(n);
+
+            MPI_Reduce(dist[0], merge[0], n*n, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
         }
     }
 }
 
-void whiteFor(int args[], pc::matrix<double> &dist, pc::matrix<int> &pred) {
-    int s = args[0];
-    int n = args[1];
-    int h = args[2];
-    int k = args[3];
+void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<int> &pred) {
     int i,j;
     for(int l = k - (n / s) / 2; l <= (n / s) / 2 + k; l++) {
         int m = (l+k)*s;

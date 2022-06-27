@@ -9,6 +9,8 @@
 #include <vector>
 #include <limits>
 #include <algorithm>
+#include <cstring>
+#include <sstream>
 
 namespace pc {
     template <class T>
@@ -19,17 +21,18 @@ namespace pc {
         void create(int);
         void destroy();
     public:
-        matrix(const matrix&);
-        matrix(matrix&&);
+        matrix(const matrix<T>&);
+        matrix(matrix<T>&&);
         explicit matrix(int);
         int getSize() const;
-        T get(int, int ) const;
+        T get(int, int) const;
         T* get(int);
-        void set(int, int, T );
+        void set(int, int, T);
         void changeSize(int);
         bool operator==(matrix<T> &);
         bool operator!=(matrix<T> &);
-        matrix<T>& operator=(matrix&&);
+        matrix<T>& operator=(matrix<T>&&);
+        matrix<T>& operator=(const matrix<T>&);
         T* operator[](int);
 
         ~matrix();
@@ -86,6 +89,7 @@ namespace pc {
     void matrix<T>::create(int size) {
         _size = size;
         _matrix = new T[size*size];
+        memset (_matrix, T(), sizeof (T) * size*size);
     }
 
     template <class T>
@@ -101,7 +105,7 @@ namespace pc {
         throw std::invalid_argument( "invalid i or j" );
     }
 
-    template <typename T>
+    template <class T>
     void matrix<T>::set(int i, int j, T w){
         if(i < _size && j < _size && i >= 0 && j >= 0)
             _matrix[i*_size + j] = w;
@@ -124,8 +128,8 @@ namespace pc {
         return nullptr;
     }
 
-    template<class T>
-    matrix<T>::matrix(const matrix &m) {
+    template <class T>
+    matrix<T>::matrix(const matrix<T> &m) {
         _size =m._size;
         _matrix = new T[_size*_size];
         for(int i =0; i<m._size; i++) {
@@ -136,7 +140,7 @@ namespace pc {
     }
 
     template<class T>
-    matrix<T>::matrix(matrix &&m) {
+    matrix<T>::matrix(matrix<T> &&m) {
         _size = m._size;
         _matrix = m._matrix;
         m._size = 0;
@@ -145,16 +149,18 @@ namespace pc {
 
     template <class T>
     std::ostream& operator<<(std::ostream& os, const matrix<T>& mt) {
-        os << mt.getSize() << ";";
+        std::stringstream ss;
+        ss << mt.getSize() << ";";
         for(int i =0; i<mt.getSize();i++) {
             for(int j = 0; j< mt.getSize();j++) {
                 if(j == mt.getSize() -1) {
-                    os << mt.get(i,j) << ";";
+                    ss << mt.get(i,j) << ";";
                 } else {
-                    os << mt.get(i,j) << ",";
+                    ss << mt.get(i,j) << ",";
                 }
             }
         }
+        os << ss.str();
         return os;
     }
 
@@ -181,7 +187,7 @@ namespace pc {
     }
 
     template<class T>
-    matrix<T> &matrix<T>::operator=(matrix &&m) {
+    matrix<T> &matrix<T>::operator=(matrix<T> &&m) {
         if(&m != this) {
             delete[] _matrix;
             _matrix = m._matrix;
@@ -189,12 +195,21 @@ namespace pc {
             m._matrix = nullptr;
             m._size = 0;
         }
-        //return m;
+        return *this;
     }
 
     template<class T>
     T *matrix<T>::operator[](int i) {
         return get(i);
+    }
+
+    template<class T>
+    matrix<T> &matrix<T>::operator=(const matrix<T> &m) {
+        if(&m != this) {
+            changeSize(m._size);
+            std::copy(m._matrix, m._matrix + (m._size * m._size), _matrix);
+        }
+        return *this;
     }
 
 
