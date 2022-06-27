@@ -94,4 +94,8 @@ Despite this fictitious problem, it can be simply solved by adding fictitious da
         \label{fig:square-algo}
 \end{figure}
 
+It is easy to notice that the output of the sequential algorithm and the parallel one can be slightly different in terms of the predecessor matrix. If there exists more than one optimal path from \(i\) to \(j\) with the same distance cost, it is not assured that the paths returned by the two \(pred\) matrices from the two distinct algorithm are the same. 
+
+The main reason behind that behavior is that the two algorithm explore the input matrix in different order, and the first optimal path found will be the one to be returned by the output. That said, we can say for sure that our algorithm is correct even if the two matrices \(pred\) are not the same between the two outputs.
+
 \FloatBarrier
