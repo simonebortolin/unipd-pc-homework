@@ -127,7 +127,7 @@ namespace pc {
     template<class T>
     matrix<T>::matrix(const matrix &m) {
         _size =m._size;
-        _matrix = new T[_size];
+        _matrix = new T[_size*_size];
         for(int i =0; i<m._size; i++) {
             for(int j =0; j<m._size; j++) {
                 set(i,j,m._matrix[i*_size + j]);
