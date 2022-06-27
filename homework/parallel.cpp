@@ -219,33 +219,40 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
             }
 
             MPI_Barrier ( MPI_COMM_WORLD );
-            pc::matrix<double> merge = pc::matrix<double>(n);
+            MPI_Reduce(dist[0], dist[0], n*n, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+        }
+    }
+}
 
-            MPI_Reduce(dist[0], merge[0], n*n, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+void clearPred(int s, int n, int h, int k, pc::matrix<int> &pred) {
+    for(int i = 0; i< n; i++) {
+        for(int j = 0; j< n ;j++) {
+
         }
     }
 }
 
 void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<int> &pred) {
     int i,j;
-    for(int l = k - (n / s) / 2; l <= (n / s) / 2 + k; l++) {
-        int m = (l+k)*s;
-        i = (m+n) % n;
+    for(int c = k - (n / s) / 2; c <= (n / s) / 2 + k; c++) {
+        int r = (c + k) * s;
+        i = (r + n) % n;
         if(i == h) continue;
         j = (h-k*s+n) % n;
         floyd(dist,pred,i,j,i,h,h,j,s);
         j = (h+k*s+n) % n;
         floyd(dist,pred,i,j,i,h,h,j,s);
     }
-    for(int l = k-(n/s)/2+s; l<=(n/s)/2+k-s; l++) {
-        int m = (l+k)*s;
-        j = (m+n) % n;
+    for(int r = k - (n / s) / 2 + s; r <= (n / s) / 2 + k - s; r++) {
+        int c = (r + k) * s;
+        j = (c + n) % n;
         if(j == h) continue;
         i = (h-k*s+n) % n;
         floyd(dist,pred,i,j,i,h,h,j,s);
         i = (h+k*s+n) % n;
         floyd(dist,pred,i,j,i,h,h,j,s);
     }
+    clearPred(s, n, h, k, pred);
 }
 
 template <class T>
