@@ -30,6 +30,7 @@ namespace pc {
         bool operator==(matrix<T> &);
         bool operator!=(matrix<T> &);
         matrix<T>& operator=(matrix&&);
+        T* operator[](int);
 
         ~matrix();
 
@@ -193,6 +194,12 @@ namespace pc {
             m._matrix = nullptr;
             m._size = 0;
         }
+        //return m;
+    }
+
+    template<class T>
+    T *matrix<T>::operator[](int i) {
+        return get(i);
     }
 
 

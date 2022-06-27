@@ -16,6 +16,7 @@ int main(int argc , char ** argv) {
     if(cseq != csq) {
         std::cout << "not ok dist" << std::endl;
     } else {
+        std::cout << "pass" << std::endl;
         std::cout << csq << std::endl; //distances matrix: min costs
         std::cout << outc << std::endl; //predecessors matrix: min path
     }

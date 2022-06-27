@@ -128,11 +128,11 @@ pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
             }
             for(int l = k-(n/s)/2+s; l<=(n/s)/2+k-s; l++) {
                 int m = (l+k)*s;
-                i = (m+n) % n;
-                if(i == h) continue;
-                j = (h-k*s+n) % n;
+                j = (m+n) % n;
+                if(j == h) continue;
+                i = (h-k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
-                j = (h+k*s+n) % n;
+                i = (h+k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
             }
         }
