@@ -20,7 +20,7 @@ namespace pc {
         void destroy();
     public:
         matrix(const matrix&);
-        matrix(matrix&);
+        matrix(matrix&&);
         explicit matrix(int);
         int getSize() const;
         T get(int, int ) const;
@@ -29,7 +29,7 @@ namespace pc {
         void changeSize(int);
         bool operator==(matrix<T> &);
         bool operator!=(matrix<T> &);
-        matrix<T>& operator=(matrix&);
+        matrix<T>& operator=(matrix&&);
 
         ~matrix();
 
@@ -56,7 +56,7 @@ namespace pc {
 
     template <class T>
     bool matrix<T>::operator!=(matrix<T> &b) {
-        return (*this) != b;
+        return !((*this) == b);
     }
 
     std::vector<std::string> split(const std::string& s, const std::string& delimiter);
@@ -135,7 +135,7 @@ namespace pc {
     }
 
     template<class T>
-    matrix<T>::matrix(matrix &m) {
+    matrix<T>::matrix(matrix &&m) {
         _size = m._size;
         _matrix = m._matrix;
         m._size = 0;
@@ -180,7 +180,7 @@ namespace pc {
     }
 
     template<class T>
-    matrix<T> &matrix<T>::operator=(matrix &m) {
+    matrix<T> &matrix<T>::operator=(matrix &&m) {
         if(&m != this) {
             delete[] _matrix;
             _matrix = m._matrix;
