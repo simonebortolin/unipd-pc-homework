@@ -7,7 +7,9 @@
 
 void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pred, int n, int s, int thread_size, int thread_rank);
 
-void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<int> &pred);
+void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<int> &pred, pc::matrix<int> &predFilter);
+
+void fill(pc::matrix<int> &m, int dx, int dy, int s);
 
 template <class T>
 void plusOfSquareToLinear(pc::matrix<T> &matrix, T* dest,  int s, int n, int h, int k);
@@ -88,35 +90,44 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
         // initialised predecessors
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                pred.set(i, j, i);
+               pred.set(i, j, i);
             }
         }
 
         //computation of min path costs
         for (int h = 0; h < n; h += s) {
+            pc::matrix<int> pf = pc::matrix<int>(n);
+            pf.fill(0);
+
             // dark green self dependent
             floyd(dist, pred, h, h, h, h, h, h, s); // first
+            fill(pf, h,h, s);
+
 
 
             for (int k = 1; k <= (n / s) / 2; k++) { // second - ....
                 // light green - row h
                 int j = (h - k * s + n) % n;
                 floyd(dist, pred, h, j, h, h, h, j, s);
+                fill(pf, h,j, s);
 
                 j = (h + k * s + n) % n;
                 floyd(dist, pred, h, j, h, h, h, j, s);
+                fill(pf, h,j, s);
 
                 // light green - row h
                 int i = (h - k * s + n) % n;
                 floyd(dist, pred, i, h, i, h, h, h, s);
+                fill(pf, i,h, s);
 
                 i = (h + k * s + n) % n;
                 floyd(dist, pred, i, h, i, h, h, h, s);
+                fill(pf, i,h, s);
 
                 // white - rest of cells
 
                 if (thread_size == 1) {
-                    whiteFor(s, n, h, k, dist, pred);
+                    whiteFor(s, n, h, k, dist, pred, pf);
                 } else {
                     //printf("cpu %d is start to initialised to send data at cpu %d \n", thread_rank, k % (thread_size -1) +1);
 
@@ -139,10 +150,17 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
             if (thread_size != 1) {
                 MPI_Barrier(MPI_COMM_WORLD);
                 pc::matrix<double> merge = pc::matrix<double>(n);
+                pc::matrix<int> mergePred = pc::matrix<int>(n);
 
-                MPI_Reduce(dist[0], merge[0], n*n, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+                for(int *p = pred.begin(), * ppf = pf.begin(); p < pred.end() && ppf < pf.end(); p++, ppf++) {
+                    *p = *p**ppf;
+                }
+
+                MPI_Reduce(dist.begin(), merge.begin(), n*n, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+                MPI_Reduce(pred.begin(), mergePred.begin(), n*n, MPI_INT, MPI_MAX, 0, MPI_COMM_WORLD);
 
                 dist = merge;
+                pred = mergePred;
             }
             //possible negative cycle
             for (int i = 0; i < n; i++) {
@@ -160,6 +178,9 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
 
         for (int h = 0; h < n; h += s) {
             printf("cpu %d is on for h: %d, kk / (thread_size -1) is: %d, kk mod (thread_size -1) is: %d \n", thread_rank,h, kk / (thread_size -1), kk % (thread_size -1));
+
+            pc::matrix<int> pf = pc::matrix<int>(n);
+            pf.fill(0);
 
             for (int i = 0; i < kk / (thread_size -1); i++) {
                 printf("cpu %d is ready to recive %d of %d \n", thread_rank, i,  kk / (thread_size -1));
@@ -179,7 +200,7 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
                 plusOfSquareFromLinear(dist, linearSquareDist, s, n, h, k);
                 plusOfSquareFromLinear(pred, linearSquarePred, s, n, h, k);
 
-                whiteFor(s, n, h, k, dist, pred);
+                whiteFor(s, n, h, k, dist, pred, pf);
 
                 //std::cout << dist << std::endl;
 
@@ -208,7 +229,7 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
                 plusOfSquareFromLinear(dist, linearSquareDist, s, n, h, k);
                 plusOfSquareFromLinear(pred, linearSquarePred, s, n, h, k);
 
-                whiteFor(s, n, h, k, dist, pred);
+                whiteFor(s, n, h, k, dist, pred, pf);
 
                 //std::cout << dist << std::endl;
 
@@ -218,41 +239,68 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
                 delete[] linearSquarePred;
             }
 
+            for(int *p = pred.begin(), * ppf = pf.begin(); p < pred.end() && ppf < pf.end(); p++, ppf++) {
+                *p = *p**ppf;
+            }
+
             MPI_Barrier ( MPI_COMM_WORLD );
-            MPI_Reduce(dist[0], dist[0], n*n, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+            MPI_Reduce(dist.begin(), dist.begin(), n*n, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+            MPI_Reduce(pred.begin(), pred.begin(), n*n, MPI_INT, MPI_MAX, 0, MPI_COMM_WORLD);
         }
     }
 }
 
-void clearPred(int s, int n, int h, int k, pc::matrix<int> &pred) {
+void predFilter(int s, int n, int h, int k, pc::matrix<int> &pred) {
     for(int i = 0; i< n; i++) {
         for(int j = 0; j< n ;j++) {
+            pred[i][j] = 0;
+            int min = k - (n / s) / 2;
+            int max = (n / s) / 2 + k;
+            if(i >= min && i <= max) {
+                if(i != h && (j==((h-k*s+n) % n) ||j ==((h+k*s+n) % n))) {
+                    pred[i][j] = 1;
+                }
+            }
+            if(j > min && j < max) {
+                if(j != h && (i==((h-k*s+n) % n) || i == ((h+k*s+n) % n))) {
+                    pred[i][j] = 1;
+                }
+            }
+        }
+    }
+    std::cout << pred << std::endl;
+}
 
+void fill(pc::matrix<int> &m, int dx, int dy, int s) {
+    for(int i=0; i<s;i++) {
+        for (int j = 0; j < s; j++) {
+            m[dx + i][dy + j] = 1;
         }
     }
 }
 
-void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<int> &pred) {
+void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<int> &pred, pc::matrix<int> &predFilter) {
     int i,j;
     for(int c = k - (n / s) / 2; c <= (n / s) / 2 + k; c++) {
-        int r = (c + k) * s;
-        i = (r + n) % n;
+        i = (((c + k) * s) + n) % n;
         if(i == h) continue;
         j = (h-k*s+n) % n;
         floyd(dist,pred,i,j,i,h,h,j,s);
+        fill(predFilter, i,j, s);
         j = (h+k*s+n) % n;
         floyd(dist,pred,i,j,i,h,h,j,s);
+        fill(predFilter, i,j, s);
     }
     for(int r = k - (n / s) / 2 + s; r <= (n / s) / 2 + k - s; r++) {
-        int c = (r + k) * s;
-        j = (c + n) % n;
+        j = (((r + k) * s) + n) % n;
         if(j == h) continue;
         i = (h-k*s+n) % n;
         floyd(dist,pred,i,j,i,h,h,j,s);
+        fill(predFilter, i,j, s);
         i = (h+k*s+n) % n;
         floyd(dist,pred,i,j,i,h,h,j,s);
+        fill(predFilter, i,j, s);
     }
-    clearPred(s, n, h, k, pred);
 }
 
 template <class T>

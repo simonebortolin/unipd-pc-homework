@@ -117,18 +117,16 @@ pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
 
             // white - rest of cells
 
-            for(int r = k - (n / s) / 2; r <= (n / s) / 2 + k; r++) {
-                int c = (r + k) * s;
-                i = (c + n) % n;
+            for(int c = k - (n / s) / 2; c <= (n / s) / 2 + k; c++) {
+                i = (((c + k) * s) + n) % n;
                 if(i == h) continue;
                 j = (h-k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
                 j = (h+k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
             }
-            for(int c = k - (n / s) / 2 + s; c <= (n / s) / 2 + k - s; c++) {
-                int r = (c + k) * s;
-                j = (r + n) % n;
+            for(int r = k - (n / s) / 2 + s; r <= (n / s) / 2 + k - s; r++) {
+                j = (((r + k) * s) + n) % n;
                 if(j == h) continue;
                 i = (h-k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);

@@ -35,6 +35,9 @@ namespace pc {
         matrix<T>& operator=(const matrix<T>&);
         T* operator[](int);
 
+        T* begin();
+        T* end();
+
         ~matrix();
 
         void fill(T t);
@@ -216,6 +219,16 @@ namespace pc {
             std::copy(m._matrix, m._matrix + (m._size * m._size), _matrix);
         }
         return *this;
+    }
+
+    template<class T>
+    T *matrix<T>::begin() {
+        return _matrix;
+    }
+
+    template<class T>
+    T *matrix<T>::end() {
+        return _matrix + _size * _size;
     }
 
 
