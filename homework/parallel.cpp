@@ -226,6 +226,7 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
     }
 }
 
+// O(s^2)
 void fill(pc::matrix<int> &m, int dx, int dy, int s) {
     for(int i=0; i<s;i++) {
         for (int j = 0; j < s; j++) {
@@ -234,6 +235,7 @@ void fill(pc::matrix<int> &m, int dx, int dy, int s) {
     }
 }
 
+// O(s^3* n/2s) = O(s^2*n)
 void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<int> &pred, pc::matrix<int> &predFilter) {
     int i,j;
     for(int c = k - (n / s) / 2; c <= (n / s) / 2 + k; c++) {
@@ -258,7 +260,7 @@ void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<i
     }
 }
 
-template <class T>
+template <class T> // O(s^2 * n/2s) = O(sn)
 void plusOfSquareToLinear(pc::matrix<T> &matrix, T* dest,  int s, int n, int h, int k){
     int a = 0;
     int i,j;
@@ -290,7 +292,7 @@ void plusOfSquareToLinear(pc::matrix<T> &matrix, T* dest,  int s, int n, int h, 
     }
 }
 
-template <class T>
+template <class T> // O(s^2 * n/2s) = O(sn)
 void plusOfSquareFromLinear(pc::matrix<T> &matrix, T* dest,  int s, int n, int h, int k) {
     int a = 0;
     int i,j;
@@ -322,14 +324,14 @@ void plusOfSquareFromLinear(pc::matrix<T> &matrix, T* dest,  int s, int n, int h
     }
 }
 
-template <class T>
+template <class T> // O(n^2)
 void submatrixToLinear(pc::matrix<T> &m, T* dest, int dx, int dy, int s) {
     for(int i = 0, k=0; i< s; i++, k+=s) {
         std::copy(&m[i+dx][dy], &m[i+dx][dy+s],&dest[k]);
     }
 }
 
-template <class T>
+template <class T> // O(n^2)
 void linearToSubatrix(pc::matrix<T> &m, T* source, int dx, int dy, int s) {
     for(int i = 0, k =0; i< s; i++, k+=s) {
         std::copy(&source[k], &source[k+s], &m[i+dx][dy]);
