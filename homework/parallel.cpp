@@ -286,20 +286,15 @@ void plusOfSquareFromLinear(pc::matrix<T> &matrix, T* dest,  int s, int n, int h
 
 template <class T>
 void submatrixToLinear(pc::matrix<T> &m, T* dest, int dx, int dy, int s) {
-    int k = 0;
-    for(int i = 0; i< s; i++) {
-        for(int j = 0; j<s ; j++, k++) {
-            dest[k] = m[i+dx][j+dy];
-        }
+    for(int i = 0, k=0; i< s; i++, k+=s) {
+        std::copy(&m[i+dx][dy], &m[i+dx][dy+s],&dest[k]);
     }
 }
 
 template <class T>
 void linearToSubatrix(pc::matrix<T> &m, T* source, int dx, int dy, int s) {
-    int k = 0;
-    for(int i = 0; i< s; i++) {
-        for(int j = 0; j<s ; j++, k++) {
-            m[i+dx][j+dy] = source[k];
-        }
+    for(int i = 0, k =0; i< s; i++, k+=s) {
+        std::copy(&source[k], &source[k+s], &m[i+dx][dy]);
+
     }
 }
