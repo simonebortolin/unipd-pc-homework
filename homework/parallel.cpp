@@ -56,9 +56,9 @@ int main(int argc , char ** argv) {
     if(thread_rank == 0) {
 
         t1 = MPI_Wtime ();
-        time = 1.e6 * ( t1 - t0 );
-        printf (" That took %f seconds \n ", time );
-        
+        time = ( t1 - t0 );
+        printf (" That took %f useconds \n ", time );
+
         std::cout << dist << std::endl;
     }
 

@@ -19,12 +19,12 @@ int main(int argc , char ** argv) {
 
     t1 = MPI_Wtime ();
     time = 1.e6 * ( t1 - t0 );
-    printf (" That took %f seconds \n ", time );
+    printf (" That took %f useconds \n ", time );
 
     if(cseq != csq) {
-        printf ("not ok - time: %d", time );
+        printf ("not ok" );
     } else {
-        printf ("pass - time: %d", time );
+        printf ("pass" );
     }
 
     return 0;
