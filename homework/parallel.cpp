@@ -11,18 +11,6 @@ void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<i
 
 void fill(pc::matrix<int> &m, int dx, int dy, int s);
 
-template <class T>
-void plusOfSquareToLinear(pc::matrix<T> &matrix, T* dest,  int s, int n, int h, int k);
-
-template <class T>
-void plusOfSquareFromLinear(pc::matrix<T> &matrix, T* dest,  int s, int n, int h, int k);
-
-template <class T>
-void submatrixToLinear(pc::matrix<T> &m, T* dest, int dx, int dy, int s);
-
-template <class T>
-void linearToSubatrix(pc::matrix<T> &m, T* source, int dx, int dy, int s);
-
 int main(int argc , char ** argv) {
     int thread_rank , thread_size ;
     MPI_Init (& argc , & argv );
@@ -121,18 +109,10 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
                 if (thread_size == 1) {
                     whiteFor(s, n, h, k, dist, pred, pf);
                 } else {
-                    int size = 12*(k+1)*s*s;
-                    double * linearSquareDist = new double[size];
-                    int * linearSquarePred = new int[size];
-                    plusOfSquareToLinear<double>(dist, linearSquareDist, s, n, h, k);
-                    plusOfSquareToLinear<int>(pred, linearSquarePred, s, n, h, k);
 
                     MPI_Send(&k, 1, MPI_INT, (k-1) % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
-                    MPI_Send(linearSquareDist, size, MPI_DOUBLE, (k-1) % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
-                    MPI_Send(linearSquarePred, size, MPI_INT, (k-1) % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
-                    delete[] linearSquareDist;
-                    delete[] linearSquarePred;
-
+                    MPI_Send(dist.begin(), n*n, MPI_DOUBLE, (k-1) % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
+                    MPI_Send(pred.begin(), n*n, MPI_INT, (k-1) % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
                 }
             }
 
@@ -171,19 +151,11 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
                 MPI_Status status;
                 int k = 0;
                 MPI_Recv(&k, 1, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
-                int size = 12*(k+1)*s*s;
-                auto * linearSquareDist = new double[size];
-                int * linearSquarePred = new int[size];
-                MPI_Recv(linearSquareDist, size, MPI_DOUBLE, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
-                MPI_Recv(linearSquarePred, size, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
-
-                plusOfSquareFromLinear(dist, linearSquareDist, s, n, h, k);
-                plusOfSquareFromLinear(pred, linearSquarePred, s, n, h, k);
+                MPI_Recv(dist.begin(), n*n, MPI_DOUBLE, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
+                MPI_Recv(pred.begin(), n*n, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
 
                 whiteFor(s, n, h, k, dist, pred, pf);
 
-                delete[] linearSquareDist;
-                delete[] linearSquarePred;
             }
 
             // if we have to do one more execution
@@ -193,26 +165,10 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
                 MPI_Status status;
                 int k = 0;
                 MPI_Recv(&k, 1, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
-                int size = 12*(k+1)*s*s;
-                auto * linearSquareDist = new double[size];
-                int * linearSquarePred = new int[size];
-                MPI_Recv(linearSquareDist, size, MPI_DOUBLE, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
-                MPI_Recv(linearSquarePred, size, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
-                //printf("cpu %d recive packet with data s: %d n: %d h: %d k: %d \n", thread_rank, s, n, h, k);
-
-                //std::cout << dist << std::endl;
-
-                plusOfSquareFromLinear(dist, linearSquareDist, s, n, h, k);
-                plusOfSquareFromLinear(pred, linearSquarePred, s, n, h, k);
+                MPI_Recv(dist.begin(), n*n, MPI_DOUBLE, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
+                MPI_Recv(pred.begin(), n*n, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
 
                 whiteFor(s, n, h, k, dist, pred, pf);
-
-                //std::cout << dist << std::endl;
-
-                //printf("cpu %d end of calc \n", thread_rank);
-
-                delete[] linearSquareDist;
-                delete[] linearSquarePred;
             }
 
             for(int *p = pred.begin(), * ppf = pf.begin(); p < pred.end() && ppf < pf.end(); p++, ppf++) {
@@ -257,84 +213,5 @@ void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<i
         i = (h+k*s+n) % n;
         floyd(dist,pred,i,j,i,h,h,j,s);
         fill(predFilter, i,j, s);
-    }
-}
-
-template <class T> // O(s^2 * n/2s) = O(sn)
-void plusOfSquareToLinear(pc::matrix<T> &matrix, T* dest,  int s, int n, int h, int k){
-    int a = 0;
-    int i,j;
-    for(int l = k - (n / s) / 2; l <= (n / s) / 2 + k; l++) {
-        int m = (l + k) * s;
-        i = (m + n) % n;
-        j = (h - k * s + n) % n;
-        submatrixToLinear<T>(matrix, dest + a, i, j, s);
-        a+= s*s;
-        j = (h + n) % n;
-        submatrixToLinear<T>(matrix, dest + a, i, j, s);
-        a+= s*s;
-        j = (h+k*s+n) % n;
-        submatrixToLinear<T>(matrix, dest + a, i, j, s);
-        a+= s*s;
-    }
-    for(int l = k-(n/s)/2+s; l<=(n/s)/2+k-s; l++) {
-        int m = (l + k) * s;
-        j = (m + n) % n;
-        i = (h - k * s + n) % n;
-        submatrixToLinear<T>(matrix, dest + a, i, j, s);
-        a+= s*s;
-        i = (h + n) % n;
-        submatrixToLinear<T>(matrix, dest + a, i, j, s);
-        a+= s*s;
-        i = (h+k*s+n) % n;
-        submatrixToLinear<T>(matrix, dest + a, i, j, s);
-        a+= s*s;
-    }
-}
-
-template <class T> // O(s^2 * n/2s) = O(sn)
-void plusOfSquareFromLinear(pc::matrix<T> &matrix, T* dest,  int s, int n, int h, int k) {
-    int a = 0;
-    int i,j;
-    for(int l = k - (n / s) / 2; l <= (n / s) / 2 + k; l++) {
-        int m = (l + k) * s;
-        i = (m + n) % n;
-        j = (h - k * s + n) % n;
-        linearToSubatrix<T>(matrix, dest + a, i, j, s);
-        a+= s*s;
-        j = (h + n) % n;
-        linearToSubatrix<T>(matrix, dest + a, i, j, s);
-        a+= s*s;
-        j = (h+k*s+n) % n;
-        linearToSubatrix<T>(matrix, dest + a, i, j, s);
-        a+= s*s;
-    }
-    for(int l = k-(n/s)/2+s; l<=(n/s)/2+k-s; l++) {
-        int m = (l + k) * s;
-        j = (m + n) % n;
-        i = (h - k * s + n) % n;
-        linearToSubatrix<T>(matrix, dest + a, i, j, s);
-        a+= s*s;
-        i = (h + n) % n;
-        linearToSubatrix<T>(matrix, dest + a, i, j, s);
-        a+= s*s;
-        i = (h+k*s+n) % n;
-        linearToSubatrix<T>(matrix, dest + a, i, j, s);
-        a+= s*s;
-    }
-}
-
-template <class T> // O(n^2)
-void submatrixToLinear(pc::matrix<T> &m, T* dest, int dx, int dy, int s) {
-    for(int i = 0, k=0; i< s; i++, k+=s) {
-        std::copy(&m[i+dx][dy], &m[i+dx][dy+s],&dest[k]);
-    }
-}
-
-template <class T> // O(n^2)
-void linearToSubatrix(pc::matrix<T> &m, T* source, int dx, int dy, int s) {
-    for(int i = 0, k =0; i< s; i++, k+=s) {
-        std::copy(&source[k], &source[k+s], &m[i+dx][dy]);
-
     }
 }
