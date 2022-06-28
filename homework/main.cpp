@@ -1,4 +1,5 @@
 #include <iostream>
+#include <mpi.h>
 #include "matrix.h"
 #include "sequential.h"
 
@@ -10,15 +11,20 @@ int main(int argc , char ** argv) {
     std::cin >> cseq;
     pc::matrix<double> csq = cseq;
 
+    double t0 , t1 , time;
+    t0 = MPI_Wtime ();
+
     pc::matrix<int> out = floydWarhsallSeq(cseq);
     pc::matrix<int> outc = floydWarhsallSquared(csq,s);
 
+    t1 = MPI_Wtime ();
+    time = 1.e6 * ( t1 - t0 );
+    printf (" That took %f seconds \n ", time );
+
     if(cseq != csq) {
-        std::cout << "not ok dist" << std::endl;
+        printf ("not ok - time: %d", time );
     } else {
-        std::cout << "pass" << std::endl;
-        std::cout << csq << std::endl; //distances matrix: min costs
-        std::cout << outc << std::endl; //predecessors matrix: min path
+        printf ("pass - time: %d", time );
     }
 
     return 0;

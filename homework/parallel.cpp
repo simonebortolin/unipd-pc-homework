@@ -22,6 +22,7 @@ int main(int argc , char ** argv) {
     int s = 0;
     int n = 0;
 
+
     if(thread_rank == 0) {
         std::cin >> s;
 
@@ -33,11 +34,15 @@ int main(int argc , char ** argv) {
     }
 
 
+    double t0 , t1 , time;
+
+
     MPI_Barrier( MPI_COMM_WORLD );
     MPI_Bcast( &n, 1, MPI_INT, 0, MPI_COMM_WORLD );
     MPI_Bcast( &s, 1, MPI_INT, 0, MPI_COMM_WORLD );
 
     if(thread_rank != 0) {
+        t0 = MPI_Wtime ();
         dist = pc::matrix<double>(n);
         pred = pc::matrix<int>(n);
         dist.fill(std::numeric_limits<double>::infinity());
@@ -49,8 +54,12 @@ int main(int argc , char ** argv) {
 
 
     if(thread_rank == 0) {
-        std::cout << dist << std::endl; //distances matrix: min costs
-        std::cout << pred << std::endl; //predecessors matrix: min path
+
+        t1 = MPI_Wtime ();
+        time = 1.e6 * ( t1 - t0 );
+        printf (" That took %f seconds \n ", time );
+        
+        std::cout << dist << std::endl;
     }
 
     MPI_Finalize ();
