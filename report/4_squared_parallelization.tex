@@ -1,16 +1,16 @@
 \section{Squared Parallelization}\label{squared-parallelization}
 
 Our idea is to reduce synchronisation times between threads as much as possible and to always use a divide-and-conquer algorithm. 
-It is based on the parallelization through inscribed squares in squares.
+It is based on the parallelization through inscribed squares in squares. We also use the idea of a circular matrix to minimise the number of cycles and avoid handling the case of elements outside the matrix.
 
 
 \begin{enumerate}
-    \item First the input matrix is divided into \(h\) blocks of size \(s\).
-    \item For each block a simplified version of Floyd-Warshall, i.e. \texttt{Floyd} from \cref{alg:Floyd} of \cref{alg:fw-blocked}, is run on each self-dependent cell in \(d[h{\twodots}h{+}s,h{\twodots}h{+}s]\) (\cref{alg:inner-square} of \cref{alg:fw-squared}) 
-    \item Run the simplified \texttt{Floyd} on the row and column of the current block of dimension \(k\) as in \cref{fig:square-dependecies-thread} (\cref{alg:square-row-first} and \ref{alg:square-column-first} of \cref{alg:fw-squared}). (Optionally these steps can also be run in parallel)
+    \item First the input matrix is divided into \(h\) blocks of size \(s\) and let \(h=1\).
+    \item \label{s2} Run the simplified version of Floyd-Warshall, i.e. \texttt{Floyd} from \cref{alg:Floyd} of \cref{alg:fw-blocked} on the self-dependent cell in \(d[h{\twodots}h{+}s,h{\twodots}h{+}s]\) (\cref{alg:inner-square} of \cref{alg:fw-squared}), and let \(k=1\).
+    \item \label{s3} Run the simplified \texttt{Floyd} on the row and column of the current block of dimension \(k\) as in \cref{fig:square-dependecies-thread} (\cref{alg:square-row-first} and \ref{alg:square-column-first} of \cref{alg:fw-squared}, optionally these steps can also be run in parallel).
     \item The remaining blocks are computed in parallel on other threads (\cref{alg:square-row} and \ref{alg:square-column} of \cref{alg:fw-squared}).
-    \item Increase \(k\) by one and return to step 3 until \(\lfloor n/2s \rfloor\) is reached.
-    \item Await until all threads have finished their execution to increment \(h\) and start again the computation of a new block.
+    \item Increase \(k\) by one and return to step \ref{s3} until \(\lfloor n/2s \rfloor\) is reached.
+    \item Await until all threads have finished their execution to increment \(h\) by \(s\) and return to step \ref{s2}.
 \end{enumerate}
 The algorithm is specifically illustrated in \cref{alg:fw-squared} and \cref{fig:square-algo}.
 It is evident that this algorithm requires a very specific partition, i.e. it must generate an odd number of rows and columns. 
@@ -75,14 +75,14 @@ Despite this fictitious problem, it can be simply solved by adding fictitious da
     \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics[width=\textwidth]{media/square_dependencies_algo_mod}
         
-        \caption{Graphical representation of the circular array operation of our algorithm to optimise the execution of the algorithm when a self-dependent block is not central: a mod is executed within the circular matrix to not waste parallel executions.}
+        \caption{Graphical representation of the circular array operation of our algorithm to optimise the execution of the algorithm when a self-dependent block is not central: a \(\bmod\) is executed within the circular matrix to not waste parallel executions.}
         \label{fig:square-dependecies-circular}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics[width=\textwidth]{media/square_dependencies_algo}
         
-        \caption{Graphical representation of the order of execution of the squared Floyd Warshall algorithm to respect dependencies. The blocks in dark green have to be executed before the lighter green ones.}
+        \caption{Graphical representation of the order of execution of the squared Floyd Warshall algorithm to respect dependencies when a self-dependent block is central. The blocks in dark green have to be executed before the lighter green ones.}
         \label{fig:square-dependecies-algo}
     \end{subfigure}
     \hfill
@@ -92,8 +92,8 @@ Despite this fictitious problem, it can be simply solved by adding fictitious da
         \caption{Graphical representation of the functional execution: the element in dark green cannot be executed in parallel, the light green elements could be executed in parallel but in our algorithm are not, the white ones are executed in parallel.}
         \label{fig:square-dependecies-thread}
     \end{subfigure}
-    \caption{Graphical representation of the squared Floyd Warshall algorithm: in the first illustration, sequential and parallel executions are described, in the second the subdivision over several threads and in the third the circular matrix solution.}
-        \label{fig:square-algo}
+    \caption{Graphical representation of the squared Floyd Warshall algorithm parallel execution and threads.}
+    \label{fig:square-algo}
 \end{figure}
 
 It is easy to notice that the output of the sequential algorithm and the parallel one can be slightly different in terms of the predecessor matrix. If there exists more than one optimal path from \(i\) to \(j\) with the same distance cost, it is not assured that the paths returned by the two \(pred\) matrices from the two distinct algorithm are the same. 

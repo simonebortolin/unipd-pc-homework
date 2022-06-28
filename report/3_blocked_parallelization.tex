@@ -1,4 +1,4 @@
-\section{Blocked parallelization}\label{blocked_parallelization}
+\section{Blocked analysis}\label{blocked_parallelization}
 
 As said in the previous section, the parallelization of the «for \(i\)» loop is simple and improves times, but there remains the problem of the join times being too high. 
 Remembering that a parallel algorithm does not start with a sequential algorithm, we must change approach.
@@ -11,7 +11,7 @@ Starting from the previous dependency analysis (\cref{fig:data-dependencies-3}),
     \centering
     \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics[width=\textwidth]{media/data_dependencies_block}
-        \caption{Graphical representation of a problem solved using the divide and conquer method, from a \(12\times 12\) matrix to \(9\) \(4\times 4\) sub-matrices.}
+        \caption{Graphical representation of a problem solved using the divide and conquer method, from a \(12\times 12\) matrix to \(9\) submatrix \(4\times 4\) sub-matrices.}
         \label{fig:submatrix}
     \end{subfigure}
     \hfill
@@ -32,13 +32,13 @@ Starting from the previous dependency analysis (\cref{fig:data-dependencies-3}),
 
 Unlike previous parallelization analysis, the self-dependent blocks are also to be calculated and do not have a default value like \(0\) in \(d\) or \(h\) in \(pred\). 
 In particular only the triple for is kept and a reduced version of the algorithm seen in \cref{alg:sequential} is used.
-Similarly, all other blocks are computed with the same lightened procedure. Dependencies are described graphically in the figure \cref{fig:data-dependency-external-loop-parallel}, in particular, the order of execution is as follows:
+Similarly, all other blocks are computed with the same lightened procedure. Dependencies are described graphically in the figure \cref{fig:data-dependency-external-loop-parallel}, in particular for any \(h\), the order of execution is as follows:
 
 \begin{enumerate}
-    \item diagonal cell \((h,h)\) since they are self-dependent (\cref{alg:block-diagonal} of \cref{alg:fw-blocked}).
-    \item \(h\)-th row depends on itself and on the previously computed  \((h,h)\) cell (\cref{alg:block-row}  of \cref{alg:fw-blocked}).
-    \item \(k\)-th column depends on itself and on the previously computed  \((h,h)\) cell (\cref{alg:block-column}  of \cref{alg:fw-blocked}).
-    \item the rest of the matrix blocks, as each of them depends on the \(h\)-th block of its row and the \(h\)-th block of its column (\cref{alg:block-other}  of \cref{alg:fw-blocked}).
+    \item diagonal cell \((h,h)\) since they are self-dependent (\cref{alg:block-diagonal} of \cref{alg:fw-blocked})
+    \item \(h\)-th row depends on itself and on the previously computed  \((h,h)\) cell (\cref{alg:block-row}  of \cref{alg:fw-blocked})
+    \item \(k\)-th column depends on itself and on the previously computed  \((h,h)\) cell (\cref{alg:block-column}  of \cref{alg:fw-blocked})
+    \item the rest of the matrix blocks, as each of them depends on the \(h\)-th block of its row and the \(h\)-th block of its column (\cref{alg:block-other}  of \cref{alg:fw-blocked})
 \end{enumerate}
 
 
@@ -103,27 +103,27 @@ Performing the calculations in this order satisfies all the dependencies seen in
     \end{minipage}
 \end{figure}
 
-\begin{figure}[htbp]
-    \centering
-    \begin{subfigure}[t]{0.3\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{media/graph_data_dependencies_v}
-        \caption{Each task in row \(h\) broadcast to tasks in same column.}
-        \label{fig:data-dependencies-v}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.3\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{media/graph_data_dependencies_o}
-        \caption{Each task in column \(h\) broadcast to tasks in same row.}
-        \label{fig:data-dependencies-o}
-    \end{subfigure}
-    \caption{Communication during the parallel task.}
-    \label{fig:communication-during-parallel-task}
-\end{figure}
+%\begin{figure}[htbp]
+%    \centering
+%    \begin{subfigure}[t]{0.3\textwidth}
+%        \centering
+%        \includegraphics[width=\textwidth]{media/graph_data_dependencies_v}
+%        \caption{Each task in row \(h\) broadcast to tasks in same column.}
+%        \label{fig:data-dependencies-v}
+%    \end{subfigure}
+%    \begin{subfigure}[t]{0.3\textwidth}
+%        \centering
+%        \includegraphics[width=\textwidth]{media/graph_data_dependencies_o}
+%        \caption{Each task in column \(h\) broadcast to tasks in same row.}
+%        \label{fig:data-dependencies-o}
+%    \end{subfigure}
+%    \caption{Communication during the parallel task.}
+%    \label{fig:communication-during-parallel-task}
+%\end{figure}
 
 A possible parallelization of the algorithm is evident: we can parallelize the outermost for and also the inner for.
 It is then possible to implement a block division algorithm of the matrix and the parallel execution of all blocks, some with delayed restart through broadcast messages.
-\Cref{fig:communication-during-parallel-task}  describes communications in an implementation where each individual block is parallelized and started together, suspended until it receives data and then executed.
+%\Cref{fig:communication-during-parallel-task}  describes communications in an implementation where each individual block is parallelized and started together, suspended until it receives data and then executed.
 
 As we can see from \cref{alg:fw-blocked}, the code works sequentially with \(O(n/s \cdot n/s \cdot n/s \cdot s^3) =O(n^3) \).
 In a parallel manner we have instead \(O(n \cdot (1+n/s+n/s+ n^2/s)) = O(n^3/s)\).

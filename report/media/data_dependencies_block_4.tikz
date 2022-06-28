@@ -15,11 +15,11 @@
         }
         \node [ anchor=south] at (2,0) {\(h\)};
 
-        \node [ anchor=south] at (3,0) {\(h{+}b\)};
+        \node [ anchor=south] at (3,0) {\(h\smash{{+}}s\)};
     
         \node [anchor=east] at (0,2) {\(h\)};
             
-        \node [anchor=east] at (0,3) {\(h{+}b\)};
+        \node [anchor=east] at (0,3) {\(h\smash{{+}}s\)};
 
         \node [ anchor=south east] at (2,2) {\((h,h)\)};
 
