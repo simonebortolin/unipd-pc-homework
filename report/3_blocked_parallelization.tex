@@ -2,7 +2,7 @@
 
 As said in the previous section, the parallelization of the «for \(i\)» loop is simple and improves times, but there remains the problem of the join times being too high. 
 Remembering that a parallel algorithm does not start with a sequential algorithm, we must change approach.
-A possible solution could be a divide-and-conquer strategy: starting from a block division, as depicted in \cref{fig:submatrix}, the analyzed dependencies are similar to those descripted in \cref{fig:data-dependency-external-loop}, but unlike before, this time the value \(d[h{\twodots}h{+}b,h{\twodots}h{+}b]\) must also be calculated.
+A possible solution could be a divide-and-conquer strategy: starting from a block division, as depicted in \cref{fig:submatrix}, the analyzed dependencies are similar to those descripted in \cref{fig:data-dependency-external-loop}, but unlike before, this time the value \(d[h{\twodots}h{+}s,h{\twodots}h{+}s]\) must also be calculated.
 
 Starting from the previous dependency analysis (\cref{fig:data-dependencies-3}), it can be noticed that if the cell size is greater than one, such as  \(  2 \times 2,  4 \times 4, \dots\) the dependency does not change.
 \Cref{fig:data-dependencies-block-1} and \ref{fig:data-dependencies-block-2} show the dependencies for \(h \in [1{\twodots}4]\) and \(h \in [5{\twodots}8]\).
@@ -62,11 +62,11 @@ Performing the calculations in this order satisfies all the dependencies seen in
             \SetKwFunction{FFloyd}{Floyd} 
             \SetKwProg{Pn}{Function}{:}{\KwRet}
             \Pn{\FFloyd{\(d,a,b,pred\)}}{
-                let \(b\) size of the matrix \(d,a,b, pred\)
+                let \(s\) size of the matrix \(d,a,b, pred\)
 
-                \For{\(h \in [1{\twodots}b]\)}{
-                    \For{\(i \in [1{\twodots}b]\)}{
-                        \For{\(j \in [1{\twodots}b]\)}{
+                \For{\(h \in [1{\twodots}s]\)}{
+                    \For{\(i \in [1{\twodots}s]\)}{
+                        \For{\(j \in [1{\twodots}s]\)}{
                             \If{\( a [ i , h ] + b [ h , j ] < d [ i , j ] \)} {
                                 \( d [ i , j ] \leftarrow a [ i , h ] + b [ h , j ] \)
 
@@ -79,20 +79,20 @@ Performing the calculations in this order satisfies all the dependencies seen in
             \SetKwFunction{FFloydBlocked}{Blocked Floyd Warshall}
             \SetKwProg{Pn}{Function}{:}{\KwRet}
             \Pn{\FFloydBlocked{\(d\)}}{
-                let \(b\) number of partition
+                let \(s\) number of partition
 
-                \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} b]\)}{
-                    \FFloyd{\(d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:block-diagonal}
+                \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} s]\)}{
+                    \FFloyd{\(d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} \label{alg:block-diagonal}
 
-                    \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} b] \setminus h\)} {
-                        \FFloyd{\(d[h{\twodots}h{+}b,j{\twodots}j{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:block-row}
+                    \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} s] \setminus h\)} {
+                        \FFloyd{\(d[h{\twodots}h{+}s,j{\twodots}j{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,h{\twodots}h{+}s]\)} \label{alg:block-row}
                     }
 
-                    \For{\(i  \in [1{\twodots}n \operatorname{with} \operatorname{step} b]  \setminus h\)} {
-                        \FFloyd{\(d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:block-column}
+                    \For{\(i  \in [1{\twodots}n \operatorname{with} \operatorname{step} s]  \setminus h\)} {
+                        \FFloyd{\(d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{alg:block-column}
 
-                        \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} b] \setminus h\)} {
-                            \FFloyd{\(d[i{\twodots}i{+}b,j{\twodots}j{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:block-other}
+                        \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} s] \setminus h\)} {
+                            \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s]\)} \label{alg:block-other}
                         }
                     }
                 }
@@ -125,8 +125,8 @@ A possible parallelization of the algorithm is evident: we can parallelize the o
 It is then possible to implement a block division algorithm of the matrix and the parallel execution of all blocks, some with delayed restart through broadcast messages.
 \Cref{fig:communication-during-parallel-task}  describes communications in an implementation where each individual block is parallelized and started together, suspended until it receives data and then executed.
 
-As we can see from \cref{alg:fw-blocked}, the code works sequentially with \(O(n/b \cdot n/b \cdot n/b \cdot b^3) =O(n^3) \).
-In a parallel manner we have instead \(O(n \cdot (1+n/p+n/p+ n^2/p)) = O(n^3/p)\).
-Despite this, the matrix strategy makes it possible to reduce the join times starting from \(n\times n\) to \(n/b + n/b + n/b \times n/b \approx n/b \times n/b\) so that if \(b\) changes, the time required for the join after parallel execution changes \cite{rucci}.
+As we can see from \cref{alg:fw-blocked}, the code works sequentially with \(O(n/s \cdot n/s \cdot n/s \cdot s^3) =O(n^3) \).
+In a parallel manner we have instead \(O(n \cdot (1+n/s+n/s+ n^2/s)) = O(n^3/s)\).
+Despite this, the matrix strategy makes it possible to reduce the join times starting from \(n\times n\) to \(n/s + n/s + n/s \times n/s \approx n/s \times n/s\) so that if \(s\) changes, the time required for the join after parallel execution changes \cite{rucci}.
 
 \FloatBarrier
