@@ -6,10 +6,10 @@ It is based on the parallelization through inscribed squares in squares.
 
 \begin{enumerate}
     \item First the input matrix is divided into \(h\) blocks of size \(s\).
-    \item For each block a simplified version of Floyd-Warshall, i.e. \texttt{Floyd} from \cref{alg:Floyd} of \cref{alg:fw-blocked}, is run on each self-dependent cell in \(d[h{\twodots}h{+}b,h{\twodots}h{+}b]\) (\cref{alg:inner-square} of \cref{alg:fw-squared}) 
+    \item For each block a simplified version of Floyd-Warshall, i.e. \texttt{Floyd} from \cref{alg:Floyd} of \cref{alg:fw-blocked}, is run on each self-dependent cell in \(d[h{\twodots}h{+}s,h{\twodots}h{+}s]\) (\cref{alg:inner-square} of \cref{alg:fw-squared}) 
     \item Run the simplified \texttt{Floyd} on the row and column of the current block of dimension \(k\) as in \cref{fig:square-dependecies-thread} (\cref{alg:square-row-first} and \ref{alg:square-column-first} of \cref{alg:fw-squared}). (Optionally these steps can also be run in parallel)
     \item The remaining blocks are computed in parallel on other threads (\cref{alg:square-row} and \ref{alg:square-column} of \cref{alg:fw-squared}).
-    \item Increase \(k\) by one and return to step 3 until \(\lfloor n/2b \rfloor\) is reached.
+    \item Increase \(k\) by one and return to step 3 until \(\lfloor n/2s \rfloor\) is reached.
     \item Await until all threads have finished their execution to increment \(h\) and start again the computation of a new block.
 \end{enumerate}
 The algorithm is specifically illustrated in \cref{alg:fw-squared} and \cref{fig:square-algo}.
@@ -32,31 +32,31 @@ Despite this fictitious problem, it can be simply solved by adding fictitious da
             \SetKwFunction{FSquaredBlocked}{Squared Floyd Warshall}
             \SetKwProg{Pn}{Function}{:}{\KwRet}
             \Pn{\FSquaredBlocked{\(d\)}}{
-                let \(b\) number of partition
+                let \(s\) number of partition
 
 
-                \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} b]\)}{
-                    \FFloyd{\(d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} \label{alg:inner-square}
+                \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} s]\)}{
+                    \FFloyd{\(d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{alg:inner-square}
 
                     
                     let \(t\) an empty thread list
 
-                    \For{\(k \in [1{\twodots}\lfloor n/b/2 \rfloor]\)}{
+                    \For{\(k \in [1{\twodots}\lfloor n/2s \rfloor]\)}{
 
                         \For{\(j \in [(h{\pm}s+n) \bmod n]\)}{ \label{alg:square-row-first}
-                            \FFloyd{\(d[h{\twodots}h{+}b,j{\twodots}j{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} 
+                            \FFloyd{\(d[h{\twodots}h{+}s,j{\twodots}j{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} 
                         }
                         \For{\(i \in [(h{\pm}s+n) \bmod n]\)}{ \label{alg:square-column-first}
-                            \FFloyd{\(d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,h{\twodots}h{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} 
+                            \FFloyd{\(d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[i{\twodots}i{+}s,h{\twodots}h{+}s]\)} 
                         }
                         
                         \(t\).\FAdd{\FThread{ 
                             \FDo{
                                 \For{\(j,i \in [(k{\pm}1+n) \bmod n] \times [((-k{\twodots}k)+n) \bmod n] \setminus 0\)}{ \label{alg:square-row}
-                                    \FFloyd{\(d[i{\twodots}i{+}b,j{\twodots}j{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} 
+                                    \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s]\)} 
                                 }
                                 \For{\(i,j \in [(k{\pm}1+n) \bmod n] \times [((-k{+}1{\twodots}k{-}1)+n) \bmod n] \setminus 0\)}{ \label{alg:square-column}
-                                    \FFloyd{\(d[i{\twodots}i{+}b,j{\twodots}j{+}b],d[i{\twodots}i{+}b,h{\twodots}h{+}b],d[h{\twodots}h{+}b,j{\twodots}j{+}b],pred[h{\twodots}h{+}b,h{\twodots}h{+}b]\)} 
+                                    \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s]\)} 
                                 }
                             }
                         }}
