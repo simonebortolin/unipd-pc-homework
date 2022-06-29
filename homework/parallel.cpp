@@ -42,24 +42,24 @@ int main(int argc , char ** argv) {
     MPI_Bcast( &s, 1, MPI_INT, 0, MPI_COMM_WORLD );
 
     if(thread_rank != 0) {
-        t0 = MPI_Wtime ();
         dist = pc::matrix<double>(n);
         pred = pc::matrix<int>(n);
         dist.fill(std::numeric_limits<double>::infinity());
-    }
+    } else 
+        t0 = MPI_Wtime ();
 
     floydWarhsallSquaredParallel(dist, pred, n, s,  thread_size, thread_rank);
-
+    if(thread_rank == 0) 
+        t1 = MPI_Wtime ();
     MPI_Barrier( MPI_COMM_WORLD );
 
 
     if(thread_rank == 0) {
 
-        t1 = MPI_Wtime ();
-        time = ( t1 - t0 );
-        printf (" That took %f useconds \n ", time );
+        time = 1.e6*( t1 - t0 );
+        printf ("par sq %d took %f useconds \n ", thread_size, time );
 
-        std::cout << dist << std::endl;
+        if( n < 20) std::cout << dist << std::endl;
     }
 
     MPI_Finalize ();
