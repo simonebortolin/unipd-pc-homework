@@ -8,6 +8,9 @@
 void floyd(pc::matrix<double> &d, pc::matrix<double> &a, pc::matrix<double> &b, pc::matrix<int> &preda, pc::matrix<int> &predb);
 template <class T>
 void to_blocked_matrix(pc::matrix<T> & from, pc::matrix<pc::matrix<T>> & to, int s);
+template <class T>
+void from_blocked_matrix(pc::matrix<pc::matrix<T>> & from, pc::matrix<T>  & to, int s);
+int gi = 0;
 
 int main(int argc , char ** argv) {
     int thread_rank , thread_size ;
@@ -40,6 +43,13 @@ int main(int argc , char ** argv) {
             MPI_Abort(MPI_COMM_WORLD, -1);
             return -1;
         }
+
+        // initialised predecessors
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                pred.set(i, j, j);
+            }
+        }
     }
     else {
         dist = pc::matrix<double>(dist.getSize());
@@ -58,6 +68,7 @@ int main(int argc , char ** argv) {
     pc::matrix< pc::matrix<int>> p = pc::matrix< pc::matrix<int>>(n/s);
     to_blocked_matrix(dist, d, s);
     to_blocked_matrix(pred, p, s);
+    std::cout << p << std::endl;
 
 
     //computation of min path costs
@@ -88,34 +99,26 @@ int main(int argc , char ** argv) {
             MPI_Bcast(d[i][h].begin(), s*s, MPI_DOUBLE, (k*s+3) % thread_size, MPI_COMM_WORLD);
             MPI_Bcast(p[i][h].begin(), s*s, MPI_INT, (k*s+3) % thread_size, MPI_COMM_WORLD);
 
-            for(int jj = -k; jj <= k; jj++) {
+            for(int jj = h-k; jj <= h+k; jj++) {
                 j = (jj+ns) % ns;
                 if(j==h) continue;
-                i = (h - 1 + ns) % ns;
-                printf("h: %d k: %d j: %d i: %d\n", h, k, j, i );
-
+                i = (h - k + ns) % ns;
                 if(thread_rank == 0) floyd(d[i][j], d[i][h], d[h][j], p[i][j], p[h][j]);
                 MPI_Bcast(d[h][j].begin(), s*s, MPI_DOUBLE, 0, MPI_COMM_WORLD);
                 MPI_Bcast(p[h][j].begin(), s*s, MPI_INT, 0, MPI_COMM_WORLD);
-                i = (h + 1 + ns) % ns;
-                printf("h: %d k: %d j: %d i: %d\n", h, k, j, i );
+                i = (h + k + ns) % ns;
                 if(thread_rank == 0) floyd(d[i][j], d[i][h], d[h][j], p[i][j], p[h][j]);
                 MPI_Bcast(d[h][j].begin(), s*s, MPI_DOUBLE, 0, MPI_COMM_WORLD);
                 MPI_Bcast(p[h][j].begin(), s*s, MPI_INT, 0, MPI_COMM_WORLD);
             }
-            printf("ok\n");
-            for(int ii = -k; ii <= k; ii++) {
-                if(ii==-k) continue;
-                if(ii==k) continue;
+            for(int ii = h-k +1; ii < k+h; ii++) {
                 i = (ii+ns) % ns;
                 if(i==h) continue;
-                j = (h - 1 + ns) % ns;
-                printf("h: %d k: %d j: %d i: %d\n", h, k, j, i );
+                j = (h - k + ns) % ns;
                 if(thread_rank == 0) floyd(d[i][j], d[i][h], d[h][j], p[i][j], p[h][j]);
                 MPI_Bcast(d[h][j].begin(), s*s, MPI_DOUBLE, 0, MPI_COMM_WORLD);
                 MPI_Bcast(p[h][j].begin(), s*s, MPI_INT, 0, MPI_COMM_WORLD);
-                i = (h + 1 + ns) % ns;
-                printf("h: %d k: %d j: %d i: %d\n", h, k, j, i );
+                j = (h + k + ns) % ns;
                 if(thread_rank == 0) floyd(d[i][j], d[i][h], d[h][j], p[i][j], p[h][j]);
                 MPI_Bcast(d[h][j].begin(), s*s, MPI_DOUBLE, 0, MPI_COMM_WORLD);
                 MPI_Bcast(p[h][j].begin(), s*s, MPI_INT, 0, MPI_COMM_WORLD);
@@ -123,10 +126,14 @@ int main(int argc , char ** argv) {
 
         }
         MPI_Barrier( MPI_COMM_WORLD );
+
+        from_blocked_matrix(d,dist,s);
+        std::cout << dist << std::endl;
     }
 
     t1 = MPI_Wtime();
     if(thread_rank == 0) {
+        from_blocked_matrix(d,dist,s);
         std::cout << dist << std::endl;
     }
 
@@ -134,12 +141,12 @@ int main(int argc , char ** argv) {
 
 template <class T>
 void to_blocked_matrix(pc::matrix<T> & from, pc::matrix<pc::matrix<T>> & to, int s) {
-    for(int dx = 0, x=0; dx < from.getSize(); dx+= s, x++) {
-        for(int dy = 0, y=0; dy < from.getSize(); dy+= s, y++) {
+    int n = from.getSize();
+    for(int dx = 0, x=0; dx < n; dx+= s, x++) {
+        for(int dy = 0, y=0; dy < n; dy+= s, y++) {
             to.set(x, y, pc::matrix<T>(s));
             for(int k=0; k<s;k++) {
-
-                std::copy(&from[dx][dy], &from[dx][dy +s], to[x][y].begin() + k*s);
+                std::copy(&from[dx+k][dy], &from[dx+k][dy] +s, to[x][y].begin() + k*s);
             }
         }
     }
@@ -148,17 +155,17 @@ void to_blocked_matrix(pc::matrix<T> & from, pc::matrix<pc::matrix<T>> & to, int
 
 template <class T>
 void from_blocked_matrix(pc::matrix<pc::matrix<T>> & from, pc::matrix<T>  & to, int s) {
-    for(int dx = 0, x=0; dx < from.getSize(); dx+= s, x++) {
-        for(int dy = 0, y=0; dy < from.getSize(); dy+= s, y++) {
-            to[dx][dy] = pc::matrix<T>(s);
+    int n = from.getSize();
+    for(int dx = 0, x=0; dx < n; dx+= s, x++) {
+        for(int dy = 0, y=0; dy < n; dy+= s, y++) {
             for(int k=0; k<s;k++) {
-                std::copy(to[dx][dy].begin() + k*s, to[dx][dy].begin() + k*s + s, &from[dx][dy]);
+               std::copy(from[x][y].begin() + k*s, from[x][y].begin() + k*s + s, &to[dx+k][dy]);
             }
         }
     }
 }
-
 void floyd(pc::matrix<double> &d, pc::matrix<double> &a, pc::matrix<double> &b, pc::matrix<int> &preda, pc::matrix<int> &predb) {
+    gi++;
     int  s = d.getSize();
     double tr;
     int pr;
