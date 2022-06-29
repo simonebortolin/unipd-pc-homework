@@ -41,6 +41,8 @@ namespace pc {
         ~matrix();
 
         void fill(T t);
+
+        matrix();
     };
 
     template <class T>
@@ -74,7 +76,6 @@ namespace pc {
 
     template <class T>
     matrix<T>::matrix(int size) {
-        _size = size;
         create(size);
     }
 
@@ -110,7 +111,6 @@ namespace pc {
     T matrix<T>::get(int i, int j) const {
         if(i < _size && j < _size && i >= 0 && j >= 0)
             return _matrix[i*_size + j];
-
         throw std::invalid_argument( "invalid i or j" );
     }
 
@@ -118,7 +118,9 @@ namespace pc {
     void matrix<T>::set(int i, int j, T w){
         if(i < _size && j < _size && i >= 0 && j >= 0)
             _matrix[i*_size + j] = w;
-        else throw std::invalid_argument( "invalid i or j" );
+        else {
+            throw std::invalid_argument( "invalid i or j" );
+        }
     }
 
     template <class T>
@@ -229,6 +231,11 @@ namespace pc {
     template<class T>
     T *matrix<T>::end() {
         return _matrix + _size * _size;
+    }
+
+    template<class T>
+    matrix<T>::matrix() {
+        create(0);
     }
 
 
