@@ -62,7 +62,6 @@ int main(int argc , char ** argv) {
 
     double t0 , t1 , time;
 
-    t0 = MPI_Wtime();
 
     pc::matrix< pc::matrix<double>> d = pc::matrix< pc::matrix<double>>(n/s);
     pc::matrix< pc::matrix<int>> p = pc::matrix< pc::matrix<int>>(n/s);
@@ -70,6 +69,9 @@ int main(int argc , char ** argv) {
     to_blocked_matrix(pred, p, s);
 
     int th = 0;
+
+    t0 = MPI_Wtime();
+
 
     //computation of min path costs
     for (int h = 0; h < n/s; h ++) {
@@ -142,8 +144,7 @@ int main(int argc , char ** argv) {
 
     t1 = MPI_Wtime();
     if(thread_rank == 0) {
-        to_linear_matrix(d, dist, s);
-        std::cout << dist << std::endl;
+        printf ("par sq %d took %f useconds \n", thread_size, time );
     }
 
 }
