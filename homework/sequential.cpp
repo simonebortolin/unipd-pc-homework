@@ -43,6 +43,7 @@ pc::matrix<int> floydWarhsallSeq(pc::matrix<double> &dist){
                 throw std::invalid_argument( "negative cycle" );
             }
         }
+        std::cout << dist << std::endl;
     }
     return pred;
 }

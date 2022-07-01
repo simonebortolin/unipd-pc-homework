@@ -33,9 +33,7 @@ int main(int argc , char ** argv) {
         n = dist.getSize();
     }
 
-
     double t0 , t1 , time;
-
 
     MPI_Barrier( MPI_COMM_WORLD );
     MPI_Bcast( &n, 1, MPI_INT, 0, MPI_COMM_WORLD );
@@ -57,7 +55,7 @@ int main(int argc , char ** argv) {
     if(thread_rank == 0) {
 
         time = 1.e6*( t1 - t0 );
-        printf ("par sq %d took %f useconds \n ", thread_size, time );
+        printf ("par sq %d took %f useconds \n", thread_size, time );
 
         if( n < 20) std::cout << dist << std::endl;
     }
@@ -74,8 +72,9 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
         return;
     }
 
-    if(thread_rank == 0) {
 
+
+    if(thread_rank == 0) {
         // initialised predecessors
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -119,6 +118,7 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
                     whiteFor(s, n, h, k, dist, pred, pf);
                 } else {
 
+                    printf("cpu %d send packet %d to cpu %d \n", thread_rank, k, (k-1) % (thread_size -1) +1);
                     MPI_Send(&k, 1, MPI_INT, (k-1) % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
                     MPI_Send(dist.begin(), n*n, MPI_DOUBLE, (k-1) % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
                     MPI_Send(pred.begin(), n*n, MPI_INT, (k-1) % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
@@ -126,16 +126,17 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
             }
 
             if (thread_size != 1) {
-                MPI_Barrier(MPI_COMM_WORLD);
                 pc::matrix<double> merge = pc::matrix<double>(n);
                 pc::matrix<int> mergePred = pc::matrix<int>(n);
 
                 for(int *p = pred.begin(), * ppf = pf.begin(); p < pred.end() && ppf < pf.end(); p++, ppf++) {
-                    *p = *p**ppf;
+                    *p = *p * *ppf;
                 }
-
+                printf("cpu %d wait to reduce\n", thread_rank);
+                MPI_Barrier(MPI_COMM_WORLD);
                 MPI_Reduce(dist.begin(), merge.begin(), n*n, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
                 MPI_Reduce(pred.begin(), mergePred.begin(), n*n, MPI_INT, MPI_MAX, 0, MPI_COMM_WORLD);
+                printf("cpu %d reduce\n", thread_rank);
 
                 dist = merge;
                 pred = mergePred;
@@ -157,11 +158,14 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
             pf.fill(0);
 
             for (int i = 0; i < kk / (thread_size -1); i++) {
+                printf("cpu %d is ready to recive packet %d \n", thread_rank, i);
+
                 MPI_Status status;
                 int k = 0;
                 MPI_Recv(&k, 1, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
                 MPI_Recv(dist.begin(), n*n, MPI_DOUBLE, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
                 MPI_Recv(pred.begin(), n*n, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
+                printf("cpu %d recive packet %d \n", thread_rank, i);
 
                 whiteFor(s, n, h, k, dist, pred, pf);
 
@@ -169,13 +173,14 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
 
             // if we have to do one more execution
             if((thread_rank -1) < (kk % (thread_size -1))) {
-                //printf("cpu %d is ready to recive last \n", thread_rank);
+                printf("cpu %d is ready to recive last packet \n", thread_rank);
 
                 MPI_Status status;
                 int k = 0;
                 MPI_Recv(&k, 1, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
                 MPI_Recv(dist.begin(), n*n, MPI_DOUBLE, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
                 MPI_Recv(pred.begin(), n*n, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
+                printf("cpu %d recive packet packet \n", thread_rank);
 
                 whiteFor(s, n, h, k, dist, pred, pf);
             }
@@ -184,9 +189,11 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
                 *p = *p**ppf;
             }
 
+            printf("cpu %d wait to reduce\n", thread_rank);
             MPI_Barrier ( MPI_COMM_WORLD );
             MPI_Reduce(dist.begin(), dist.begin(), n*n, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
             MPI_Reduce(pred.begin(), pred.begin(), n*n, MPI_INT, MPI_MAX, 0, MPI_COMM_WORLD);
+            printf("cpu %d reduce\n", thread_rank);
         }
     }
 }

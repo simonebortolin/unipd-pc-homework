@@ -22,10 +22,10 @@ int main(int argc , char ** argv) {
     t2 = MPI_Wtime ();
     
     time = 1.e6*( t1 - t0 );
-    printf (" seq take %f useconds \n ", time );
+    printf (" seq take %f useconds \n", time );
 
     time = 1.e6*( t2 - t1 );
-    printf (" sq take %f useconds \n ", time );
+    printf ("  sq take %f useconds \n", time );
 
     if(cseq != csq) {
         printf ("not ok" );
