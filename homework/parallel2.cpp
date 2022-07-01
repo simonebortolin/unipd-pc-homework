@@ -143,6 +143,7 @@ int main(int argc , char ** argv) {
     }
 
     t1 = MPI_Wtime();
+    time = 1.e6*( t1 - t0 );
     if(thread_rank == 0) {
         printf ("par sq %d took %f useconds \n", thread_size, time );
     }
