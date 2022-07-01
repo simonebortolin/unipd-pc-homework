@@ -5,11 +5,11 @@
 
 #define TAG 21
 
-void floyd(pc::matrix<double> &d, pc::matrix<double> &a, pc::matrix<double> &b, pc::matrix<int> &preda, pc::matrix<int> &predb);
+void floyd(pc::matrix<double> &dist, pc::matrix<double> &a, pc::matrix<double> &b, pc::matrix<int> &preda, pc::matrix<int> &predb);
 template <class T>
 void to_blocked_matrix(pc::matrix<T> & from, pc::matrix<pc::matrix<T>> & to, int s);
 template <class T>
-void from_blocked_matrix(pc::matrix<pc::matrix<T>> & from, pc::matrix<T>  & to, int s);
+void to_linear_matrix(pc::matrix<pc::matrix<T>> & from, pc::matrix<T>  & to, int s);
 int gi = 0;
 
 int main(int argc , char ** argv) {
@@ -68,8 +68,6 @@ int main(int argc , char ** argv) {
     pc::matrix< pc::matrix<int>> p = pc::matrix< pc::matrix<int>>(n/s);
     to_blocked_matrix(dist, d, s);
     to_blocked_matrix(pred, p, s);
-    std::cout << p << std::endl;
-
 
     //computation of min path costs
     for (int h = 0; h < n/s; h ++) {
@@ -87,7 +85,7 @@ int main(int argc , char ** argv) {
             MPI_Bcast(d[h][j].begin(), s*s, MPI_DOUBLE, (k*s) % thread_size, MPI_COMM_WORLD);
             MPI_Bcast(p[h][j].begin(), s*s, MPI_INT, (k*s) % thread_size, MPI_COMM_WORLD);
             j = (h + 1 + ns) % ns;
-            if(thread_rank == (k*s+1) % thread_size) floyd(d[h][j], d[h][h], d[h][j], p[h][j], p[h][j]);
+            if(thread_rank == (k*s+1) % thread_size) floyd(d[h][j], d[h][h], d[h][j], p[h][h], p[h][j]);
             MPI_Bcast(d[h][j].begin(), s*s, MPI_DOUBLE, (k*s+1) % thread_size, MPI_COMM_WORLD);
             MPI_Bcast(p[h][j].begin(), s*s, MPI_INT, (k*s+1) % thread_size, MPI_COMM_WORLD);
             int i = (h - 1 + ns) % ns;
@@ -127,13 +125,15 @@ int main(int argc , char ** argv) {
         }
         MPI_Barrier( MPI_COMM_WORLD );
 
-        from_blocked_matrix(d,dist,s);
-        std::cout << dist << std::endl;
+        to_linear_matrix(d, dist, s);
+        //std::cout << dist << std::endl;
+        //std::cout << d << std::endl;
+
     }
 
     t1 = MPI_Wtime();
     if(thread_rank == 0) {
-        from_blocked_matrix(d,dist,s);
+        to_linear_matrix(d, dist, s);
         std::cout << dist << std::endl;
     }
 
@@ -146,7 +146,9 @@ void to_blocked_matrix(pc::matrix<T> & from, pc::matrix<pc::matrix<T>> & to, int
         for(int dy = 0, y=0; dy < n; dy+= s, y++) {
             to.set(x, y, pc::matrix<T>(s));
             for(int k=0; k<s;k++) {
-                std::copy(&from[dx+k][dy], &from[dx+k][dy] +s, to[x][y].begin() + k*s);
+                for(int h=0; h< s; h++) {
+                    to[x][y][k][h] = from[dx+k][dy+h];
+                }
             }
         }
     }
@@ -154,19 +156,21 @@ void to_blocked_matrix(pc::matrix<T> & from, pc::matrix<pc::matrix<T>> & to, int
 }
 
 template <class T>
-void from_blocked_matrix(pc::matrix<pc::matrix<T>> & from, pc::matrix<T>  & to, int s) {
-    int n = from.getSize();
+void to_linear_matrix(pc::matrix<pc::matrix<T>> & from, pc::matrix<T>  & to, int s) {
+    int n = to.getSize();
     for(int dx = 0, x=0; dx < n; dx+= s, x++) {
         for(int dy = 0, y=0; dy < n; dy+= s, y++) {
             for(int k=0; k<s;k++) {
-               std::copy(from[x][y].begin() + k*s, from[x][y].begin() + k*s + s, &to[dx+k][dy]);
+                for(int h=0; h< s; h++) {
+                    to[dx+k][dy+h] = from[dx/s][dy/s][k][h];
+                }
             }
         }
     }
 }
-void floyd(pc::matrix<double> &d, pc::matrix<double> &a, pc::matrix<double> &b, pc::matrix<int> &preda, pc::matrix<int> &predb) {
+void floyd(pc::matrix<double> &dist, pc::matrix<double> &a, pc::matrix<double> &b, pc::matrix<int> &preda, pc::matrix<int> &predb) {
     gi++;
-    int  s = d.getSize();
+    int  s = dist.getSize();
     double tr;
     int pr;
     for(int h=0; h<s;h++){
@@ -176,10 +180,10 @@ void floyd(pc::matrix<double> &d, pc::matrix<double> &a, pc::matrix<double> &b, 
                 //path comparison between current i->j and i->h->j
                 tr = a.get(i,h) + b.get(h,j);
 
-                if(  tr < d.get(i,j) ){
+                if(tr < dist.get(i, j) ){
 
                     //update of min path distance and predecessors
-                    d.set(i,j,tr);
+                    dist.set(i, j, tr);
                     pr = predb.get(h,j);
                     preda.set(i,j,pr);
 
