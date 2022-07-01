@@ -5,9 +5,9 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(sequential main.cpp matrix.cpp matrix.h sequential.cpp sequential.h)
 
-add_executable(parallel parallel.cpp matrix.cpp matrix.h sequential.cpp sequential.h)
+add_executable(parallelold parallel.cpp matrix.cpp matrix.h sequential.cpp sequential.h)
 
-add_executable(parallel2 parallel2.cpp matrix.cpp matrix.h sequential.cpp sequential.h)
+add_executable(parallel parallel2.cpp matrix.cpp matrix.h sequential.cpp sequential.h)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
