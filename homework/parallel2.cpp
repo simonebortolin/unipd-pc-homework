@@ -68,8 +68,6 @@ int main(int argc , char ** argv) {
     to_blocked_matrix(dist, d, s);
     to_blocked_matrix(pred, p, s);
 
-    int th = 0;
-
     t0 = MPI_Wtime();
 
 
@@ -109,29 +107,25 @@ int main(int argc , char ** argv) {
                 j = (jj+ns) % ns;
                 if(j==h) continue;
                 i = (h - k + ns) % ns;
-                if(thread_rank == (k*s+th) % thread_size) floyd(d[i][j], d[i][h], d[h][j], p[i][j], p[h][j]);
-                MPI_Bcast(d[i][j].begin(), s*s, MPI_DOUBLE, (k*s+th) % thread_size, MPI_COMM_WORLD);
-                MPI_Bcast(p[i][j].begin(), s*s, MPI_INT, (k*s+th) % thread_size, MPI_COMM_WORLD);
-                th++;
+                if(thread_rank == (k % thread_size)) floyd(d[i][j], d[i][h], d[h][j], p[i][j], p[h][j]);
+                MPI_Bcast(d[i][j].begin(), s*s, MPI_DOUBLE,  k % thread_size, MPI_COMM_WORLD);
+                MPI_Bcast(p[i][j].begin(), s*s, MPI_INT,  k % thread_size, MPI_COMM_WORLD);
                 i = (h + k + ns) % ns;
-                if(thread_rank == (k*s+th) % thread_size) floyd(d[i][j], d[i][h], d[h][j], p[i][j], p[h][j]);
-                MPI_Bcast(d[i][j].begin(), s*s, MPI_DOUBLE, (k*s+th) % thread_size, MPI_COMM_WORLD);
-                MPI_Bcast(p[i][j].begin(), s*s, MPI_INT, (k*s+th) % thread_size, MPI_COMM_WORLD);
-                th++;
+                if(thread_rank == (k % thread_size)) floyd(d[i][j], d[i][h], d[h][j], p[i][j], p[h][j]);
+                MPI_Bcast(d[i][j].begin(), s*s, MPI_DOUBLE,  k % thread_size, MPI_COMM_WORLD);
+                MPI_Bcast(p[i][j].begin(), s*s, MPI_INT,  k % thread_size, MPI_COMM_WORLD);
             }
             for(int ii = h-k +1; ii < k+h; ii++) {
                 i = (ii+ns) % ns;
                 if(i==h) continue;
                 j = (h - k + ns) % ns;
-                if(thread_rank == (k*s+th) % thread_size) floyd(d[i][j], d[i][h], d[h][j], p[i][j], p[h][j]);
-                MPI_Bcast(d[i][j].begin(), s*s, MPI_DOUBLE, (k*s+th) % thread_size, MPI_COMM_WORLD);
-                MPI_Bcast(p[i][j].begin(), s*s, MPI_INT, (k*s+th) % thread_size, MPI_COMM_WORLD);
-                th++;
+                if(thread_rank == (k % thread_size)) floyd(d[i][j], d[i][h], d[h][j], p[i][j], p[h][j]);
+                MPI_Bcast(d[i][j].begin(), s*s, MPI_DOUBLE,  k % thread_size, MPI_COMM_WORLD);
+                MPI_Bcast(p[i][j].begin(), s*s, MPI_INT,  k % thread_size, MPI_COMM_WORLD);
                 j = (h + k + ns) % ns;
-                if(thread_rank == (k*s+th) % thread_size) floyd(d[i][j], d[i][h], d[h][j], p[i][j], p[h][j]);
-                MPI_Bcast(d[i][j].begin(), s*s, MPI_DOUBLE, (k*s+th) % thread_size, MPI_COMM_WORLD);
-                MPI_Bcast(p[i][j].begin(), s*s, MPI_INT, (k*s+th) % thread_size, MPI_COMM_WORLD);
-                th++;
+                if(thread_rank == (k % thread_size)) floyd(d[i][j], d[i][h], d[h][j], p[i][j], p[h][j]);
+                MPI_Bcast(d[i][j].begin(), s*s, MPI_DOUBLE,  k % thread_size, MPI_COMM_WORLD);
+                MPI_Bcast(p[i][j].begin(), s*s, MPI_INT, k % thread_size, MPI_COMM_WORLD);
             }
         }
         MPI_Barrier( MPI_COMM_WORLD );
@@ -144,7 +138,7 @@ int main(int argc , char ** argv) {
     t1 = MPI_Wtime();
     time = 1.e6*( t1 - t0 );
     if(thread_rank == 0) {
-        printf ("par sq %d took %f useconds \n", thread_size, time );
+        printf ("par sq,%d,%f\n", thread_size, time );
     }
     MPI_Finalize ();
     return 0;
