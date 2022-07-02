@@ -1,0 +1,15 @@
+\begin{tikzpicture}
+
+    \node[rectangle,draw, minimum width =1cm,  minimum height = 1cm] (1) at (0,0) {\(1\)};
+
+    \node[rectangle,draw, minimum width =1cm, minimum height = 1cm] (2) at (2,0) {\(2\)};
+
+    \node[rectangle,draw, minimum width =1cm,   minimum height = 1cm] (3) at (4,0) {\(3\)};
+
+    \node[rectangle, minimum width =1cm,   minimum height = 1cm] (4) at (6,0) {\(\dots\)};
+
+    \node[rectangle,draw, minimum width =1cm,   minimum height = 1cm] (5) at (8,0) {\(7\)};
+
+    \path [draw] (1) -- (2)  -- (3) -- (4) -- (5);
+
+\end{tikzpicture}
