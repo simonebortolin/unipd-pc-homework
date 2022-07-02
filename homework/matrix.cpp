@@ -26,9 +26,9 @@ namespace pc {
     }
 
     template <>
-    double convertTo<double>(const std::string &str) {
-        if(str == "i") return std::numeric_limits<double>::infinity();
-        if(str == "inf") return std::numeric_limits<double>::infinity();
+    float convertTo<float>(const std::string &str) {
+        if(str == "i") return std::numeric_limits<float>::infinity();
+        if(str == "inf") return std::numeric_limits<float>::infinity();
         return std::stod(str);
     }
 
