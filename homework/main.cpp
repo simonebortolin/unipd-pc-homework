@@ -12,25 +12,25 @@ int main(int argc , char ** argv) {
     pc::matrix<double> csq = cseq;
 
     double t0 , t1 ,t2, time;
-    //t0 = MPI_Wtime ();
+    t0 = MPI_Wtime ();
 
     pc::matrix<int> out = floydWarhsallSeq(cseq);
 
-    //t1 = MPI_Wtime();
+    t1 = MPI_Wtime();
     pc::matrix<int> outc = floydWarhsallSquared(csq, s);
 
-    //t2 = MPI_Wtime ();
+    t2 = MPI_Wtime ();
     
-    //time = 1.e6*( t1 - t0 );
-    //printf (" seq take %f useconds \n", time );
+    time = 1.e6*( t1 - t0 );
+    printf ("seq,,%f\n", time );
 
-    //time = 1.e6*( t2 - t1 );
-    //printf ("  sq take %f useconds \n", time );
+    time = 1.e6*( t2 - t1 );
+    printf ("sq,,%f\n", time );
 
     if(cseq != csq) {
         printf ("not ok" );
     } else {
-	if(  cseq.getSize()< 20) std::cout << cseq << std::endl; 
+	if(  cseq.getSize()<= 20) std::cout << cseq << std::endl;
     }
 
     return 0;

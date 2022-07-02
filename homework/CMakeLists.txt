@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(sequential main.cpp matrix.cpp matrix.h sequential.cpp sequential.h basic_matrix.h)
 
-add_executable(parallelold parallel.cpp matrix.cpp matrix.h sequential.cpp sequential.h basic_matrix.h)
+add_executable(parallel1 parallel.cpp matrix.cpp matrix.h sequential.cpp sequential.h basic_matrix.h)
 
 add_executable(parallel parallel2.cpp matrix.cpp matrix.h sequential.cpp sequential.h matrix_matrix.h basic_matrix.h)
 

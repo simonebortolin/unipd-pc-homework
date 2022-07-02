@@ -131,7 +131,7 @@ namespace pc {
     matrix<T> &matrix<T>::operator=(const matrix<T> &m) {
         if(&m != this) {
             if(this->getSize() != m._size) {
-                if(this->_destroy != nullptr) this->_destroy(this->_matrix);
+                destroy();
                 (*this) = matrix<T>(m._size);
             }
             std::copy(m._matrix, m._matrix + (m._size * m._size), this->_matrix);
