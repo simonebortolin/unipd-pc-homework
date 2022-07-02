@@ -7,11 +7,11 @@ int main(int argc , char ** argv) {
     int s;
     std::cin >> s;
 
-    pc::matrix<double> cseq = pc::matrix<double>(0);
+    pc::matrix<float> cseq = pc::matrix<float>(0);
     std::cin >> cseq;
-    pc::matrix<double> csq = cseq;
+    pc::matrix<float> csq = cseq;
 
-    double t0 , t1 ,t2, time;
+    float t0 , t1 ,t2, time;
     t0 = MPI_Wtime ();
 
     pc::matrix<int> out = floydWarhsallSeq(cseq);
