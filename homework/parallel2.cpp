@@ -1,15 +1,15 @@
 #include <iostream>
 #include <mpi.h>
 #include "matrix.h"
-#include "sequential.h"
+#include "matrix_matrix.h"
 
 #define TAG 21
 
-void floyd(pc::matrix<double> &dist, pc::matrix<double> &a, pc::matrix<double> &b, pc::matrix<int> &preda, pc::matrix<int> &predb);
+void floyd(pc::basic_matrix<double> &dist, pc::basic_matrix<double> &a, pc::basic_matrix<double> &b, pc::basic_matrix<int> &preda, pc::basic_matrix<int> &predb);
 template <class T>
-void to_blocked_matrix(pc::matrix<T> & from, pc::matrix<pc::matrix<T>> & to, int s);
+void to_blocked_matrix(pc::matrix<T> & from, pc::matrix_matrix<T> & to, int s);
 template <class T>
-void to_linear_matrix(pc::matrix<pc::matrix<T>> & from, pc::matrix<T>  & to, int s);
+void to_linear_matrix(pc::matrix_matrix<T> & from, pc::matrix<T>  & to, int s);
 int gi = 0;
 
 int main(int argc , char ** argv) {
@@ -32,7 +32,6 @@ int main(int argc , char ** argv) {
 
         n = dist.getSize();
     }
-
 
     MPI_Barrier( MPI_COMM_WORLD );
     MPI_Bcast( &n, 1, MPI_INT, 0, MPI_COMM_WORLD );
@@ -63,8 +62,8 @@ int main(int argc , char ** argv) {
     double t0 , t1 , time;
 
 
-    pc::matrix< pc::matrix<double>> d = pc::matrix< pc::matrix<double>>(n / s);
-    pc::matrix< pc::matrix<int>> p = pc::matrix< pc::matrix<int>>(n / s);
+    pc::matrix_matrix<double> d = pc::matrix_matrix<double>(n , s);
+    pc::matrix_matrix<int> p = pc::matrix_matrix<int>(n , s);
     to_blocked_matrix(dist, d, s);
     to_blocked_matrix(pred, p, s);
 
@@ -147,8 +146,8 @@ int main(int argc , char ** argv) {
         }
         MPI_Barrier( MPI_COMM_WORLD );
 
-        //to_linear_matrix(d, dist, s);
-        //if(thread_rank==0) std::cout << dist << std::endl;
+        to_linear_matrix(d, dist, s);
+        if(thread_rank==0) std::cout << dist << std::endl;
         //std::cout << d << std::endl;
     }
 
@@ -156,17 +155,18 @@ int main(int argc , char ** argv) {
     time = 1.e6*( t1 - t0 );
     if(thread_rank == 0) {
         printf ("par sq,%d,%f\n", thread_size, time );
+        to_linear_matrix(d, dist, s);
+        std::cout << dist << std::endl;
     }
     MPI_Finalize ();
     return 0;
 }
 
 template <class T>
-void to_blocked_matrix(pc::matrix<T> & from, pc::matrix<pc::matrix<T>> & to, int s) {
+void to_blocked_matrix(pc::matrix<T> & from, pc::matrix_matrix<T> & to, int s) {
     int n = from.getSize();
     for(int dx = 0, x=0; dx < n; dx+= s, x++) {
         for(int dy = 0, y=0; dy < n; dy+= s, y++) {
-            to.set(x, y, pc::matrix<T>(s));
             for(int k=0; k<s;k++) {
                 for(int h=0; h< s; h++) {
                     to[x][y][k][h] = from[dx+k][dy+h];
@@ -178,7 +178,7 @@ void to_blocked_matrix(pc::matrix<T> & from, pc::matrix<pc::matrix<T>> & to, int
 }
 
 template <class T>
-void to_linear_matrix(pc::matrix<pc::matrix<T>> & from, pc::matrix<T>  & to, int s) {
+void to_linear_matrix(pc::matrix_matrix<T> & from, pc::matrix<T>  & to, int s) {
     int n = to.getSize();
     for(int dx = 0, x=0; dx < n; dx+= s, x++) {
         for(int dy = 0, y=0; dy < n; dy+= s, y++) {
@@ -190,7 +190,7 @@ void to_linear_matrix(pc::matrix<pc::matrix<T>> & from, pc::matrix<T>  & to, int
         }
     }
 }
-void floyd(pc::matrix<double> &dist, pc::matrix<double> &a, pc::matrix<double> &b, pc::matrix<int> &preda, pc::matrix<int> &predb) {
+void floyd(pc::basic_matrix<double> &dist, pc::basic_matrix<double> &a, pc::basic_matrix<double> &b, pc::basic_matrix<int> &preda, pc::basic_matrix<int> &predb) {
     gi++;
     int  s = dist.getSize();
     double tr;
