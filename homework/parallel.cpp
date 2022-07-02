@@ -43,11 +43,11 @@ int main(int argc , char ** argv) {
         dist = pc::matrix<double>(n);
         pred = pc::matrix<int>(n);
         dist.fill(std::numeric_limits<double>::infinity());
-    } else 
+    } else
         t0 = MPI_Wtime ();
 
     floydWarhsallSquaredParallel(dist, pred, n, s,  thread_size, thread_rank);
-    if(thread_rank == 0) 
+    if(thread_rank == 0)
         t1 = MPI_Wtime ();
     MPI_Barrier( MPI_COMM_WORLD );
 
@@ -64,7 +64,7 @@ int main(int argc , char ** argv) {
     return 0;
 }
 
-void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pred, int n, int s,  int thread_size, int thread_rank){
+void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pred, int n, int s, int thread_size, int thread_rank){
     if(((int)((double)n/(double)s))%2 == 0) {
         if(thread_rank == 0) {
             std::cout << "ERROR! work only with a odd division of matrix" << std::endl;

@@ -63,8 +63,8 @@ int main(int argc , char ** argv) {
     double t0 , t1 , time;
 
 
-    pc::matrix< pc::matrix<double>> d = pc::matrix< pc::matrix<double>>(n/s);
-    pc::matrix< pc::matrix<int>> p = pc::matrix< pc::matrix<int>>(n/s);
+    pc::matrix< pc::matrix<double>> d = pc::matrix< pc::matrix<double>>(n / s);
+    pc::matrix< pc::matrix<int>> p = pc::matrix< pc::matrix<int>>(n / s);
     to_blocked_matrix(dist, d, s);
     to_blocked_matrix(pred, p, s);
 
