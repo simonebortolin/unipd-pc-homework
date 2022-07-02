@@ -113,7 +113,37 @@
                         A graph is said to be \textbf{regular of degree \(\Delta\) } if all its nodes have degree \(\Delta\)
 
                     \heading{Diameter}
-                    \heading{Dichotomy}
+                    In an undirected graph \(G = (V, E)\), the distance \(dist_G(a, b)\) between two nodes \(a\) and \(b\) is defined as the length of a shortest path in \(G\) from \(a\) to \(b\). The \textbf{diameter of G} is defined as the maximum distance between any pair of nodes, that is:
+                    \begin{equation*}
+                        \operatorname{diam}(G) = \max_{a,b \in V} (dist_G (a,b))
+                    \end{equation*}
+
+                    \begin{description}
+                        \item[Diameter and Degree]  Lower bound for any connected graph \(G\) with \(P\) nodes and \(\operatorname{degree}(G) = \delta \geq 3\):
+                        \begin{equation*}
+                            \operatorname { diam } ( G ) > \log _ { \delta - 1 } ( P - 1 ) + \log _ { \delta - 1 } ( ( \delta - 2 ) / \delta ) 
+                        \end{equation*}
+                    \end{description}
+
+                
+                    
+                    \heading{Bandwidth}
+                    Let \(G = (V,E)\) be an undirected graph. Let \(S \subseteq V\) be a subset of nodes. 
+                    \(\delta_{G}(S)\) is the number of edges between set S and its complement \(V - S\)
+                    \begin{equation*}
+                        \delta_{G}(S)=|(S \times(V-S)) \cap E|
+                    \end{equation*}
+
+                    \begin{description}
+                        \item[Dichotomy width] Given \(m\) integer \(0 \leq m \leq|V| \):
+                        \begin{equation*}
+                            \delta_{G}(m)=\min_{S \subseteq V,|S|=m} \delta_{G}(S)
+                        \end{equation*}
+                        \item[Bisection width] Bisection width with \(m=\lfloor|V| / 2\rfloor\):
+                        \begin{equation*}
+                            b_{G}=\delta_{G}(\lfloor|V| / 2\rfloor)
+                        \end{equation*}
+                    \end{description}
 
                 \end{block}
             \end{column}

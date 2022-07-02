@@ -1,12 +1,12 @@
 # Fdb version 3
-["xdvipdfmx"] 1656752974 "poster.xdv" "poster.pdf" "poster" 1656752976
-  "poster.xdv" 1656752974 23420 2efbafdbd54fa2fbf9b6503fc88c4202 "xelatex"
+["xdvipdfmx"] 1656756567 "poster.xdv" "poster.pdf" "poster" 1656756568
+  "poster.xdv" 1656756566 29292 776250edd1e49b6c74393eabde3d91df "xelatex"
   (generated)
   "poster.pdf"
-["xelatex"] 1656752970 "c:/Users/pasto/Desktop/parallel/poster/poster.tex" "poster.xdv" "poster" 1656752976
+["xelatex"] 1656756562 "c:/Users/pasto/Desktop/parallel/unipd-pc-homework/poster/poster.tex" "poster.xdv" "poster" 1656756568
   "beamercolorthemeunipd-light.sty" 1656748632 1436 b92363ddb285d7e8bdba25b20e6a1d7b ""
   "beamerthemegemini.sty" 1656748633 5873 7981c2cbb4cdada3bb2a8747e680a048 ""
-  "c:/Users/pasto/Desktop/parallel/poster/poster.tex" 1656752955 4533 cf81901ea1c649bded4e9bc4631ff686 ""
+  "c:/Users/pasto/Desktop/parallel/unipd-pc-homework/poster/poster.tex" 1656756547 6447 d8989859a7b3e4c226da41322fbb175a ""
   "c:/texlive/2021/texmf-dist/fonts/map/fontname/texfonts.map" 1633615755 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "c:/texlive/2021/texmf-dist/fonts/tfm/adobe/zapfding/pzdr.tfm" 1633618522 1528 7e12f4c0fcf5a072cebdcfbfc610f54c ""
   "c:/texlive/2021/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1633614500 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -301,15 +301,15 @@
   "c:/texlive/2021/texmf.cnf" 1633618534 713 e69b156964470283e0530f5060668171 ""
   "media/DEI.pdf" 1656748633 4241 2dc011f76b9871dc4f8ca17fb098d621 ""
   "media/unipd_sigillo.pdf" 1656748635 86632 a6d909892bfc79a7c15b286b24da685e ""
-  "poster.aux" 1656752974 1135 bf7e4fdc8276342ce2a79ef312aa3508 "xelatex"
-  "poster.nav" 1656752974 307 9e520c26371a1250ff9fc1fe87f9c655 "xelatex"
-  "poster.out" 1656752974 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
-  "poster.tex" 1656752955 4533 cf81901ea1c649bded4e9bc4631ff686 ""
+  "poster.aux" 1656756566 1135 bf7e4fdc8276342ce2a79ef312aa3508 "xelatex"
+  "poster.nav" 1656756566 307 9e520c26371a1250ff9fc1fe87f9c655 "xelatex"
+  "poster.out" 1656756566 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
+  "poster.tex" 1656756547 6447 d8989859a7b3e4c226da41322fbb175a ""
   (generated)
+  "poster.nav"
   "poster.log"
   "poster.aux"
-  "poster.nav"
+  "poster.out"
   "poster.xdv"
   "poster.toc"
   "poster.snm"
-  "poster.out"
