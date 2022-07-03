@@ -11,7 +11,7 @@ int main(int argc , char ** argv) {
     std::cin >> cseq;
     pc::matrix<float> csq = cseq;
 
-    float t0 , t1 ,t2, time;
+    double t0 , t1 ,t2, time;
     t0 = MPI_Wtime ();
 
     pc::matrix<int> out = floydWarhsallSeq(cseq);

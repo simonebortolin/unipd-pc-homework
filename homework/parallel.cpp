@@ -34,7 +34,7 @@ int main(int argc , char ** argv) {
     }
 
 
-    float t0 , t1 , time;
+    double t0 , t1 , time;
 
 
     MPI_Barrier( MPI_COMM_WORLD );
