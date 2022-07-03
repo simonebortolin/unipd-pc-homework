@@ -12,7 +12,6 @@ template <class T>
 void to_linear_matrix(pc::matrix_matrix<T> & from, pc::matrix<T>  & to, int s);
 
 int main(int argc , char ** argv) {
-	try {
     int thread_rank , thread_size ;
     MPI_Init (& argc , & argv );
     MPI_Comm_rank ( MPI_COMM_WORLD , & thread_rank );
@@ -72,7 +71,7 @@ int main(int argc , char ** argv) {
     MPI_Bcast( dist.begin(), n*n, MPI_FLOAT, 0, MPI_COMM_WORLD );
     MPI_Bcast( pred.begin(), n*n, MPI_INT, 0, MPI_COMM_WORLD );
 
-    double t0 , t1 , time;
+    double t0 , t1;
 
 
     pc::matrix_matrix<float> d = pc::matrix_matrix<float>(n/s , s);
@@ -85,7 +84,7 @@ int main(int argc , char ** argv) {
 
     //computation of min path costs
     for (int h = 0; h < n/s; h ++) {
-size_t size_of_buffer = s*s*(sizeof(int)+sizeof(float));
+        int size_of_buffer = s*s*(sizeof(int)+sizeof(float));
         char * buffer = new char[size_of_buffer];
         position = 0;
         if(thread_rank == 0) {
@@ -212,17 +211,13 @@ size_t size_of_buffer = s*s*(sizeof(int)+sizeof(float));
     }
 
     t1 = MPI_Wtime();
-    time = 1.e6*( t1 - t0 );
     if(thread_rank==0) {
-        printf ("par2sq,%d,%f\n", thread_size, time );
+        printf ("par2sq,%d,%f\n", thread_size, t1 - t0 );
         if(n <= 20) {
             to_linear_matrix(d, dist, s);
             std::cout << dist << std::endl;
         }
     }
-	} catch (std::exception& e) {   // older compilers may throw other exceptions:
-    std::cerr << "some other standard exception caught: " << e.what() << '\n';
-  }
     MPI_Finalize ();
     return 0;
 }

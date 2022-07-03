@@ -56,7 +56,7 @@ int main(int argc , char ** argv) {
 
     if(thread_rank == 0) {
 
-        time = 1.e6*( t1 - t0 );
+        time = ( t1 - t0 );
         printf ("par1sq,%d,%f\n ", thread_size, time );
 
         if( n <= 20) std::cout << dist << std::endl;
