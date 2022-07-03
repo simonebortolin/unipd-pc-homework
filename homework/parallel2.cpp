@@ -206,10 +206,6 @@ int main(int argc , char ** argv) {
                 buffer = nullptr;
             }
         }
-        if(thread_rank == 0) {
-            to_linear_matrix(d, dist, s);
-            std::cout << dist << std::endl;
-        }
         MPI_Barrier( MPI_COMM_WORLD );
     }
 
