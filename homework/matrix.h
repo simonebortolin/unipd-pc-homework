@@ -100,7 +100,7 @@ namespace pc {
             std::getline(is, line, ';');
 
             std::vector<std::string> result = split(line, ",");
-            std::vector<float> doubleVector(result.size());
+            std::vector<float> floatVector(result.size());
             std::transform(result.begin(), result.end(), floatVector.begin(),
                            [](std::string const& val) { return convertTo<T>(val); });
             std::copy(floatVector.begin(), floatVector.end(), m.get(i));
