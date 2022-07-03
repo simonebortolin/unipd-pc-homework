@@ -5,9 +5,9 @@
 
 #define TAG 21
 
-void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pred, int n, int s, int thread_size, int thread_rank);
+void floydWarhsallSquaredParallel(pc::matrix<float> &dist, pc::matrix<int> &pred, int n, int s, int thread_size, int thread_rank);
 
-void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<int> &pred, pc::matrix<int> &predFilter);
+void whiteFor(int s, int n, int h, int k, pc::matrix<float> &dist, pc::matrix<int> &pred, pc::matrix<int> &predFilter);
 
 void fill(pc::matrix<int> &m, int dx, int dy, int s);
 
@@ -17,7 +17,7 @@ int main(int argc , char ** argv) {
     MPI_Comm_rank ( MPI_COMM_WORLD , & thread_rank );
     MPI_Comm_size ( MPI_COMM_WORLD , & thread_size );
 
-    pc::matrix<double> dist = pc::matrix<double>(0);
+    pc::matrix<float> dist = pc::matrix<float>(0);
     pc::matrix<int> pred = pc::matrix<int>(0);
     int s = 0;
     int n = 0;
@@ -42,9 +42,9 @@ int main(int argc , char ** argv) {
     MPI_Bcast( &s, 1, MPI_INT, 0, MPI_COMM_WORLD );
 
     if(thread_rank != 0) {
-        dist = pc::matrix<double>(n);
+        dist = pc::matrix<float>(n);
         pred = pc::matrix<int>(n);
-        dist.fill(std::numeric_limits<double>::infinity());
+        dist.fill(std::numeric_limits<float>::infinity());
     } else
         t0 = MPI_Wtime ();
 
@@ -56,7 +56,7 @@ int main(int argc , char ** argv) {
 
     if(thread_rank == 0) {
 
-        time = 1.e6*( t1 - t0 );
+        time = ( t1 - t0 );
         printf ("par1sq,%d,%f\n ", thread_size, time );
 
         if( n <= 20) std::cout << dist << std::endl;
@@ -66,8 +66,8 @@ int main(int argc , char ** argv) {
     return 0;
 }
 
-void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pred, int n, int s,  int thread_size, int thread_rank){
-    if(((int)((double)n/(double)s))%2 == 0) {
+void floydWarhsallSquaredParallel(pc::matrix<float> &dist, pc::matrix<int> &pred, int n, int s,  int thread_size, int thread_rank){
+    if(((int)((float)n/(float)s))%2 == 0) {
         if(thread_rank == 0) {
             std::cout << "ERROR! work only with a odd division of matrix" << std::endl;
         }
@@ -120,20 +120,20 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
                 } else {
 
                     MPI_Send(&k, 1, MPI_INT, (k-1) % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
-                    MPI_Send(dist.begin(), n*n, MPI_DOUBLE, (k-1) % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
+                    MPI_Send(dist.begin(), n*n, MPI_FLOAT, (k-1) % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
                     MPI_Send(pred.begin(), n*n, MPI_INT, (k-1) % (thread_size -1) +1, TAG, MPI_COMM_WORLD);
                 }
             }
 
             if (thread_size != 1) {
-                pc::matrix<double> merge = pc::matrix<double>(n);
+                pc::matrix<float> merge = pc::matrix<float>(n);
                 pc::matrix<int> mergePred = pc::matrix<int>(n);
 
                 for(int *p = pred.begin(), * ppf = pf.begin(); p < pred.end() && ppf < pf.end(); p++, ppf++) {
                     *p = *p**ppf;
                 }
                 MPI_Barrier(MPI_COMM_WORLD);
-                MPI_Reduce(dist.begin(), merge.begin(), n*n, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+                MPI_Reduce(dist.begin(), merge.begin(), n*n, MPI_FLOAT, MPI_MIN, 0, MPI_COMM_WORLD);
                 MPI_Reduce(pred.begin(), mergePred.begin(), n*n, MPI_INT, MPI_MAX, 0, MPI_COMM_WORLD);
 
                 dist = merge;
@@ -159,7 +159,7 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
                 MPI_Status status;
                 int k = 0;
                 MPI_Recv(&k, 1, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
-                MPI_Recv(dist.begin(), n*n, MPI_DOUBLE, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
+                MPI_Recv(dist.begin(), n*n, MPI_FLOAT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
                 MPI_Recv(pred.begin(), n*n, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
 
                 whiteFor(s, n, h, k, dist, pred, pf);
@@ -171,7 +171,7 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
                 MPI_Status status;
                 int k = 0;
                 MPI_Recv(&k, 1, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
-                MPI_Recv(dist.begin(), n*n, MPI_DOUBLE, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
+                MPI_Recv(dist.begin(), n*n, MPI_FLOAT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
                 MPI_Recv(pred.begin(), n*n, MPI_INT, MPI_ANY_SOURCE, TAG, MPI_COMM_WORLD, &status);
 
                 whiteFor(s, n, h, k, dist, pred, pf);
@@ -182,7 +182,7 @@ void floydWarhsallSquaredParallel(pc::matrix<double> &dist, pc::matrix<int> &pre
             }
 
             MPI_Barrier ( MPI_COMM_WORLD );
-            MPI_Reduce(dist.begin(), dist.begin(), n*n, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+            MPI_Reduce(dist.begin(), dist.begin(), n*n, MPI_FLOAT, MPI_MIN, 0, MPI_COMM_WORLD);
             MPI_Reduce(pred.begin(), pred.begin(), n*n, MPI_INT, MPI_MAX, 0, MPI_COMM_WORLD);
         }
     }
@@ -198,7 +198,7 @@ void fill(pc::matrix<int> &m, int dx, int dy, int s) {
 }
 
 // O(s^3* n/2s) = O(s^2*n)
-void whiteFor(int s, int n, int h, int k, pc::matrix<double> &dist, pc::matrix<int> &pred, pc::matrix<int> &predFilter) {
+    void whiteFor(int s, int n, int h, int k, pc::matrix<float> &dist, pc::matrix<int> &pred, pc::matrix<int> &predFilter) {
     int i,j;
     for(int c = k - (n / s) / 2; c <= (n / s) / 2 + k; c++) {
         i = (((c + k) * s) + n) % n;

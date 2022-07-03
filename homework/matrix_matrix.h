@@ -23,7 +23,7 @@ namespace pc {
 
     template<class T>
     matrix_matrix<T>::matrix_matrix(int size, int step) : basic_matrix<basic_matrix<T>>(new basic_matrix<T>[size * size], size) {
-        _allocator = new T[size * step * size * step];
+	    _allocator = new T[size*size * step*step];
         _step = step;
         for(int i = 0; i < size; i++) {
             for(int j = 0; j < size; j++) {

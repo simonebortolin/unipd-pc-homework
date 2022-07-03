@@ -4,9 +4,9 @@
 #include "matrix.h"
 #include "sequential.h"
 
-pc::matrix<int> floydWarhsallSeq(pc::matrix<double> &dist){
+pc::matrix<int> floydWarhsallSeq(pc::matrix<float> &dist){
 
-    double tr;
+    float tr;
     int pr;
     int d = dist.getSize();
     pc::matrix<int> pred = pc::matrix<int>(d);
@@ -43,7 +43,6 @@ pc::matrix<int> floydWarhsallSeq(pc::matrix<double> &dist){
                 throw std::invalid_argument( "negative cycle" );
             }
         }
-        //std::cout << dist << std::endl;
     }
     return pred;
 }
@@ -52,8 +51,8 @@ pc::matrix<int> floydWarhsallSeq(pc::matrix<double> &dist){
 // dx,dy: start index of submatrix d
 // ax,ay: start index of submatrix a
 // bx,by: start index of submatrix b
-void floyd(pc::matrix<double> &dist, pc::matrix<int> &pred, int dx, int dy, int ax, int ay, int bx, int by, int s) {
-    double tr;
+void floyd(pc::matrix<float> &dist, pc::matrix<int> &pred, int dx, int dy, int ax, int ay, int bx, int by, int s) {
+    float tr;
     int pr;
     for(int h=0; h<s;h++){
         for(int i=0; i<s;i++){
@@ -75,13 +74,13 @@ void floyd(pc::matrix<double> &dist, pc::matrix<int> &pred, int dx, int dy, int 
     }
 }
 
-pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
+pc::matrix<int> floydWarhsallSquared(pc::matrix<float> &dist, int s){
     int n = dist.getSize();
 
     pc::matrix<int> pred = pc::matrix<int>(n);
 
 
-    if(((int)((double)n/(double)s))%2 == 0) {
+    if(((int)((float)n/(float)s))%2 == 0) {
         std::cout << "ERROR! work only with a odd division of matrix";
         return pc::matrix<int>(0);
     }
@@ -117,24 +116,24 @@ pc::matrix<int> floydWarhsallSquared(pc::matrix<double> &dist, int s){
 
             // white - rest of cells
 
-            for(int c = k - (n / s) / 2; c <= (n / s) / 2 + k; c++) {
-                i = (((c + k) * s) + n) % n;
+            for(int c = h-k*s; c <= h + k*s; c+=s) {
+                i = (c + n) % n;
                 if(i == h) continue;
                 j = (h-k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
                 j = (h+k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
             }
-            for(int r = k - (n / s) / 2 + s; r <= (n / s) / 2 + k - s; r++) {
-                j = (((r + k) * s) + n) % n;
+            for(int r = h-k*s + s; r <= h + k*s - s; r+=s) {
+                j = (r + n) % n;
                 if(j == h) continue;
                 i = (h-k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
                 i = (h+k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
             }
-        }
 
+        }
 
         //possible negative cycle
         for(int i=0;i<n;i++ ){
