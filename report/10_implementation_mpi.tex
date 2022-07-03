@@ -1,18 +1,16 @@
 \section{Implementation in MPI}\label{implementation-in-mpi}
 
-C++ was chosen for the MPI implementation of the programme design. In particular, a template class was realised for the representation of the matrix information. The reason why a template class was chosen is that for saving distances, it is more correct to use a data type with a specific infinity value and not the maximum, while for saving the pred type in for homogeneity with the indices.
+C++ was chosen for the MPI implementation of the programme design. In particular, a three template class was realised for the representation of the matrix information. The reason why a template class was chosen is that for saving distances, it is more correct to use a data type with a specific infinity value and not the maximum, while for saving the pred type in for homogeneity with the indices.
 
-For the exchange of data from the main thread to the secondary threads, the choice has been made to minimise the data to be passed, and only those which are strictly necessary are passed. Data are passed with \texttt{MPI\_Send} and \texttt{MPI\_Recv} in a blocking manner.
-Whereas for the join, since there are only \(n/s\), it was decided to use the \texttt{MPI\_Reduce} function, which takes care of the merge between the various matrices allocated on the various threads. 
-An alternative to this implementation is the use of \texttt{MPI\_Scatter}, however, it requires a different handling of the matrix so that the data to be sent can be subdivided exactly.
+For the exchange of data from the main thread to the secondary threads, the choice has been made to minimise the data to be passed, and only those which are strictly necessary are passed. Data are passed with \texttt{MPI\_Bcast}, \texttt{MPI\_Send} and \texttt{MPI\_Recv} in a blocking manner.
 
-The implementation of data exchange on the pred matrix was perhaps the most difficult thing, since no merge strategy such as \texttt{MPI\_MAX}, \texttt{MPI\_MIN}, \texttt{MPI\_SUM}, \texttt{MPI\_PROD} or user-defined strategy  could be applied, data reduce was implemented using a third auxiliary array, which acts as a filter: setting the data we do not want to merge to 0, and merged with \texttt{MPI\_MAX}.
-% forse potrei implementare una trategia custom ??? per rendere più veloce ???...
+\texttt{MPI\_Barriers} were used to perform synchronisation between the various threads and where parallelization is not possible as described in the previous paragraphs.
 
-\texttt{MPI\_Barriers} were used to perform synchronisation between the various threads and where parallelisation is not possible as described in the previous paragraphs.
+The parallel code returns that the parallel code is \(O(n\cdot (n / s)\cdot s^2\cdot n/p) = O(n^3 \cdot  s /p)\) while the sequential code is \(O(n\cdot (n / s)\cdot s^2\cdot n) =  O(n^3 \cdot  s) \).
+%% TODO check
 
-\subsection{Performance analysis}
+Already as can be seen from this analysis, the times remain similar to those of the classical algorithm.
+This is precisely why we do not expect great performance from the parallel algorithm.
 
-The parallel code returns that the parallel code is \(O(n\cdot (n / s)\cdot s^2\cdot n/p) = O(n^3 \cdot  s /p)\) while the sequential code is \(O(n\cdot (n / s)\cdot s^2\cdot n) =  O(n^3 \cdot  s) \)
-%% booh controllate meglio c'è da sistemare anche eventuali cose errate in paragrafo 3
 \FloatBarrier
+

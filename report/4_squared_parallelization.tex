@@ -1,18 +1,18 @@
-\section{Squared Parallelization}\label{squared-parallelization}
+\section{Squared parallelization}\label{squared-parallelization}
 
 Our idea is to reduce synchronisation times between threads as much as possible and to always use a divide-and-conquer algorithm. 
-It is based on the parallelization through inscribed squares in squares. We also use the idea of a circular matrix to minimise the number of cycles and avoid handling the case of elements outside the matrix.
+It is based on the parallelization through inscribed squares in squares. We also use the idea of a 2d torus or circular matrix to minimise the number of cycles and avoid handling the case of elements outside the matrix.
 
 
 \begin{enumerate}
     \item First the input matrix is divided into \(h\) blocks of size \(s\) and let \(h=1\).
-    \item \label{s2} Run the simplified version of Floyd-Warshall, i.e. \texttt{Floyd} from \cref{alg:Floyd} of \cref{alg:fw-blocked} on the self-dependent cell in \(d[h{\twodots}h{+}s,h{\twodots}h{+}s]\) (\cref{alg:inner-square} of \cref{alg:fw-squared}), and let \(k=1\).
-    \item \label{s3} Run the simplified \texttt{Floyd} on the row and column of the current block of dimension \(k\) as in \cref{fig:square-dependecies-thread} (\cref{alg:square-row-first} and \ref{alg:square-column-first} of \cref{alg:fw-squared}, optionally these steps can also be run in parallel).
-    \item The remaining blocks are computed in parallel on other threads (\cref{alg:square-row} and \ref{alg:square-column} of \cref{alg:fw-squared}).
+    \item \label{s2} Run the simplified version of Floyd-Warshall, i.e. \texttt{Floyd} from \cref{Floyd} of \cref{fw-blocked} on the self-dependent cell in \(d[h{\twodots}h{+}s,h{\twodots}h{+}s]\) (\cref{inner-square} of \cref{fw-squared}), and let \(k=1\).
+    \item \label{s3} Run the simplified \texttt{Floyd} on the row and column of the current block of dimension \(k\) as in \cref{square-dependecies-thread} (\cref{square-row-first,square-column-first} of \cref{fw-squared}, optionally these steps can also be run in parallel).
+    \item The remaining blocks are computed in parallel on other threads (\cref{square-row,square-column} of \cref{fw-squared}).
     \item Increase \(k\) by one and return to step \ref{s3} until \(\lfloor n/2s \rfloor\) is reached.
     \item Await until all threads have finished their execution to increment \(h\) by \(s\) and return to step \ref{s2}.
 \end{enumerate}
-The algorithm is specifically illustrated in \cref{alg:fw-squared} and \cref{fig:square-algo}.
+The algorithm is specifically illustrated in \cref{fw-squared,square-algo}.
 It is evident that this algorithm requires a very specific partition, i.e. it must generate an odd number of rows and columns. 
 Despite this fictitious problem, it can be simply solved by adding fictitious data, for example, vertices disconnected from the complete graph.
 \begin{figure}[htbp]
@@ -36,26 +36,26 @@ Despite this fictitious problem, it can be simply solved by adding fictitious da
 
 
                 \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} s]\)}{
-                    \FFloyd{\(d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{alg:inner-square}
+                    \FFloyd{\(d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{inner-square}
 
                     
                     let \(t\) an empty thread list
 
                     \For{\(k \in [1{\twodots}\lfloor n/2s \rfloor]\)}{
 
-                        \For{\(j \in [(h{\pm}s+n) \bmod n]\)}{ \label{alg:square-row-first}
+                        \For{\(j \in [(h{\pm}s+n) \bmod n]\)}{ \label{square-row-first}
                             \FFloyd{\(d[h{\twodots}h{+}s,j{\twodots}j{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} 
                         }
-                        \For{\(i \in [(h{\pm}s+n) \bmod n]\)}{ \label{alg:square-column-first}
+                        \For{\(i \in [(h{\pm}s+n) \bmod n]\)}{ \label{square-column-first}
                             \FFloyd{\(d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[i{\twodots}i{+}s,h{\twodots}h{+}s]\)} 
                         }
                         
                         \(t\).\FAdd{\FThread{ 
                             \FDo{
-                                \For{\(j,i \in [(k{\pm}1+n) \bmod n] \times [((-k{\twodots}k)+n) \bmod n] \setminus 0\)}{ \label{alg:square-row}
+                                \For{\(j,i \in [(k{\pm}1+n) \bmod n] \times [((-k{\twodots}k)+n) \bmod n] \setminus 0\)}{ \label{square-row}
                                     \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s]\)} 
                                 }
-                                \For{\(i,j \in [(k{\pm}1+n) \bmod n] \times [((-k{+}1{\twodots}k{-}1)+n) \bmod n] \setminus 0\)}{ \label{alg:square-column}
+                                \For{\(i,j \in [(k{\pm}1+n) \bmod n] \times [((-k{+}1{\twodots}k{-}1)+n) \bmod n] \setminus 0\)}{ \label{square-column}
                                     \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s]\)} 
                                 }
                             }
@@ -65,7 +65,7 @@ Despite this fictitious problem, it can be simply solved by adding fictitious da
                 }
             }
             \caption{Floyd-Warshall's squared parallel algorithm.}
-            \label{alg:fw-squared}
+            \label{fw-squared}
         \end{algorithm}
     \end{minipage}
 \end{figure}
@@ -75,25 +75,25 @@ Despite this fictitious problem, it can be simply solved by adding fictitious da
     \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics[width=\textwidth]{media/square_dependencies_algo_mod}
         
-        \caption{Graphical representation of the circular array operation of our algorithm to optimise the execution of the algorithm when a self-dependent block is not central: a \(\bmod\) is executed within the circular matrix to not waste parallel executions.}
-        \label{fig:square-dependecies-circular}
+        \caption{Graphical representation of the 2D torus operation of our algorithm to optimise the execution of the algorithm when a self-dependent block is not central: a \(\bmod\) is executed within the 2D torus to not waste parallel executions.}
+        \label{square-dependecies-circular}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics[width=\textwidth]{media/square_dependencies_algo}
         
         \caption{Graphical representation of the order of execution of the squared Floyd Warshall algorithm to respect dependencies when a self-dependent block is central. The blocks in dark green have to be executed before the lighter green ones.}
-        \label{fig:square-dependecies-algo}
+        \label{square-dependecies-algo}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics[width=\textwidth]{media/square_dependencies_algo_thread}
         
         \caption{Graphical representation of the functional execution: the element in dark green cannot be executed in parallel, the light green elements could be executed in parallel but in our algorithm are not, the white ones are executed in parallel.}
-        \label{fig:square-dependecies-thread}
+        \label{square-dependecies-thread}
     \end{subfigure}
     \caption{Graphical representation of the squared Floyd Warshall algorithm parallel execution and threads.}
-    \label{fig:square-algo}
+    \label{square-algo}
 \end{figure}
 
 It is easy to notice that the output of the sequential algorithm and the parallel one can be slightly different in terms of the predecessor matrix. If there exists more than one optimal path from \(i\) to \(j\) with the same distance cost, it is not assured that the paths returned by the two \(pred\) matrices from the two distinct algorithm are the same. 

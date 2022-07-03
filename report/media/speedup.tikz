@@ -1,0 +1,20 @@
+\begin{tikzpicture}
+\begin{axis}[
+    width=\textwidth,
+    height=10cm,
+    xtick=data,
+    xticklabels from table={\datatable}{matrix},
+    x tick label style={font=\normalsize, rotate=35, anchor=east},
+    legend style={at={(0.98,0.02)},anchor=south east},
+    ylabel={Speedup (\%)},xlabel={Size of matrix - Size of step}]
+    
+    \addplot [mark=o, black!50 ] table [x expr=\coordindex, y expr=\thisrow{sq}/\thisrow{par2sq-2}*100]{\datatable};
+    \addlegendentry{Squared Parallel - 2 CPU}
+    
+    \addplot [mark=o, violet!80] table [x expr=\coordindex, y expr=\thisrow{sq}/\thisrow{par2sq-4}*100]{\datatable};
+    \addlegendentry{Squared Parallel - 4 CPU}
+    
+    \addplot [mark=o, cyan!80] table [x expr=\coordindex, y expr=\thisrow{sq}/\thisrow{par2sq-8}*100]{\datatable};
+    \addlegendentry{Squared Parallel - 8 CPU}
+\end{axis}
+\end{tikzpicture}
