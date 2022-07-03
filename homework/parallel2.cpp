@@ -12,6 +12,7 @@ template <class T>
 void to_linear_matrix(pc::matrix_matrix<T> & from, pc::matrix<T>  & to, int s);
 
 int main(int argc , char ** argv) {
+	try {
     int thread_rank , thread_size ;
     MPI_Init (& argc , & argv );
     MPI_Comm_rank ( MPI_COMM_WORLD , & thread_rank );
@@ -74,8 +75,8 @@ int main(int argc , char ** argv) {
     double t0 , t1 , time;
 
 
-    pc::matrix_matrix<float> d = pc::matrix_matrix<float>(n , s);
-    pc::matrix_matrix<int> p = pc::matrix_matrix<int>(n , s);
+    pc::matrix_matrix<float> d = pc::matrix_matrix<float>(n/s , s);
+    pc::matrix_matrix<int> p = pc::matrix_matrix<int>(n/s , s);
     to_blocked_matrix(dist, d, s);
     to_blocked_matrix(pred, p, s);
 
@@ -84,7 +85,7 @@ int main(int argc , char ** argv) {
 
     //computation of min path costs
     for (int h = 0; h < n/s; h ++) {
-        int size_of_buffer = s*s*(sizeof(int)+sizeof(float));
+size_t size_of_buffer = s*s*(sizeof(int)+sizeof(float));
         char * buffer = new char[size_of_buffer];
         position = 0;
         if(thread_rank == 0) {
@@ -219,6 +220,9 @@ int main(int argc , char ** argv) {
             std::cout << dist << std::endl;
         }
     }
+	} catch (std::exception& e) {   // older compilers may throw other exceptions:
+    std::cerr << "some other standard exception caught: " << e.what() << '\n';
+  }
     MPI_Finalize ();
     return 0;
 }
