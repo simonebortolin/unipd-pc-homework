@@ -192,8 +192,8 @@ int main(int argc , char ** argv) {
                     MPI_Unpack(buffer, size_of_buffer, &position,d[i][j].begin(), s * s, MPI_FLOAT, MPI_COMM_WORLD);
                     MPI_Unpack(buffer, size_of_buffer, &position,p[i][j].begin(), s * s, MPI_INT, MPI_COMM_WORLD);
                 }
-                for (int ii = h - k + 1; ii < k + h; ii++) {
-                    int j = (ii + ns) % ns;
+                for (int r = h - k + 1; r < k + h; r++) {
+                    int j = (r + ns) % ns;
                     if (j == h) continue;
                     int i = (h - k + ns) % ns;
                     MPI_Unpack(buffer, size_of_buffer, &position,d[i][j].begin(), s * s, MPI_FLOAT, MPI_COMM_WORLD);
