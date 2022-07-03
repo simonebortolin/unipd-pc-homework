@@ -71,7 +71,7 @@ int main(int argc , char ** argv) {
     MPI_Bcast( dist.begin(), n*n, MPI_FLOAT, 0, MPI_COMM_WORLD );
     MPI_Bcast( pred.begin(), n*n, MPI_INT, 0, MPI_COMM_WORLD );
 
-    double t0 , t1 , time;
+    float t0 , t1 , time;
 
 
     pc::matrix_matrix<float> d = pc::matrix_matrix<float>(n , s);
