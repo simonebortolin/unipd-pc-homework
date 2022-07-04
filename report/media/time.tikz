@@ -1,0 +1,34 @@
+\begin{tikzpicture}
+\begin{axis}[
+    width=\textwidth,
+    height=10cm,
+    xtick=data,
+    ymode=log,
+    xticklabels from table={\datatable}{matrix},
+    x tick label style={font=\normalsize, rotate=35, anchor=east},
+    %legend style={at={(1.1,0.5)},anchor=north},
+    legend style={at={(0.98,0.02)},anchor=south east},
+    ylabel={Time (s)},xlabel={Size of matrix - Size of step}]
+    
+    \addplot [mark=o, blue!80 ] table [x expr=\coordindex, y={seq}]{\datatable};
+    \addlegendentry{Sequential}
+    
+    \addplot [mark=o, red!80] table [x expr=\coordindex, y={sq}]{\datatable};
+    \addlegendentry{Squared Sequential}
+    
+    \addplot [mark=o, black!50 ] table [x expr=\coordindex, y={par2sq-2}]{\datatable};
+    \addlegendentry{Squared Parallel - 2 CPU}
+    
+    \addplot [mark=o, violet!80] table [x expr=\coordindex, y={par2sq-4}]{\datatable};
+    \addlegendentry{Squared Parallel - 4 CPU}
+    
+    \addplot [mark=o, cyan!80] table [x expr=\coordindex, y={par2sq-8}]{\datatable};
+    \addlegendentry{Squared Parallel - 8 CPU}
+    
+    %\addplot [mark=o, orange!30] table [x expr=\coordindex, y={par2sq-16}]{\datatable};
+    %\addlegendentry{Squared Parallel - 16 CPU}
+    
+    %\addplot [mark=o, brown!90] table [x expr=\coordindex, y={par2sq-32}]{\datatable};
+    %\addlegendentry{Squared Parallel - 32 CPU}
+\end{axis}
+\end{tikzpicture}

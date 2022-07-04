@@ -1,0 +1,16 @@
+\begin{tikzpicture}
+\begin{axis}[
+    ybar stacked,
+    width=\textwidth,
+    height=7cm,
+    xtick=data,
+    xticklabels from table={\datatable}{id},
+    x tick label style={font=\normalsize, rotate=35, anchor=east},
+    legend style={at={(0.5,1.2)}, anchor=north,legend columns=-1},
+    ylabel={Time (s)},xlabel={Size of processors - Rank of processors}]
+    \addplot [fill=green!80] table [y expr=\thisrow{total}-\thisrow{comm}, x expr=\coordindex] {\datatable};
+    \addlegendentry{Work time}
+    \addplot [fill=blue!60] table [y expr=\thisrow{comm}, x expr=\coordindex] {\datatable};
+    \addlegendentry{Communication time}
+\end{axis}
+\end{tikzpicture}

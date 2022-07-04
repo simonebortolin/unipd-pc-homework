@@ -2,43 +2,43 @@
 
 As said in the previous section, the parallelization of the «for \(i\)» loop is simple and improves times, but there remains the problem of the join times being too high. 
 Remembering that a parallel algorithm does not start with a sequential algorithm, we must change approach.
-A possible solution could be a divide-and-conquer strategy: starting from a block division, as depicted in \cref{fig:submatrix}, the analyzed dependencies are similar to those descripted in \cref{fig:data-dependency-external-loop}, but unlike before, this time the value \(d[h{\twodots}h{+}s,h{\twodots}h{+}s]\) must also be calculated.
+A possible solution could be a divide-and-conquer strategy: starting from a block division, as depicted in \cref{submatrix}, the analyzed dependencies are similar to those descripted in \cref{data-dependency-external-loop}, but unlike before, this time the value \(d[h{\twodots}h{+}s,h{\twodots}h{+}s]\) must also be calculated.
 
-Starting from the previous dependency analysis (\cref{fig:data-dependencies-3}), it can be noticed that if the cell size is greater than one, such as  \(  2 \times 2,  4 \times 4, \dots\) the dependency does not change.
-\Cref{fig:data-dependencies-block-1} and \ref{fig:data-dependencies-block-2} show the dependencies for \(h \in [1{\twodots}4]\) and \(h \in [5{\twodots}8]\).
+Starting from the previous dependency analysis (\cref{data-dependencies-3}), it can be noticed that if the cell size is greater than one, such as  \(  2 \times 2,  4 \times 4, \dots\) the dependency does not change.
+\Cref{data-dependencies-block-1,data-dependencies-block-2} show the dependencies for \(h \in [1{\twodots}4]\) and \(h \in [5{\twodots}8]\).
 
 \begin{figure}[htbp]
     \centering
     \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics[width=\textwidth]{media/data_dependencies_block}
         \caption{Graphical representation of a problem solved using the divide and conquer method, from a \(12\times 12\) matrix to \(9\) submatrix \(4\times 4\) sub-matrices.}
-        \label{fig:submatrix}
+        \label{submatrix}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics[width=\textwidth]{media/data_dependencies_block_1}
         \caption{Graphical representation of dependencies in the case of block subdivision of the matrix: for \(h \in [1{\twodots}4]\) we must first calculate the matrix highlighted in dark green \(d[1{\twodots}4,1{\twodots}4]\), then those in light green and finally those in white}
-        \label{fig:data-dependencies-block-1}
+        \label{data-dependencies-block-1}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.3\textwidth}
         \includegraphics[width=\textwidth]{media/data_dependencies_block_2}
         \caption{Graphical representation of dependencies in the case of block subdivision of the matrix: for \(h \in [5{\twodots}8]\) we must first calculate the matrix highlighted in dark green \(d[5{\twodots}8,5{\twodots}8]\), then those in light green and finally those in white.}
-        \label{fig:data-dependencies-block-2}
+        \label{data-dependencies-block-2}
     \end{subfigure}
     \caption{Graphical representation of the block division and constraints.}
-    \label{fig:data-representation-of-the-block-division-and-constraints}
+    \label{data-representation-of-the-block-division-and-constraints}
 \end{figure}
 
 Unlike previous parallelization analysis, the self-dependent blocks are also to be calculated and do not have a default value like \(0\) in \(d\) or \(h\) in \(pred\). 
-In particular only the triple for is kept and a reduced version of the algorithm seen in \cref{alg:sequential} is used.
-Similarly, all other blocks are computed with the same lightened procedure. Dependencies are described graphically in the figure \cref{fig:data-dependency-external-loop-parallel}, in particular for any \(h\), the order of execution is as follows:
+In particular only the triple for is kept and a reduced version of the algorithm seen in \cref{sequential} is used.
+Similarly, all other blocks are computed with the same lightened procedure. Dependencies are described graphically in the figure \cref{data-dependency-external-loop-parallel}, in particular for any \(h\), the order of execution is as follows:
 
 \begin{enumerate}
-    \item diagonal cell \((h,h)\) since they are self-dependent (\cref{alg:block-diagonal} of \cref{alg:fw-blocked})
-    \item \(h\)-th row depends on itself and on the previously computed  \((h,h)\) cell (\cref{alg:block-row}  of \cref{alg:fw-blocked})
-    \item \(k\)-th column depends on itself and on the previously computed  \((h,h)\) cell (\cref{alg:block-column}  of \cref{alg:fw-blocked})
-    \item the rest of the matrix blocks, as each of them depends on the \(h\)-th block of its row and the \(h\)-th block of its column (\cref{alg:block-other}  of \cref{alg:fw-blocked})
+    \item diagonal cell \((h,h)\) since they are self-dependent (\cref{block-diagonal} of \cref{fw-blocked})
+    \item \(h\)-th row depends on itself and on the previously computed  \((h,h)\) cell (\cref{block-row}  of \cref{fw-blocked})
+    \item \(k\)-th column depends on itself and on the previously computed  \((h,h)\) cell (\cref{block-column}  of \cref{fw-blocked})
+    \item the rest of the matrix blocks, as each of them depends on the \(h\)-th block of its row and the \(h\)-th block of its column (\cref{block-other}  of \cref{fw-blocked})
 \end{enumerate}
 
 
@@ -50,15 +50,15 @@ Similarly, all other blocks are computed with the same lightened procedure. Depe
     \end{subfigure}
 
     \caption{Graphical representation of the dependencies of the algorithm to calculate the cell values for each \(h\).}
-    \label{fig:data-dependency-external-loop-parallel}
+    \label{data-dependency-external-loop-parallel}
 \end{figure}
 
-Performing the calculations in this order satisfies all the dependencies seen in \cref{fig:data-dependency-external-loop-parallel}, and it is noticeable that starting from this list one could realize the parallel algorithm for our problem \cite{rucci}.
+Performing the calculations in this order satisfies all the dependencies seen in \cref{data-dependency-external-loop-parallel}, and it is noticeable that starting from this list one could realize the parallel algorithm for our problem \cite{rucci}.
 
 \begin{figure}[htbp]
     \centering
     \begin{minipage}{\textwidth}
-        \begin{algorithm}[H] \label{alg:Floyd}
+        \begin{algorithm}[H] \label{Floyd}
             \SetKwFunction{FFloyd}{Floyd} 
             \SetKwProg{Pn}{Function}{:}{\KwRet}
             \Pn{\FFloyd{\(d,a,b,pred\)}}{
@@ -82,23 +82,23 @@ Performing the calculations in this order satisfies all the dependencies seen in
                 let \(s\) number of partition
 
                 \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} s]\)}{
-                    \FFloyd{\(d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} \label{alg:block-diagonal}
+                    \FFloyd{\(d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} \label{block-diagonal}
 
                     \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} s] \setminus h\)} {
-                        \FFloyd{\(d[h{\twodots}h{+}s,j{\twodots}j{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,h{\twodots}h{+}s]\)} \label{alg:block-row}
+                        \FFloyd{\(d[h{\twodots}h{+}s,j{\twodots}j{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,h{\twodots}h{+}s]\)} \label{block-row}
                     }
 
                     \For{\(i  \in [1{\twodots}n \operatorname{with} \operatorname{step} s]  \setminus h\)} {
-                        \FFloyd{\(d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{alg:block-column}
+                        \FFloyd{\(d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{block-column}
 
                         \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} s] \setminus h\)} {
-                            \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s]\)} \label{alg:block-other}
+                            \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s]\)} \label{block-other}
                         }
                     }
                 }
             }
             \caption{Floyd-Warshall's blocked algorithm.}
-            \label{alg:fw-blocked}
+            \label{fw-blocked}
         \end{algorithm}
     \end{minipage}
 \end{figure}
@@ -109,23 +109,23 @@ Performing the calculations in this order satisfies all the dependencies seen in
 %        \centering
 %        \includegraphics[width=\textwidth]{media/graph_data_dependencies_v}
 %        \caption{Each task in row \(h\) broadcast to tasks in same column.}
-%        \label{fig:data-dependencies-v}
+%        \label{data-dependencies-v}
 %    \end{subfigure}
 %    \begin{subfigure}[t]{0.3\textwidth}
 %        \centering
 %        \includegraphics[width=\textwidth]{media/graph_data_dependencies_o}
 %        \caption{Each task in column \(h\) broadcast to tasks in same row.}
-%        \label{fig:data-dependencies-o}
+%        \label{data-dependencies-o}
 %    \end{subfigure}
 %    \caption{Communication during the parallel task.}
-%    \label{fig:communication-during-parallel-task}
+%    \label{communication-during-parallel-task}
 %\end{figure}
 
 A possible parallelization of the algorithm is evident: we can parallelize the outermost for and also the inner for.
 It is then possible to implement a block division algorithm of the matrix and the parallel execution of all blocks, some with delayed restart through broadcast messages.
-%\Cref{fig:communication-during-parallel-task}  describes communications in an implementation where each individual block is parallelized and started together, suspended until it receives data and then executed.
+%\Cref{communication-during-parallel-task}  describes communications in an implementation where each individual block is parallelized and started together, suspended until it receives data and then executed.
 
-As we can see from \cref{alg:fw-blocked}, the code works sequentially with \(O(n/s \cdot n/s \cdot n/s \cdot s^3) =O(n^3) \).
+As we can see from \cref{fw-blocked}, the code works sequentially with \(O(n/s \cdot n/s \cdot n/s \cdot s^3) =O(n^3) \).
 In a parallel manner we have instead \(O(n \cdot (1+n/s+n/s+ n^2/s)) = O(n^3/s)\).
 Despite this, the matrix strategy makes it possible to reduce the join times starting from \(n\times n\) to \(n/s + n/s + n/s \times n/s \approx n/s \times n/s\) so that if \(s\) changes, the time required for the join after parallel execution changes \cite{rucci}.
 

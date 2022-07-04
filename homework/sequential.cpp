@@ -43,7 +43,6 @@ pc::matrix<int> floydWarhsallSeq(pc::matrix<float> &dist){
                 throw std::invalid_argument( "negative cycle" );
             }
         }
-        //std::cout << dist << std::endl;
     }
     return pred;
 }
@@ -117,24 +116,24 @@ pc::matrix<int> floydWarhsallSquared(pc::matrix<float> &dist, int s){
 
             // white - rest of cells
 
-            for(int c = k - (n / s) / 2; c <= (n / s) / 2 + k; c++) {
-                i = (((c + k) * s) + n) % n;
+            for(int c = h-k*s; c <= h + k*s; c+=s) {
+                i = (c + n) % n;
                 if(i == h) continue;
                 j = (h-k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
                 j = (h+k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
             }
-            for(int r = k - (n / s) / 2 + s; r <= (n / s) / 2 + k - s; r++) {
-                j = (((r + k) * s) + n) % n;
+            for(int r = h-k*s + s; r <= h + k*s - s; r+=s) {
+                j = (r + n) % n;
                 if(j == h) continue;
                 i = (h-k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
                 i = (h+k*s+n) % n;
                 floyd(dist,pred,i,j,i,h,h,j,s);
             }
-        }
 
+        }
 
         //possible negative cycle
         for(int i=0;i<n;i++ ){

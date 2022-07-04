@@ -1,7 +1,7 @@
 \section{Introduction}\label{introduction}
 
 % introduzione generica all'algoritmo e cosa fa
-Given a complete directed  graph, Floyd-Warshall's algorithm, described in \cref{alg:sequential}, can be used to compute the shortest paths from all vertices to all vertices.
+Given a complete directed  graph, Floyd-Warshall's algorithm, described in \cref{sequential}, can be used to compute the shortest paths from all vertices to all vertices.
 When applying the sequential version of the algorithm, the solution is reached with a complexity of \(O(n^3)\), with \(n\) as number of vertices.
 Unlike Dijkstra's algorithm for the shortest path problem, Floyd-Warshall's algorithm can also be used in case of negative costs and can identify the presence of negative cycles 
 (the correctness of the algorithm is not guaranteed in such cases)~\cite{fischetti}.
@@ -13,9 +13,9 @@ The algorithm takes as input an adjacency matrix of $n \times n$  distances $c[i
   \end{itemize}
 
 The overall algorithm works by testing every intermediate vertex \(h\) to find the shortest path from a vertex \(i\) to a vertex \(j\),
-comparing the new path cost with the current one (best so far) as described by \cref{eq:cost}~\cite{fischetti}.
+comparing the new path cost with the current one (best so far) as described by \cref{cost}~\cite{fischetti}.
 
-\begin{equation} \label{eq:cost}
+\begin{equation} \label{cost}
     d[i,j] = \min\left\{ d[i,j], d[i,h]+d[h,j] \right\}
 \end{equation}
 
@@ -33,9 +33,9 @@ Once the algorithm has been run, we can use \(pred\) to navigate from one node t
             \( pred [ i , j ]  \leftarrow i \)
         }
     }
-    \For{\(h\in [1{\twodots}n]\)} { \label{alg:for-h}
-        \For{\(i \in [1{\twodots}n]\)} { \label{alg:for-i}
-            \For{\(j \in [1{\twodots}n]\)}{ \label{alg:for-j}
+    \For{\(h\in [1{\twodots}n]\)} { \label{for-h}
+        \For{\(i \in [1{\twodots}n]\)} { \label{for-i}
+            \For{\(j \in [1{\twodots}n]\)}{ \label{for-j}
                 \If{\( d [ i , h ] + d [ h , j ] < d [ i , j ] \)} {
                     \( d [ i , j ] \leftarrow d [ i , h ] + d [ h , j ] \)
 
@@ -50,7 +50,7 @@ Once the algorithm has been run, we can use \(pred\) to navigate from one node t
         }
     }
 \caption{Floyd-Warshall's sequential algorithm.}
-\label{alg:sequential}
+\label{sequential}
 \end{algorithm}
     \end{minipage}
 \end{figure}
@@ -60,7 +60,7 @@ Once the algorithm has been run, we can use \(pred\) to navigate from one node t
         \centering
         \includegraphics[width=\textwidth]{media/example_floyd_warshall}
         \caption{Input graph}
-        \label{fig:example-floyd-warshall-input-graph}
+        \label{example-floyd-warshall-input-graph}
     \end{subfigure}
     \begin{subfigure}[b]{0.28\textwidth}
         \centering
@@ -75,7 +75,7 @@ Once the algorithm has been run, we can use \(pred\) to navigate from one node t
         \(5\) & \( \infty \) & \( \infty \) & \( \infty \) & \(6\) & \(0\) \\ \cline{2-6}
         \end{tabular}}
         \caption{Input matrix}
-        \label{fig:example-floyd-warshall-input-matrix}
+        \label{example-floyd-warshall-input-matrix}
     \end{subfigure}
     \begin{subfigure}[b]{0.26\textwidth}
         \centering
@@ -86,7 +86,7 @@ Once the algorithm has been run, we can use \(pred\) to navigate from one node t
             \(1\)& \(0\) &\(1\) &\(-3\) &\(2\) &\(-5\)\\  \cline{2-6} \(2\)&\(3\) &\(0\) & \(-4\)&\(1\) &\(-1\)\\  \cline{2-6} \(3\)&\(7\) &\(5\) &\(0\) &\(5\) &\(3\)\\  \cline{2-6} \(5\)&\(2\) &\(-1\) &\(-5\) &\(0\) &\(-2\)\\  \cline{2-6} \(5\)&\(8\) &\(5\) &\(1\) &\(6\) &\(0\) \\ \cline{2-6}
             \end{tabular}}
         \caption{Output: distance matrix}
-        \label{fig:xample-floyd-warshall-output-matrix-d}
+        \label{xample-floyd-warshall-output-matrix-d}
     \end{subfigure}
     \begin{subfigure}[b]{0.25\textwidth}
         \centering
@@ -97,10 +97,10 @@ Once the algorithm has been run, we can use \(pred\) to navigate from one node t
             \(1\)&\(0\) &\(2\) &\(3\) &\(4\) &\(0\)\\  \cline{2-6} \(2\)&\(3\) &\(1\) &\(3\) &\(1\) &\(0\)\\  \cline{2-6} \(3\)&\(3\) &\(2\) &\(2\) &\(1\) &\(0\)\\  \cline{2-6} \(4\)&\(3\) &\(2\) &\(3\) &\(3\) &\(0\)\\  \cline{2-6} \(5\)&\(3\) &\(2\) &\(3\) &\(4\) &\(4\) \\ \cline{2-6}
         \end{tabular}}
         \caption{Output: \(pred\) matrix}
-        \label{fig:xample-floyd-warshall-output-matrix-pred}
+        \label{xample-floyd-warshall-output-matrix-pred}
     \end{subfigure}
     \caption{Example of the input and the output for the execution of the Floyd-Warshall algorithm.}
-    \label{fig:example-floyd-warshall}
+    \label{example-floyd-warshall}
 \end{figure}
 
 %esempio?
