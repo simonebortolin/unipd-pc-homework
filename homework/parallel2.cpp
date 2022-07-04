@@ -77,7 +77,7 @@ int main(int argc , char ** argv) {
     MPI_Bcast( pred.begin(), n*n, MPI_INT, 0, MPI_COMM_WORLD );
 
     double t0 , t1;
-
+    double tt0, tt1, time = 0.0;
 
     pc::matrix_matrix<float> d = pc::matrix_matrix<float>(n/s , s);
     pc::matrix_matrix<int> p = pc::matrix_matrix<int>(n/s , s);
@@ -95,10 +95,12 @@ int main(int argc , char ** argv) {
         if(thread_rank == 0) {
             // dark green self dependent
             floyd(d[h][h], d[h][h], d[h][h], p[h][h], p[h][h]); // first
-            MPI_Pack(d[h][h].begin(), s*s, MPI_FLOAT, buffer,  size_of_buffer, &position, MPI_COMM_WORLD);
+	    MPI_Pack(d[h][h].begin(), s*s, MPI_FLOAT, buffer,  size_of_buffer, &position, MPI_COMM_WORLD);
             MPI_Pack(p[h][h].begin(), s*s, MPI_INT, buffer,  size_of_buffer, &position, MPI_COMM_WORLD);
         }
+	tt0 = MPI_Wtime();
         MPI_Bcast(buffer, size_of_buffer, MPI_PACKED, 0, MPI_COMM_WORLD);
+	time += MPI_Wtime() - tt0;
         if(thread_rank != 0) {
             MPI_Unpack(buffer, size_of_buffer, &position, d[h][h].begin(), s*s, MPI_FLOAT, MPI_COMM_WORLD);
             MPI_Unpack(buffer, size_of_buffer, &position, p[h][h].begin(), s*s, MPI_INT, MPI_COMM_WORLD);
@@ -129,9 +131,11 @@ int main(int argc , char ** argv) {
                 MPI_Pack(d[i][h].begin(), s * s, MPI_FLOAT, buffer, size_of_buffer, &position, MPI_COMM_WORLD);
                 MPI_Pack(p[i][h].begin(), s * s, MPI_INT, buffer, size_of_buffer, &position, MPI_COMM_WORLD);
             }
+	          tt0 = MPI_Wtime();
             //MPI_Barrier( MPI_COMM_WORLD );
             MPI_Bcast(buffer, size_of_buffer, MPI_PACKED, 0, MPI_COMM_WORLD);
-            if (thread_rank != 0) {
+            time += MPI_Wtime() - tt0;
+	    if(thread_rank != 0) {
                 int j = (h - k + ns) % ns;
                 MPI_Unpack(buffer, size_of_buffer, &position, d[h][j].begin(), s * s, MPI_FLOAT, MPI_COMM_WORLD);
                 MPI_Unpack(buffer, size_of_buffer, &position, p[h][j].begin(), s * s, MPI_INT, MPI_COMM_WORLD);
@@ -176,8 +180,9 @@ int main(int argc , char ** argv) {
                     MPI_Pack(d[i][j].begin(), s * s, MPI_FLOAT, buffer, size_of_buffer, &position, MPI_COMM_WORLD);
                     MPI_Pack(p[i][j].begin(), s * s, MPI_INT, buffer, size_of_buffer, &position, MPI_COMM_WORLD);
                 }
+		tt0 = MPI_Wtime();
                 MPI_Send(buffer, position, MPI_PACKED, 0, TAG, MPI_COMM_WORLD);
-
+		time += MPI_Wtime() - tt0;
                 delete[] buffer;
                 buffer = nullptr;
             }
@@ -188,7 +193,9 @@ int main(int argc , char ** argv) {
                 buffer = new char[size_of_buffer];
                 position = 0;
                 MPI_Status status;
+		            tt0 = MPI_Wtime();
                 MPI_Recv(buffer, size_of_buffer, MPI_PACKED, k % (thread_size -1) +1, TAG, MPI_COMM_WORLD, &status);
+                time += MPI_Wtime() - tt0;
                 for (int c = h - k; c <= h + k; c++) {
                     int i = (c + ns) % ns;
                     if (i == h) continue;
@@ -213,12 +220,16 @@ int main(int argc , char ** argv) {
                 buffer = nullptr;
             }
         }
+	      tt0 = MPI_Wtime();
         MPI_Barrier( MPI_COMM_WORLD );
+	      time += MPI_Wtime() - tt0;
     }
 
     t1 = MPI_Wtime();
+    // printf ("par2sq,%d,%d,%f,%f\n", thread_size, thread_rank, t1 - t0, time );
+
     if(thread_rank==0) {
-        printf ("par2sq,%d,%f\n", thread_size, t1 - t0 );
+   	printf ("par2sq,%d,%f",thread_size, t1 - t0);
         if(n <= 20) {
             to_linear_matrix(d, dist, s);
             std::cout << dist << std::endl;
