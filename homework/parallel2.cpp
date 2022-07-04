@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <mpi.h>
 #include "matrix.h"
 #include "matrix_matrix.h"
@@ -26,9 +27,13 @@ int main(int argc , char ** argv) {
     int position = 0;
 
     if(thread_rank == 0) {
-        std::cin >> s;
+        std::fstream fin(argv[1], std::ios::in);
+        if(!fin){
+            MPI_Abort(MPI_COMM_WORLD, 99);
+        }
+        fin >> s;
 
-        std::cin >> dist;
+        fin >> dist;
 
         pred = pc::matrix<int>(dist.getSize());
 
