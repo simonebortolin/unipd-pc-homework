@@ -229,7 +229,7 @@ int main(int argc , char ** argv) {
     // printf ("par2sq,%d,%d,%f,%f\n", thread_size, thread_rank, t1 - t0, time );
 
     if(thread_rank==0) {
-   	printf ("par2sq,%d,%f",thread_size, t1 - t0);
+   	printf ("par2sq,%d,%f\n",thread_size, t1 - t0);
         if(n <= 20) {
             to_linear_matrix(d, dist, s);
             std::cout << dist << std::endl;
