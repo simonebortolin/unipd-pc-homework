@@ -1,5 +1,5 @@
 \section{Conclusion}
-We have seen an implementation of a parallel version of floyd-warshall based on a 2D torus or circular matrix topology, theoretically this implementation should give very good results, the basic problem remains the synchronisation times, which analysed in \cref{trivial_parallelization} and we have studied a way to minimise them in \cref{squared-parallelization} are still too high to give decent results.
+We have seen an implementation of a parallel version of floyd-warshall based on a 2D torus or circular matrix topology, theoretically this implementation should give very good results, the basic problem remains the synchronisation times, which have been analysed in \cref{trivial_parallelization}. We have studied a way to minimise them in \cref{squared-parallelization}, but they are still too high to give good results. The synchronization times problem is very clear when we have used 16 and 32 CPUs, where the performances dropped due to the copying of buffers. We have not kept the results using a different number of CPUs because the results were not such useful.
 
 These results are in line with the current scientific literature in the field of  Floyd-Warshall parallelization.
 
