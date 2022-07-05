@@ -36,27 +36,26 @@ Despite this fictitious problem, it can be simply solved by adding fictitious da
 
 
                 \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} s]\)}{
-                    \FFloyd{\(d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{inner-square}
-
+                    \FFloyd{\(d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{inner-square}
                     
                     let \(t\) an empty thread list
-
+                    
                     \For{\(k \in [1{\twodots}\lfloor n/2s \rfloor]\)}{
 
                         \For{\(j \in [(h{\pm}s+n) \bmod n]\)}{ \label{square-row-first}
-                            \FFloyd{\(d[h{\twodots}h{+}s,j{\twodots}j{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} 
+                            \FFloyd{\(d[h{\twodots}h{+}s,j{\twodots}j{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} 
                         }
                         \For{\(i \in [(h{\pm}s+n) \bmod n]\)}{ \label{square-column-first}
-                            \FFloyd{\(d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[i{\twodots}i{+}s,h{\twodots}h{+}s]\)} 
+                            \FFloyd{\(d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[i{\twodots}i{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} 
                         }
                         
                         \(t\).\FAdd{\FThread{ 
                             \FDo{
                                 \For{\(j,i \in [(k{\pm}1+n) \bmod n] \times [((-k{\twodots}k)+n) \bmod n] \setminus 0\)}{ \label{square-row}
-                                    \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s]\)} 
+                                    \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} 
                                 }
                                 \For{\(i,j \in [(k{\pm}1+n) \bmod n] \times [((-k{+}1{\twodots}k{-}1)+n) \bmod n] \setminus 0\)}{ \label{square-column}
-                                    \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s]\)} 
+                                    \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} 
                                 }
                             }
                         }}
@@ -98,6 +97,6 @@ Despite this fictitious problem, it can be simply solved by adding fictitious da
 
 It is easy to notice that the output of the sequential algorithm and the parallel one can be slightly different in terms of the predecessor matrix. If there exists more than one optimal path from \(i\) to \(j\) with the same distance cost, it is not assured that the paths returned by the two \(pred\) matrices from the two distinct algorithm are the same. 
 
-The main reason behind that behavior is that the two algorithm explore the input matrix in different order, and the first optimal path found will be the one to be returned by the output. That said, we can say for sure that our algorithm is correct even if the two matrices \(pred\) are not the same between the two outputs.
+The main reason behind that behavior is that the two algorithm explore the input matrix in different order, and the first optimal path found will be the one to be returned by the output. So, we can say for sure that our algorithm is correct even if the two matrices \(pred\) are not the same between the two outputs.
 
 \FloatBarrier
