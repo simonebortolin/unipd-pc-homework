@@ -12,12 +12,12 @@ Our parallel solution does not bring desired results because:
     \begin{itemize}
         \item the problem of the main process and the worker process remain, so any communications such as scatter, gather cannot be used and only broadcast and point-to-point can be used
         \item blocking waits remain to ensure proper synchronisation between process
-        \item with MPI you cannot have a massive parallelizsation running all item of array in parallel mode  as in CUDA for example
+        \item with MPI you cannot have a massive parallelization running all item of array in parallel mode  as in  \texttt{vector_add} function of CUDA for example
     \end{itemize}
     \item \label{overhead-dependencies} There are very important dependencies, it cannot really be parallelized like other algorithms \cite{rucci}:
     \begin{itemize}
-        \item dependencies must be run before running other threads and can be executed synchronously, in which case it would be good to parallelize the internal loops as with CUDA
-        \item dependencies are a big block to any intelligent form of parallelizm in MPI, such as scatter, gather, and in any matrix-like algorithm allow for very good performance
+        \item dependencies must be run before running other threads and can be executed synchronously, in which case it would be good to parallelize the internal loops as with  \texttt{vector_add} function of CUDA
+        \item dependencies are a big block to any intelligent form of parallelization in MPI, such as scatter, gather, and in any matrix-like algorithm allow for very good performance
     \end{itemize}
     \item \label{memory-massive} Being a memory-intensive algorithm, each copy wastes time and space \cite{maras}:
     \begin{itemize}
@@ -26,14 +26,13 @@ Our parallel solution does not bring desired results because:
     \end{itemize}
 \end{enumerate}
 
-In particular, our results are very similar to what the literature states: without massive execution of internal loops synchronously (i.e. with CUDA), Floyd-Warshall times remain stable even in parallel as the algorithm requires massive parallel execution without synchronisation times.
+In particular, our results are very similar to what the literature states: without massive execution of internal loops synchronously (i.e. \texttt{vector_add} function of CUDA), Floyd-Warshall times remain stable even in parallel as the algorithm requires massive parallel execution without synchronisation times.
 
 From the graph in figure \cref{time} you can see that the squared version is always slower than the classical one except in the case of a really small matrix, the reasons are described in \cref{overhead-squared} of previous numbered list.
 
 From the graph in figure \cref{time} you can see that the parallel speed always remains constant, the reasons being mainly that there are the too many dependencies and MPI adds so much overhead (described in \cref{memory-massive} of previous numbered list).
 
 Despite this, the parallel algorithm achieves speedups up to 200\% compared to the quadratic version, as shown in \cref{speedup}, although it never beats the classic version \cref{time}. However, this speedup does not increase as processors increase, so the parallel version does not scale well.
-
 
 \begin{figure}[htbp]
     \pgfplotstableread[col sep=comma]{media/time.csv}\datatable
