@@ -12,11 +12,11 @@ Our parallel solution does not bring desired results because:
     \begin{itemize}
         \item the problem of the main process and the worker process remain, so any communications such as scatter, gather cannot be used and only broadcast and point-to-point can be used
         \item blocking waits remain to ensure proper synchronisation between process
-        \item with MPI you cannot have a massive parallelization running all item of array in parallel mode  as in  \texttt{vector_add} function of CUDA for example
+        \item with MPI you cannot have a massive parallelization running all item of array in parallel mode  as in  \texttt{vector\_add} function of CUDA for example
     \end{itemize}
     \item \label{overhead-dependencies} There are very important dependencies, it cannot really be parallelized like other algorithms \cite{rucci}:
     \begin{itemize}
-        \item dependencies must be run before running other threads and can be executed synchronously, in which case it would be good to parallelize the internal loops as with  \texttt{vector_add} function of CUDA
+        \item dependencies must be run before running other threads and can be executed synchronously, in which case it would be good to parallelize the internal loops as with  \texttt{vector\_add} function of CUDA
         \item dependencies are a big block to any intelligent form of parallelization in MPI, such as scatter, gather, and in any matrix-like algorithm allow for very good performance
     \end{itemize}
     \item \label{memory-massive} Being a memory-intensive algorithm, each copy wastes time and space \cite{maras}:
@@ -26,7 +26,7 @@ Our parallel solution does not bring desired results because:
     \end{itemize}
 \end{enumerate}
 
-In particular, our results are very similar to what the literature states: without massive execution of internal loops synchronously (i.e. \texttt{vector_add} function of CUDA), Floyd-Warshall times remain stable even in parallel as the algorithm requires massive parallel execution without synchronisation times.
+In particular, our results are very similar to what the literature states: without massive execution of internal loops synchronously (i.e. \texttt{vector\_add} function of CUDA), Floyd-Warshall times remain stable even in parallel as the algorithm requires massive parallel execution without synchronisation times.
 
 From the graph in figure \cref{time} you can see that the squared version is always slower than the classical one except in the case of a really small matrix, the reasons are described in \cref{overhead-squared} of previous numbered list.
 
@@ -47,7 +47,7 @@ Despite this, the parallel algorithm achieves speedups up to 200\% compared to t
         \subfile{media/speedup.tikz}
         \caption*{Higher is better, \(100 =\) same speed as sequential squared algorithm}
         \caption{Speedup: performance gain as the number of
-        processors increases: \( S ( p ) = T _ { \text {base } } / T ( p ) \)}
+        processors increases: \( S ( p ) = T _ { \text {base } } / T ( p ) \) compared to the sequential algorithm}
         \label{speedup}
     \end{subfigure}
 
@@ -56,6 +56,8 @@ Despite this, the parallel algorithm achieves speedups up to 200\% compared to t
 \end{figure}
 
 In \cref{work-and-communication-time} we can see how the workloads are distributed and how much time the processes lose in communication, we note that in the case of 4 and 8 CPUs the workload in the worker threads is very similar and homogeneous, whereas in the case of 2 CPUs it is strongly unbalanced, especially on very large arrays.
+
+\Cref{work-and-communication-time} also shows the reduced time saved by parallel computing, because it can be seen that the sum of the green zones is less than the total execution time, which is very evident for dual and quad core execution It is also noticeable that the percentages of time spent synchronising are very high, despite the fact that data packs and unpacks were not taken into account in the calculation.
 
 Long synchronisation times are the main reason why the Floyd-Warhsall algorithm does not scale correctly in the case of parallelism. This can only be solved through the use of massive parallel computing systems, like computing parallel instructions on a vector.
 The main cause of slowness, especially when working with more than 2 processors, is due to the copying of buffers, as discussed in \cref{overhead-dependencies,overhead-mpi} of previous numbered list, because as can be seen, the root process is unloaded and cannot wait to work.
@@ -80,4 +82,9 @@ The main cause of slowness, especially when working with more than 2 processors,
     \caption{Work and communication time in Squared Floyd-Warshall: Communication impact on the performance on the input 1000 - 8}
     \label{work-and-communication-time}
 \end{figure}
+
+
+The results with \(3,5,6,7,9,10,11,12,13,14,15\) CPU show very similar results to those with \(2,4,8,16\) CPU and despite the fact that many parallel algorithms among those in the main-worker category benefit from a number of processors other than powers of two, this algortim offers similar results to those with a number of nodes equal to powers of two without significant differences and for simplicity we have omitted them.
+
+The results with more than 8 CPUs, such as 16 and 32 show very pitiful results as the communication and data exchange times double realising a collapse of the algorithm, a performance collapse also occurs by performing a variant that parallelizes all nodes by dividing them over all threads eliminating the concept of main - worker.
 

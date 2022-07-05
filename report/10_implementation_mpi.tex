@@ -6,7 +6,7 @@ For the exchange of data from the main thread to the secondary threads, the choi
 
 \texttt{MPI\_Barriers} were used to perform synchronisation between the various threads and where parallelization is not possible as described in the previous paragraphs.
 
-The parallel code returns that the parallel code is \(O(n\cdot (n / s)\cdot s^2\cdot n/p) = O(n^3 \cdot  s /p)\) while the sequential code is \(O(n\cdot (n / s)\cdot s^2\cdot n) =  O(n^3 \cdot  s) \).
+The parallel code returns that the parallel code is \(O(n/s \cdot (1+n/(sp)+n/(sp)+n^2/(s^2p))\cdot s^3)=O(n^3/p)\) where \(p\) the number of processors, while the sequential code is \( O(n^3 ) \).
 %% TODO check
 
 Already as can be seen from this analysis, the times remain similar to those of the classical algorithm.

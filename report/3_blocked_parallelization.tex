@@ -82,13 +82,13 @@ Performing the calculations in this order, all the dependencies seen in \cref{da
                 let \(s\) number of partition
 
                 \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} s]\)}{
-                    \FFloyd{\(d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{block-diagonal}
+                    \FFloyd{\(d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{block-diagonal}
                     \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} s] \setminus h\)} {
-                        \FFloyd{\(d[h{\twodots}h{+}s,j{\twodots}j{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} \label{block-row}
+                        \FFloyd{\(d[h{\twodots}h{+}s,j{\twodots}j{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} \label{block-row}
                     }
-
+                    
                     \For{\(i  \in [1{\twodots}n \operatorname{with} \operatorname{step} s]  \setminus h\)} {
-                        \FFloyd{\(d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{block-column}
+                        \FFloyd{\(d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[i{\twodots}i{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{block-column}
                         \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} s] \setminus h\)} {
                             \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} \label{block-other}
                         }

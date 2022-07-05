@@ -1,6 +1,6 @@
 \section{Trivial parallelization}\label{trivial_parallelization}
 
-The algorithm can be parallelized in two ways: the classic way, i.e. parallelize cycles by splitting them into several nodes, each one takes actions independently from the others and then each independent node must be joined with the other, or the second way that uses dedicated hardware and functions to parallelize operations on vectors, like \texttt{vector_add} function of CUDA; the second method has the advantage that execution takes place on sub-nodes of the same node. Since these calculations are performed on the same core
+The algorithm can be parallelized in two ways: the classic way, i.e. parallelize cycles by splitting them into several nodes, each one takes actions independently from the others and then each independent node must be joined with the other, or the second way that uses dedicated hardware and functions to parallelize operations on vectors, like \texttt{vector\_add} function of CUDA; the second method has the advantage that execution takes place on sub-nodes of the same node. Since these calculations are performed on the same core
 synchronously and thus eliminating join as actions, they are executed in a parallel and atomic way.
 
 In the case of simple parallelization, it is good to start from the outermost cycles to parallelize, while in the case of massive parallelization from the innermost ones as there are no synchronisation times.
