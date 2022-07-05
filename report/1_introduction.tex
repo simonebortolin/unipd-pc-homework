@@ -2,7 +2,7 @@
 
 % introduzione generica all'algoritmo e cosa fa
 Given a complete directed  graph, Floyd-Warshall's algorithm, described in \cref{sequential}, can be used to compute the shortest paths from all vertices to all vertices.
-When applying the sequential version of the algorithm, the solution is reached with a complexity of \(O(n^3)\), with \(n\) as number of vertices.
+Applying the sequential version of the algorithm, the solution is reached with a complexity of \(O(n^3)\), with \(n\) as number of vertices.
 Unlike Dijkstra's algorithm for the shortest path problem, Floyd-Warshall's algorithm can also be used in case of negative costs and can identify the presence of negative cycles 
 (the correctness of the algorithm is not guaranteed in such cases)~\cite{fischetti}.
 
@@ -19,7 +19,7 @@ comparing the new path cost with the current one (best so far) as described by \
     d[i,j] = \min\left\{ d[i,j], d[i,h]+d[h,j] \right\}
 \end{equation}
 
-Once the algorithm has been run, we can use \(pred\) to navigate from one node to another via the best route.
+Once the algorithm has been run, we can use \(pred\) to navigate from one node to another following the best route.
 
 \begin{figure}[htbp]
     \centering
