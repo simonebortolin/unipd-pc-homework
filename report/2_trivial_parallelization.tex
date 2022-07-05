@@ -1,14 +1,14 @@
 \section{Trivial parallelization}\label{trivial_parallelization}
 
-Can be distinguished two ways of parallellisation, the first being the classic way, i.e. to paralellise cycles by splitting them into several processes and then to perform a join, and the second way, which makes use of GPUs, envisaging massive parallelization of the innermost cycles without having join times, since these calculations are performed on the same core synchronously, which is not possible with classic parallelization. 
+The algorithm can be parallelized in two ways: the classic way, i.e. parallelize cycles by splitting them into several nodes and then perform a join inside the algorithm, or the second way, which makes use of GPUs, envisaging massive parallelization of the innermost cycles without having join times, since using instructions on parallelzed array, these calculations are performed on the same core synchronously, which is not possible with classic parallelization. 
 
 In the case of simple parallelization, it is good to start from the outermost cycles to parallelize, while in the case of massive parallelization from the innermost ones as there are no synchronisation times.
-Since the purpose of this project is to make a simple, non-massive paralellization, it seems a good choice to start parallelizing from the most external cycle «for \(h\)» (\cref{for-h} of \cref{sequential}).
+Since the purpose of this project is to make a simple, non-massive parallelization, it seems a good choice to start parallelizing from the most external cycle «for \(h\)» (\cref{for-h} of \cref{sequential}).
 
-Unfortunately, a dependency analysis shows us that to execute the «for \(h\)»  in parallel, there are some dependencies. One can clearly see that the execution of round \(h=2\) needs to know from round \(h=1\) the row \(1\) and the column \(1\). Continuing the dependencies' analysis, it is noticeable that the cell \((1,1)\) needs to be accessed for the execution of those two row and column, but its value in the matrix \(d\) remains \(0\) throughout the entirety of the algorithm, unlike in the matrix \(pred\) where it can be updated at every iteration of \( i\), as shown in the \cref{data-dependencies-1}.
+Unfortunately, a dependency analysis shows us that to execute the «for \(h\)»  in parallel, there are some dependencies. One can clearly see that the execution of round \(h=2\) needs to know from round \(h=1\) the row \(1\) and the column \(1\). Continuing the dependencies' analysis, it is noticeable that the cell \((1,1)\) needs to be accessed for the execution of those row and column, but its value in the matrix \(d\) remains \(0\) throughout the entirety of the algorithm, unlike in the matrix \(pred\) where it can be updated at every iteration of \( i\), as shown in the \cref{data-dependencies-1}.
 For the execution of round \(h=3\) it is needed the cell \((2,2)\), row \(2\) and column \(2\) from round \(h=2\), as shown in the \cref{data-dependencies-2}.
 
-The total analysis of the dependencies of the most external loop «for \(h\)», as shown in \cref{data-dependency-external-loop}, shows that paralleling this loop in a simple manner is impossible, but since the execution of loops \(i\) and \(j\) can be done in any order the parallelization of the algorithm will focus on that particular aspect~\cite{rucci}.
+The total analysis of the dependencies of the most external loop «for \(h\)», as shown in \cref{data-dependency-external-loop}, shows that paralleling this loop in a simple manner is impossible, so since the execution of loops \(i\) and \(j\) can be done in any order the parallelization of the algorithm will focus on that particular aspect~\cite{rucci}.
 
 \begin{figure}[htbp]
     \centering
