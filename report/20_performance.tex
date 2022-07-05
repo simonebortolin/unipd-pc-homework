@@ -61,23 +61,23 @@ Long synchronisation times are the main reason why the Floyd-Warhsall algorithm 
 The main cause of slowness, especially when working with more than 2 processors, is due to the copying of buffers, as discussed in \cref{overhead-dependencies,overhead-mpi} of previous numbered list, because as can be seen, the root process is unloaded and cannot wait to work.
 
 \begin{figure}[htbp]
-    \pgfplotstableread[col sep=comma]{media/commimpact100_20.csv}\datatable
+    %\pgfplotstableread[col sep=comma]{media/commimpact100_20.csv}\datatable
     %\subfile{media/commimpact.tikz}   
-    \begin{subfigure}[t]{0.5\textwidth}
-        \subfile{media/commimpact.tikz}        
-        \caption*{Lower comunication time is better}
-        \caption{Communication impact on the performance on 600 - 200}
-        \label{commimpact600_24}
-    \end{subfigure}
+    %\begin{subfigure}[t]{0.5\textwidth}
+    %    \subfile{media/commimpact.tikz}        
+    %    \caption*{Lower comunication time is better}
+    %    \caption{Communication impact on the performance on 600 - 200}
+    %    \label{commimpact600_24}
+    %\end{subfigure}
     \pgfplotstableread[col sep=comma]{media/commimpact1000_8.csv}\datatable
-    \begin{subfigure}[t]{0.5\textwidth}
+    %\begin{subfigure}[t]{0.5\textwidth}
         \subfile{media/commimpact.tikz}
         \caption*{Lower comunication time is better}
-        \caption{Communication impact on the performance on 1000 - 8}
-        \label{commimpact1000_40}
-    \end{subfigure}
+    %    \caption{Communication impact on the performance on 1000 - 8}
+    %    \label{commimpact1000_40}
+    %\end{subfigure}
 
-    \caption{Work and communication time in Squared Floyd-Warshall}
+    \caption{Work and communication time in Squared Floyd-Warshall: Communication impact on the performance on 1000 - 8}
     \label{work-and-communication-time}
 \end{figure}
 

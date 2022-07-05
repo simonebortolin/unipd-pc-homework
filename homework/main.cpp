@@ -1,14 +1,19 @@
 #include <iostream>
 #include <mpi.h>
+#include <fstream>
 #include "matrix.h"
 #include "sequential.h"
 
 int main(int argc , char ** argv) {
     int s;
-    std::cin >> s;
+    std::fstream fin(argv[1], std::ios::in);
+    if(!fin){
+        MPI_Abort(MPI_COMM_WORLD, 99);
+    }
+    fin >> s;
 
     pc::matrix<float> cseq = pc::matrix<float>(0);
-    std::cin >> cseq;
+    fin >> cseq;
     pc::matrix<float> csq = cseq;
 
     double t0 , t1 ,t2;
@@ -28,11 +33,10 @@ int main(int argc , char ** argv) {
     if(cseq != csq) {
         printf ("not ok" );
     } else {
-	if(  cseq.getSize()<= 20) std::cout << cseq << std::endl;
+	    if(  cseq.getSize()<= 20) std::cout << cseq << std::endl;
     }
 
     return 0;
-
 }
 
 

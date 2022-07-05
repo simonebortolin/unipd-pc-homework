@@ -25,10 +25,10 @@
     \addplot [mark=o, cyan!80] table [x expr=\coordindex, y={par2sq-8}]{\datatable};
     \addlegendentry{Squared Parallel - 8 CPU}
     
-    %\addplot [mark=o, orange!30] table [x expr=\coordindex, y={par2sq-16}]{\datatable};
-    %\addlegendentry{Squared Parallel - 16 CPU}
+    \addplot [mark=o, orange!30] table [x expr=\coordindex, y={par2sq-16}]{\datatable};
+    \addlegendentry{Squared Parallel - 16 CPU}
     
-    %\addplot [mark=o, brown!90] table [x expr=\coordindex, y={par2sq-32}]{\datatable};
-    %\addlegendentry{Squared Parallel - 32 CPU}
+    \addplot [mark=o, brown!90] table [x expr=\coordindex, y={par2sq-32}]{\datatable};
+    \addlegendentry{Squared Parallel - 32 CPU}
 \end{axis}
 \end{tikzpicture}
