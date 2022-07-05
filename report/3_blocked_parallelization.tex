@@ -2,7 +2,7 @@
 
 As said in the previous section, the parallelization of the «for \(i\)» loop is simple and improves times, but there remains the problem of the join times being too high. 
 Remembering that a parallel algorithm does not start with a sequential algorithm, we must change approach.
-A possible solution could be a divide-and-conquer strategy: starting from a block division, as depicted in \cref{submatrix}, the analyzed dependencies are similar to those descripted in \cref{data-dependency-external-loop}, but unlike before, this time the value \(d[h{\twodots}h{+}s,h{\twodots}h{+}s]\) must also be calculated.
+A possible solution could be a divide-and-conquer strategy: starting from a block division, as depicted in \cref{submatrix}, the analyzed dependencies are similar to those descripted in \cref{data-dependency-external-loop}, but unlike before, this time also the value \(d[h{\twodots}h{+}s,h{\twodots}h{+}s]\) must be calculated.
 
 Starting from the previous dependency analysis (\cref{data-dependencies-3}), it can be noticed that if the cell size is greater than one, such as  \(  2 \times 2,  4 \times 4, \dots\) the dependency does not change.
 \Cref{data-dependencies-block-1,data-dependencies-block-2} show the dependencies for \(h \in [1{\twodots}4]\) and \(h \in [5{\twodots}8]\).
@@ -30,12 +30,12 @@ Starting from the previous dependency analysis (\cref{data-dependencies-3}), it 
     \label{data-representation-of-the-block-division-and-constraints}
 \end{figure}
 
-Unlike previous parallelization analysis, the self-dependent blocks are also to be calculated and do not have a default value like \(0\) in \(d\) or \(h\) in \(pred\). 
+Unlike previous parallelization analysis, also the self-dependent blocks must be calculated and do not have a default value like \(0\) in \(d\), or \(h\) in \(pred\). 
 In particular only the triple for is kept and a reduced version of the algorithm seen in \cref{sequential} is used.
 Similarly, all other blocks are computed with the same lightened procedure. Dependencies are described graphically in the figure \cref{data-dependency-external-loop-parallel}, in particular for any \(h\), the order of execution is as follows:
 
 \begin{enumerate}
-    \item diagonal cell \((h,h)\) since they are self-dependent (\cref{block-diagonal} of \cref{fw-blocked})
+    \item diagonal cell \((h,h)\) since it is self-dependent (\cref{block-diagonal} of \cref{fw-blocked})
     \item \(h\)-th row depends on itself and on the previously computed  \((h,h)\) cell (\cref{block-row}  of \cref{fw-blocked})
     \item \(k\)-th column depends on itself and on the previously computed  \((h,h)\) cell (\cref{block-column}  of \cref{fw-blocked})
     \item the rest of the matrix blocks, as each of them depends on the \(h\)-th block of its row and the \(h\)-th block of its column (\cref{block-other}  of \cref{fw-blocked})
@@ -53,7 +53,7 @@ Similarly, all other blocks are computed with the same lightened procedure. Depe
     \label{data-dependency-external-loop-parallel}
 \end{figure}
 
-Performing the calculations in this order satisfies all the dependencies seen in \cref{data-dependency-external-loop-parallel}, and it is noticeable that starting from this list one could realize the parallel algorithm for our problem \cite{rucci}.
+Performing the calculations in this order, all the dependencies seen in \cref{data-dependency-external-loop-parallel} are satisfied, and it is noticeable that, starting from this list, one could realize the parallel algorithm for our problem \cite{rucci}.
 
 \begin{figure}[htbp]
     \centering
@@ -61,7 +61,7 @@ Performing the calculations in this order satisfies all the dependencies seen in
         \begin{algorithm}[H] \label{Floyd}
             \SetKwFunction{FFloyd}{Floyd} 
             \SetKwProg{Pn}{Function}{:}{\KwRet}
-            \Pn{\FFloyd{\(d,a,b,pred\)}}{
+            \Pn{\FFloyd{\(d,a,b,predb,predd\)}}{
                 let \(s\) size of the matrix \(d,a,b, pred\)
 
                 \For{\(h \in [1{\twodots}s]\)}{
@@ -70,7 +70,7 @@ Performing the calculations in this order satisfies all the dependencies seen in
                             \If{\( a [ i , h ] + b [ h , j ] < d [ i , j ] \)} {
                                 \( d [ i , j ] \leftarrow a [ i , h ] + b [ h , j ] \)
 
-                                \( pred [ i , j ] \leftarrow pred [ h , j ] \)
+                                \( predd [ i , j ] \leftarrow predb [ h , j ] \)
                             }
                         }
                     }
@@ -82,17 +82,15 @@ Performing the calculations in this order satisfies all the dependencies seen in
                 let \(s\) number of partition
 
                 \For{\(h \in [1{\twodots}n \operatorname{with} \operatorname{step} s]\)}{
-                    \FFloyd{\(d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} \label{block-diagonal}
-
+                    \FFloyd{\(d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{block-diagonal}
                     \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} s] \setminus h\)} {
-                        \FFloyd{\(d[h{\twodots}h{+}s,j{\twodots}j{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,h{\twodots}h{+}s]\)} \label{block-row}
+                        \FFloyd{\(d[h{\twodots}h{+}s,j{\twodots}j{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} \label{block-row}
                     }
 
                     \For{\(i  \in [1{\twodots}n \operatorname{with} \operatorname{step} s]  \setminus h\)} {
-                        \FFloyd{\(d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{block-column}
-
+                        \FFloyd{\(d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s],pred[h{\twodots}h{+}s,h{\twodots}h{+}s]\)} \label{block-column}
                         \For{\(j  \in [1{\twodots}n \operatorname{with} \operatorname{step} s] \setminus h\)} {
-                            \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s]\)} \label{block-other}
+                            \FFloyd{\(d[i{\twodots}i{+}s,j{\twodots}j{+}s],d[i{\twodots}i{+}s,h{\twodots}h{+}s],d[h{\twodots}h{+}s,j{\twodots}j{+}s],pred[i{\twodots}i{+}s,j{\twodots}j{+}s],pred[h{\twodots}h{+}s,j{\twodots}j{+}s]\)} \label{block-other}
                         }
                     }
                 }
@@ -126,7 +124,7 @@ It is then possible to implement a block division algorithm of the matrix and th
 %\Cref{communication-during-parallel-task}  describes communications in an implementation where each individual block is parallelized and started together, suspended until it receives data and then executed.
 
 As we can see from \cref{fw-blocked}, the code works sequentially with \(O(n/s \cdot n/s \cdot n/s \cdot s^3) =O(n^3) \).
-In a parallel manner we have instead \(O(n \cdot (1+n/s+n/s+ n^2/s)) = O(n^3/s)\).
+In parallel we have instead \(O(n/s \cdot (1+n/(sp)+n/(sp)+n^2/(s^2p))\cdot s^3)=O(n^3/p)\) where \(p\) is number of processors.
 Despite this, the matrix strategy makes it possible to reduce the join times starting from \(n\times n\) to \(n/s + n/s + n/s \times n/s \approx n/s \times n/s\) so that if \(s\) changes, the time required for the join after parallel execution changes \cite{rucci}.
 
 \FloatBarrier
